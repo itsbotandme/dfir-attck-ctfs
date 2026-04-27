@@ -15,27 +15,33 @@ training guide that explains the *why* behind every finding.
 
 ## How to Play
 
+### 🌐 Easiest — play online
+
+**👉 https://itsbotandme.github.io/dfir-attck-ctfs/**
+
+That URL is the live site. Pick a lab and play in your browser — works on desktop and mobile, no install needed.
+
+### 💻 Or play locally (works fully offline)
+
 ```bash
 # 1. Clone the repo
 git clone https://github.com/itsbotandme/dfir-attck-ctfs.git
 cd dfir-attck-ctfs
 
-# 2. Open the CTF in your browser
-xdg-open reports/MemLabs-Lab1-CTF.html      # Linux
-open reports/MemLabs-Lab1-CTF.html          # macOS
-start reports/MemLabs-Lab1-CTF.html         # Windows
+# 2. Open the landing page in your browser
+xdg-open index.html         # Linux
+open index.html             # macOS
+start index.html            # Windows
 ```
 
-That's it. **No installation, no Claude, no API keys, no internet.** The
-CTF is a self-contained HTML file with a JavaScript terminal emulator and
-all Volatility outputs embedded.
+That's it. **No installation, no Claude, no API keys, no internet** required at runtime. Each CTF is a self-contained HTML file with a JavaScript terminal emulator and all Volatility outputs embedded.
 
 ### 📱 Play on Mobile (iOS / Android)
 
 The CTF is **fully mobile-friendly** — no app store install needed.
 
-1. Clone the repo on your phone (or download the HTML directly via [GitHub Mobile](https://github.com/itsbotandme/dfir-attck-ctfs/raw/main/reports/MemLabs-Lab1-CTF.html))
-2. Open `MemLabs-Lab1-CTF.html` in **Safari (iOS)** or **Chrome (Android)**
+1. Open **https://itsbotandme.github.io/dfir-attck-ctfs/** in Safari or Chrome on your phone
+2. Tap a CTF card → "Play Now"
 3. Use the **⚡ tap-to-run command buttons** below the terminal — no need to type pipe `|` or backslash on a mobile keyboard
 4. Optional: **Add to Home Screen** (Safari → Share → Add to Home Screen / Chrome → Menu → Install app) for a fullscreen, native-feeling experience
 

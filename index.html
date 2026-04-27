@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DFIR ATT&CK CTF Lab Pack</title>
+<meta name="description" content="Browser-playable DFIR Capture-the-Flag labs organised by MITRE ATT&CK Enterprise tactics. Free, self-contained, mobile-friendly.">
+<meta property="og:title" content="DFIR ATT&CK CTF Lab Pack">
+<meta property="og:description" content="Browser-playable DFIR Capture-the-Flag labs organised by MITRE ATT&CK Enterprise tactics.">
+<meta property="og:type" content="website">
+<style>
+  :root {
+    --bg: #0a0e14;
+    --panel: #11161d;
+    --panel-2: #161c25;
+    --border: #232a36;
+    --accent: #58a6ff;
+    --accent-2: #79c0ff;
+    --green: #3fb950;
+    --yellow: #d29922;
+    --red: #f85149;
+    --purple: #bc8cff;
+    --text: #c9d1d9;
+    --muted: #7d8590;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace; line-height: 1.6; min-height: 100vh; }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  header.hero { text-align: center; padding: 30px 0 50px; border-bottom: 1px solid var(--border); margin-bottom: 50px; }
+  .logo { font-size: 2rem; color: var(--purple); margin-bottom: 8px; }
+  h1 { font-size: 1.8rem; color: var(--accent); font-weight: 600; margin-bottom: 12px; letter-spacing: -0.02em; }
+  .tagline { color: var(--muted); font-size: 0.95rem; max-width: 600px; margin: 0 auto 18px; line-height: 1.7; }
+  .hero-tags { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .tag { background: var(--panel); border: 1px solid var(--border); padding: 4px 12px; border-radius: 12px; font-size: 0.7rem; color: var(--muted); }
+
+  h2 { font-size: 1.05rem; color: var(--accent-2); text-transform: uppercase; letter-spacing: 0.1em; margin: 40px 0 20px; font-weight: 600; }
+  .lab-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+
+  .lab-card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 24px; transition: all 0.2s; }
+  .lab-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(88,166,255,0.08); }
+
+  .lab-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+  .lab-title { font-size: 1.2rem; color: var(--accent-2); font-weight: 600; }
+  .lab-subtitle { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+  .lab-difficulty { background: rgba(210,153,34,0.1); color: var(--yellow); border: 1px solid var(--yellow); padding: 3px 10px; border-radius: 12px; font-size: 0.7rem; }
+
+  .lab-tactics { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0; }
+  .tactic-pill { background: rgba(188,140,255,0.1); color: var(--purple); border: 1px solid var(--purple); padding: 3px 9px; border-radius: 4px; font-size: 0.68rem; }
+
+  .lab-desc { font-size: 0.85rem; color: var(--text); line-height: 1.7; margin: 14px 0; }
+  .lab-stats { display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.75rem; color: var(--muted); margin: 14px 0; }
+  .lab-stats b { color: var(--text); font-weight: 600; }
+
+  .play-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: #000; padding: 12px 22px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.9rem; margin-top: 8px; transition: opacity 0.15s; min-height: 44px; }
+  .play-btn:hover { opacity: 0.85; }
+  .secondary-link { display: inline-block; margin-left: 16px; color: var(--muted); text-decoration: none; font-size: 0.8rem; padding: 12px 0; }
+  .secondary-link:hover { color: var(--accent-2); text-decoration: underline; }
+
+  .info-box { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 20px 24px; margin: 24px 0; font-size: 0.85rem; line-height: 1.7; }
+  .info-box h3 { color: var(--green); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+  .info-box code { background: #000; padding: 2px 6px; border-radius: 3px; color: var(--accent-2); font-size: 0.78rem; }
+
+  footer { margin-top: 60px; padding-top: 30px; border-top: 1px solid var(--border); text-align: center; font-size: 0.75rem; color: var(--muted); line-height: 1.8; }
+  footer a { color: var(--accent-2); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 640px) {
+    .wrap { padding: 24px 16px 60px; }
+    h1 { font-size: 1.4rem; }
+    .tagline { font-size: 0.85rem; }
+    .lab-card { padding: 18px; }
+    .lab-title { font-size: 1.05rem; }
+    header.hero { padding: 20px 0 30px; margin-bottom: 30px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="logo">⬡</div>
+    <h1>DFIR ATT&amp;CK CTF Lab Pack</h1>
+    <p class="tagline">Browser-playable Capture-the-Flag labs that walk the MITRE ATT&amp;CK Enterprise kill chain. Real Volatility output, real analyst commands, real ATT&amp;CK mapping. Built for memory forensics training.</p>
+    <div class="hero-tags">
+      <span class="tag">Self-contained HTML</span>
+      <span class="tag">No installation</span>
+      <span class="tag">Mobile-friendly</span>
+      <span class="tag">Free / MIT</span>
+    </div>
+  </header>
+
+  <h2>🎯 Available Labs</h2>
+
+  <div class="lab-grid">
+    <div class="lab-card">
+      <div class="lab-header">
+        <div>
+          <div class="lab-title">MemLabs Lab 1 — Memory Forensics</div>
+          <div class="lab-subtitle">Insider threat / compromised credentials scenario · Windows 7 SP1 x64</div>
+        </div>
+        <div class="lab-difficulty">JUNIOR / INTERMEDIATE</div>
+      </div>
+
+      <p class="lab-desc">An interactive 8-stage investigation walking the full ATT&amp;CK kill chain — from initial access to credential dumping to data staging. Type real Volatility 3 commands (or tap suggested ones on mobile) into a sandboxed terminal that returns the actual output captured during analysis.</p>
+
+      <div class="lab-tactics">
+        <span class="tactic-pill">TA0007 Discovery</span>
+        <span class="tactic-pill">TA0001 Initial Access</span>
+        <span class="tactic-pill">TA0002 Execution</span>
+        <span class="tactic-pill">TA0005 Defense Evasion</span>
+        <span class="tactic-pill">TA0006 Credential Access</span>
+        <span class="tactic-pill">TA0009 Collection</span>
+        <span class="tactic-pill">TA0010 Exfiltration</span>
+      </div>
+
+      <div class="lab-stats">
+        <span><b>8</b> stages</span>
+        <span><b>400</b> points</span>
+        <span><b>60–90 min</b> typical playtime</span>
+      </div>
+
+      <a class="play-btn" href="reports/MemLabs-Lab1-CTF.html">▶ Play Now</a>
+      <a class="secondary-link" href="reports/MemLabs-Lab1-DFIR-Report.md">📄 Read the report</a>
+      <a class="secondary-link" href="reports/MemLabs-Lab1-AnswerSheet.md">📚 Answer sheet</a>
+    </div>
+  </div>
+
+  <div class="info-box">
+    <h3>📱 Playing on Mobile</h3>
+    <p>This site works on iOS Safari and Android Chrome. For the cleanest experience, after opening a lab, use your browser's <b>Add to Home Screen</b> (Safari Share menu / Chrome menu → Install app) — the CTF then runs fullscreen offline like a native app.</p>
+  </div>
+
+  <div class="info-box">
+    <h3>🛠️ Want to Build Your Own?</h3>
+    <p>The labs in this pack were generated by a Claude Code skill called <code>ctf-builder</code> that converts forensic artefacts (memory images, disk images, pcap, EVTX corpus) into ATT&amp;CK-organised CTFs with three deliverables — interactive game, DFIR report, and analyst training guide. Grab the skill from the <a href="https://github.com/itsbotandme/dfir-attck-ctfs/tree/main/skill/ctf-builder" style="color:var(--accent-2)">repo</a>.</p>
+  </div>
+
+  <h2>🙏 Attribution</h2>
+  <p style="font-size: 0.83rem; line-height: 1.8; color: var(--text);">
+    The DFIR challenges referenced here derive from publicly available CTFs created by their original authors. The CTF wrapper, ATT&amp;CK kill-chain methodology, analyst training guides, and <code style="background:#000;padding:2px 6px;border-radius:3px;color:var(--accent-2);font-size:0.78rem">ctf-builder</code> skill in this repository are derivative educational content released under MIT.<br><br>
+    <b style="color:var(--text)">MemLabs Lab 1</b> — original challenge by <b style="color:var(--text)">stuxnet999</b> · <a href="https://github.com/stuxnet999/MemLabs" style="color:var(--accent-2)">github.com/stuxnet999/MemLabs</a>
+  </p>
+
+  <footer>
+    <p>Built with <a href="https://claude.com/claude-code">Claude Code</a> — <a href="https://github.com/itsbotandme/dfir-attck-ctfs">Source on GitHub</a></p>
+    <p style="margin-top:6px">Released under the MIT License · Original challenges retain upstream attribution</p>
+  </footer>
+
+</div>
+
+</body>
+</html>
