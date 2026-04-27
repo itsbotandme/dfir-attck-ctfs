@@ -17,8 +17,8 @@ training guide that explains the *why* behind every finding.
 
 ```bash
 # 1. Clone the repo
-git clone <repo-url>
-cd <repo-dir>
+git clone https://github.com/itsbotandme/dfir-attck-ctfs.git
+cd dfir-attck-ctfs
 
 # 2. Open the CTF in your browser
 xdg-open reports/MemLabs-Lab1-CTF.html      # Linux
@@ -37,7 +37,7 @@ For convenience, run any CTF by name from the terminal:
 ```bash
 # One-time setup (Linux/macOS)
 source scripts/start.sh              # current shell only
-echo 'source ~/path/to/scripts/start.sh' >> ~/.bashrc   # permanent
+echo "source $(pwd)/scripts/start.sh" >> ~/.bashrc   # permanent
 
 # Then:
 start                                # list available CTFs
