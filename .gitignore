@@ -1,0 +1,46 @@
+# --- Forensic artefacts (too large / not redistributable) ---
+*.raw
+*.dd
+*.E0[0-9]
+*.E1[0-9]
+*.7z
+*.zip
+*.tar.gz
+*.tgz
+*.vmem
+*.vmsn
+*.lime
+*.aff4
+
+# --- Case working directories (contain raw evidence + intermediate output) ---
+cases/
+analysis/
+exports/
+/MemoryDump_*
+
+# --- Game project (separate codebase from the DFIR repo) ---
+rps.html
+
+# --- Local DFIR Orchestrator config (machine-specific paths, references) ---
+CLAUDE.md
+
+# --- OS junk ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Editor / IDE ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# --- Python ---
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# --- Logs ---
+*.log
