@@ -30,6 +30,21 @@ That's it. **No installation, no Claude, no API keys, no internet.** The
 CTF is a self-contained HTML file with a JavaScript terminal emulator and
 all Volatility outputs embedded.
 
+### 📱 Play on Mobile (iOS / Android)
+
+The CTF is **fully mobile-friendly** — no app store install needed.
+
+1. Clone the repo on your phone (or download the HTML directly via [GitHub Mobile](https://github.com/itsbotandme/dfir-attck-ctfs/raw/main/reports/MemLabs-Lab1-CTF.html))
+2. Open `MemLabs-Lab1-CTF.html` in **Safari (iOS)** or **Chrome (Android)**
+3. Use the **⚡ tap-to-run command buttons** below the terminal — no need to type pipe `|` or backslash on a mobile keyboard
+4. Optional: **Add to Home Screen** (Safari → Share → Add to Home Screen / Chrome → Menu → Install app) for a fullscreen, native-feeling experience
+
+Mobile features:
+- ☰ **Hamburger menu** opens the stages drawer
+- ⚡ **Tap-to-run** suggested commands for each stage
+- ⌨️ / 🖱 **Toggle** between typing commands and tap-only mode
+- 💡 **Touch-friendly hints**, large 44px tap targets throughout
+
 ### Optional: `start <name>` shell launcher
 
 For convenience, run any CTF by name from the terminal:

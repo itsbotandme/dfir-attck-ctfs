@@ -136,11 +136,87 @@
   .att-flow .step { display: inline-block; padding: 2px 6px; margin: 1px; background: rgba(88,166,255,0.1); border: 1px solid var(--border); border-radius: 3px; }
   .att-flow .step.done { background: rgba(63,185,80,0.1); border-color: var(--green); color: var(--green); }
   .att-flow .step.current { background: rgba(88,166,255,0.2); border-color: var(--accent); color: var(--accent); }
+
+  /* === Tap-to-run command buttons === */
+  .cmd-suggestions { margin-bottom: 8px; }
+  .cmd-sugg-label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; display: block; }
+  .cmd-sugg-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .cmd-sugg-btn { display: inline-flex; align-items: center; padding: 8px 12px; background: var(--code-bg); border: 1px solid var(--border); border-radius: 5px; color: var(--accent); font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 0.72rem; cursor: pointer; transition: all 0.12s; min-height: 34px; max-width: 100%; }
+  .cmd-sugg-btn:hover, .cmd-sugg-btn:active { background: rgba(88,166,255,0.12); border-color: var(--accent); }
+  .cmd-sugg-btn::before { content: '▸ '; color: var(--green); margin-right: 4px; }
+
+  /* === Input mode toggle === */
+  .term-mode-toggle { font-size: 0.65rem; color: var(--muted); cursor: pointer; user-select: none; padding: 3px 8px; border: 1px solid var(--border); border-radius: 3px; background: transparent; font-family: inherit; }
+  .term-mode-toggle:hover { background: rgba(88,166,255,0.06); color: var(--text); }
+  .term-input-row.hidden { display: none; }
+
+  /* === Hamburger button (mobile only) === */
+  .hamburger { display: none; cursor: pointer; padding: 6px 10px; background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; color: var(--text); font-size: 1.1rem; font-family: inherit; line-height: 1; }
+  .hamburger:hover { background: rgba(88,166,255,0.06); }
+  .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 49; }
+  .sidebar-overlay.show { display: block; }
+
+  /* === Tablet breakpoint (≤1024px) === */
+  @media (max-width: 1024px) {
+    .container { grid-template-columns: 240px 1fr; }
+    header h1 { font-size: 0.85rem; }
+    .badge { font-size: 0.65rem; padding: 1px 6px; }
+  }
+
+  /* === Phone breakpoint (≤768px) === */
+  @media (max-width: 768px) {
+    body { font-size: 14px; }
+    header { padding: 10px 14px; gap: 8px; flex-wrap: wrap; }
+    header h1 { font-size: 0.8rem; }
+    header .badge { display: none; }
+    header .badge:nth-of-type(1) { display: inline-block; }
+    .score-pill { font-size: 0.7rem; padding: 3px 8px; }
+    .hamburger { display: inline-block; }
+
+    .container { grid-template-columns: 1fr; height: calc(100vh - 49px); }
+
+    /* Sidebar becomes a slide-in drawer */
+    .sidebar {
+      position: fixed; top: 49px; left: 0;
+      width: 280px; height: calc(100vh - 49px);
+      transform: translateX(-100%);
+      transition: transform 0.25s ease;
+      z-index: 50;
+      box-shadow: 4px 0 16px rgba(0,0,0,0.5);
+    }
+    .sidebar.open { transform: translateX(0); }
+
+    .stage-header { padding: 12px 14px; }
+    .stage-title { font-size: 1rem; }
+    .stage-tactic-row { gap: 6px; }
+    .briefing { padding: 12px 14px; }
+    .briefing-summary { font-size: 0.95rem; }
+    .terminal-wrapper { padding: 10px 14px; }
+    .question-area { padding: 12px 14px; }
+
+    .terminal { height: 240px; font-size: 0.75rem; padding: 8px 10px; }
+
+    /* Bigger tap targets — Apple HIG / Material spec */
+    .submit-btn { padding: 12px 18px; font-size: 0.95rem; min-height: 44px; }
+    .answer-input { padding: 12px 12px; font-size: 1rem; min-height: 44px; }
+    .term-input-row { padding: 10px 12px; min-height: 44px; }
+    .term-input-row::before { font-size: 0.7rem; }
+    .term-input-field { font-size: 1rem; }
+    .briefing-toggle, .term-mode-toggle, .hint-link { padding: 8px 14px; min-height: 36px; display: inline-flex; align-items: center; }
+    .cmd-sugg-btn { font-size: 0.78rem; padding: 10px 14px; min-height: 40px; }
+  }
+
+  /* === Very small phones (≤380px) === */
+  @media (max-width: 380px) {
+    .terminal { height: 200px; }
+    header h1 { display: none; }
+  }
 </style>
 </head>
 <body>
 
 <header>
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="Toggle stages menu">☰</button>
   <span style="color:var(--purple);font-size:1.1rem">⬡</span>
   <h1>MemLabs Lab 1 — DFIR ATT&CK Investigation</h1>
   <span class="badge">Volatility 3</span>
@@ -149,6 +225,8 @@
   <span class="score-pill">Score: <span class="v" id="total-score">0</span> / 400</span>
   <span class="score-pill"><span class="v" id="solved-count">0</span> / 8 stages</span>
 </header>
+
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
 <div class="container">
 
@@ -184,12 +262,18 @@
 
       <div class="terminal-wrapper">
         <div class="terminal-label">
-          <span>🖥️ ANALYST TERMINAL — execute commands to investigate</span>
-          <span class="hint-link" onclick="showHint()">💡 Need a hint?</span>
+          <span>🖥️ ANALYST TERMINAL</span>
+          <span style="display:flex;gap:8px;align-items:center">
+            <button class="term-mode-toggle" id="mode-toggle" onclick="toggleInputMode()">⌨️ Type</button>
+            <span class="hint-link" onclick="showHint()">💡 Need a hint?</span>
+          </span>
         </div>
+
+        <div class="cmd-suggestions" id="cmd-suggestions"></div>
+
         <div class="terminal" id="terminal"></div>
-        <div class="term-input-row">
-          <input type="text" class="term-input-field" id="term-input" autocomplete="off" spellcheck="false" placeholder="Type 'help' to see available commands">
+        <div class="term-input-row" id="term-input-row">
+          <input type="text" class="term-input-field" id="term-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Type 'help' or tap a suggested command above">
         </div>
         <div class="hint-popup" id="hint-popup"></div>
       </div>
@@ -1240,6 +1324,7 @@ function selectStage(idx) {
   state.current = idx;
   renderStagesList();
   renderCurrentStage();
+  closeSidebar();  // close drawer on mobile after selection
 }
 
 function renderCurrentStage() {
@@ -1279,7 +1364,11 @@ function renderCurrentStage() {
 
   document.getElementById('hint-popup').classList.remove('show');
   state.hintIdx[s.id] = state.hintIdx[s.id] || 0;
-  ai.focus();
+
+  renderCommandSuggestions();
+
+  // Don't auto-focus on mobile — pulls up keyboard unnecessarily
+  if (window.innerWidth > 768) ai.focus();
 }
 
 function checkAnswer() {
@@ -1356,6 +1445,58 @@ function toggleBriefing() {
   t.textContent = d.classList.contains('show') ? '▾ Hide full briefing' : '▸ Show full briefing';
 }
 
+// === Mobile sidebar drawer ===
+function toggleSidebar() {
+  const sb = document.querySelector('.sidebar');
+  const ov = document.getElementById('sidebar-overlay');
+  sb.classList.toggle('open');
+  ov.classList.toggle('show');
+}
+function closeSidebar() {
+  document.querySelector('.sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('show');
+}
+
+// === Tap-to-run command suggestions ===
+function renderCommandSuggestions() {
+  const s = STAGES[state.current];
+  const cmds = s.expectedCommands || [];
+  const wrap = document.getElementById('cmd-suggestions');
+  if (cmds.length === 0) { wrap.innerHTML = ''; return; }
+  wrap.innerHTML = `
+    <span class="cmd-sugg-label">⚡ Tap to run a suggested command</span>
+    <div class="cmd-sugg-row">
+      ${cmds.map((c, i) => `<button class="cmd-sugg-btn" onclick="runSuggestedCommand(${i})" title="${escapeHtml(c)}">${escapeHtml(c)}</button>`).join('')}
+    </div>`;
+}
+
+function runSuggestedCommand(idx) {
+  const s = STAGES[state.current];
+  const cmd = (s.expectedCommands || [])[idx];
+  if (!cmd) return;
+  // Focus terminal if visible, then execute
+  executeLine(cmd);
+  // Brief visual flash on the input to show what ran
+  const inp = document.getElementById('term-input');
+  if (inp) inp.value = '';
+}
+
+// === Tap/Type input mode toggle ===
+function toggleInputMode() {
+  const row = document.getElementById('term-input-row');
+  const btn = document.getElementById('mode-toggle');
+  const isHidden = row.classList.toggle('hidden');
+  btn.textContent = isHidden ? '🖱 Tap-only' : '⌨️ Type';
+}
+
+// On first load, hide the input row by default on phones for a cleaner look
+function autoSetMobileMode() {
+  if (window.innerWidth <= 768) {
+    document.getElementById('term-input-row').classList.add('hidden');
+    document.getElementById('mode-toggle').textContent = '🖱 Tap-only';
+  }
+}
+
 // ============================================================
 // EVENT WIRING
 // ============================================================
@@ -1409,6 +1550,7 @@ renderStagesList();
 renderCurrentStage();
 updateScoreboard();
 bootTerminal();
+autoSetMobileMode();
 </script>
 </body>
 </html>
