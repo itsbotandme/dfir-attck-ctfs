@@ -229,7 +229,7 @@ start                    # no args → list all available CTFs
 The `start` function (defined in `~/.bash_aliases`) searches these
 directories, in order:
 
-1. ``
+1. `<repo-root>/reports/`
 2. `~/CTFs/`
 3. `~/dfir-ctfs/`
 
