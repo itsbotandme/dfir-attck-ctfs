@@ -71,7 +71,8 @@ TA0001 Initial Access            ← How did they get in?
 TA0002 Execution                 ← What did they run?
 TA0003 Persistence               ← How do they stay?
 TA0004 Privilege Escalation      ← Did they elevate?
-TA0005 Defense Evasion           ← How did they hide?
+TA0005 Stealth                   ← How did they blend in / hide artefacts?
+TA00?? Impair Defenses           ← Did they disable / degrade controls? (new in v19; ID TBC)
 TA0006 Credential Access         ← What credentials did they steal?
 TA0007 Discovery                 ← What did they enumerate?
 TA0008 Lateral Movement          ← Did they pivot?
@@ -265,7 +266,8 @@ Always **include at least one negative-finding stage** (e.g., "Find the persiste
 | TA0002 | Execution | T1059.001 PowerShell, T1059.003 cmd, T1053.005 Scheduled Task |
 | TA0003 | Persistence | T1547.001 Run keys, T1053.005 Scheduled Task, T1543.003 Service |
 | TA0004 | Privilege Escalation | T1548.002 UAC bypass, T1134 Token manipulation |
-| TA0005 | Defense Evasion | T1036.005 Masquerading, T1027 Obfuscation, T1070 Indicator Removal |
+| TA0005 | Stealth (renamed in v19) | T1036.005 Masquerading, T1027 Obfuscated Files/Information, T1564 Hide Artifacts |
+| TA00?? | Impair Defenses (new in v19) | Disable/modify security tools, clear event logs, disable firewall — formerly T1562.* and T1070.001 sub-techniques. Confirm IDs at https://attack.mitre.org/tactics/enterprise/ |
 | TA0006 | Credential Access | T1003.001 LSASS, T1003.002 SAM, T1552.001 Files, T1555 Password Stores |
 | TA0007 | Discovery | T1082 System Info, T1083 File/Dir Discovery, T1018 Remote System |
 | TA0008 | Lateral Movement | T1021.001 RDP, T1021.002 SMB/Admin Shares, T1550 Use Alternate Auth |

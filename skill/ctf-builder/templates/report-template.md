@@ -44,7 +44,8 @@
 ### 3.2 TA0002 Execution — `T<technique>`
 ...
 
-### 3.3 TA0005 Defense Evasion — `T<technique>`
+### 3.3 TA0005 Stealth — `T<technique>`
+<!-- For active disabling/degrading of controls, use the v19 "Impair Defenses" tactic instead. -->
 ...
 
 (Skip tactics with no evidence; explicitly note negative findings.)

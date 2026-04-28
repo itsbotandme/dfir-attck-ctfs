@@ -159,7 +159,9 @@ Process *parentage* is more useful than process *name*. Anyone can rename a bina
 
 ---
 
-## Stage 4 — TA0005 Defense Evasion (T1036.005 Masquerading)
+## Stage 4 — TA0005 Stealth (T1036.005 Masquerading)
+
+> **ATT&CK v19 note (Apr 2026):** TA0005 was renamed *Defense Evasion → Stealth*. The "actively disable / degrade controls" half of the old tactic (T1562) is now a separate tactic, **Impair Defenses**. T1036.005 Masquerading is a stealth behaviour (blending in, not breaking controls), so it stays under TA0005.
 
 ### Hypothesis to test
 *"Is the attacker hiding tools in plain sight by using legitimate directory locations?"*
@@ -300,7 +302,7 @@ DumpIt / winpmem / procdump found?
 ```
 TA0001 Initial Access      → T1078         Two simultaneous sessions
 TA0002 Execution           → T1059.003     cmd.exe + St4G3$1.bat
-TA0005 Defense Evasion     → T1036.005     Bat file in System32
+TA0005 Stealth             → T1036.005     Bat file in System32
 TA0006 Credential Access   → T1003.001     PASSWD.LOG + DumpIt
 TA0009 Collection          → T1560.001     WinRAR + Important.rar
 TA0010 Exfiltration        → T1041 (inferred)  RAM image as carrier

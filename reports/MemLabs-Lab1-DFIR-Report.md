@@ -26,7 +26,7 @@ A Windows 7 SP1 x64 workstation (hostname **SMARTNET-PC**, IP **10.0.2.15**) is 
 |--------|-----------|----------|-----------|
 | TA0001 Initial Access | T1078 Valid Accounts | HIGH | HIGH |
 | TA0002 Execution | T1059.003 Windows Command Shell | HIGH | HIGH |
-| TA0005 Defense Evasion | T1036.005 Masquerading | HIGH | HIGH |
+| TA0005 Stealth (was Defense Evasion in v18) | T1036.005 Masquerading | HIGH | HIGH |
 | TA0006 Credential Access | T1003.001 LSASS Memory | CRITICAL | HIGH |
 | TA0007 Discovery | T1082 System Information Discovery | LOW | MEDIUM |
 | TA0009 Collection | T1560.001 Archive via Utility | HIGH | HIGH |
@@ -87,7 +87,7 @@ A `cmd.exe` shell (PID 1984) was spawned interactively by the SmartNet session. 
 
 The user **SmartNet** also recently opened `St4g3$1.bat` and `St4g3$1.txt` according to the Registry RecentDocs MRU list. The `.txt` extension means the file was read in Notepad — the staging script was both **executed and edited** in this session.
 
-### 3.4 TA0005 Defense Evasion — `T1036.005 Masquerading`
+### 3.4 TA0005 Stealth — `T1036.005 Masquerading`
 **Confidence: HIGH** | **Severity: HIGH**
 
 A batch file with leet-speak naming was placed in two locations:
@@ -134,7 +134,7 @@ DumpIt produced a 1 GB raw memory image written to the SmartNet user's Downloads
 - Later exfiltration via removable media, web upload, or alternate egress
 - Attacker uploading the image after closing the dump tool
 
-### 3.8 TA0005 Defense Evasion (secondary) — `T1564 Hide Artifacts` (possible)
+### 3.8 TA0005 Stealth (secondary) — `T1564 Hide Artifacts` (possible)
 **Confidence: LOW** | **Severity: MEDIUM**
 
 `mspaint.exe` (PID 2424) was launched by SmartNet at 14:35:14 with no file argument. Two hypotheses cover the observation:
@@ -236,8 +236,8 @@ DumpIt produced a 1 GB raw memory image written to the SmartNet user's Downloads
 | Initial Access | T1078 Valid Accounts | (Local) | `windows.pslist` — two simultaneous explorer sessions | HIGH |
 | Execution | T1059.003 Cmd Shell | — | `windows.pstree` cmd.exe ← explorer.exe + conhost | HIGH |
 | Persistence | T1547 Boot/Logon Autostart | (no Run-key entries) | `windows.registry.printkey` Run keys empty | LOW (negative finding) |
-| Defense Evasion | T1036.005 Masquerading | Match Legitimate Name/Location | `windows.filescan` St4G3$1.bat in System32 | HIGH |
-| Defense Evasion | T1564 Hide Artifacts | (mspaint potential stego) | `windows.pslist` mspaint no args + DLL list | LOW |
+| Stealth | T1036.005 Masquerading | Match Legitimate Name/Location | `windows.filescan` St4G3$1.bat in System32 | HIGH |
+| Stealth | T1564 Hide Artifacts | (mspaint potential stego) | `windows.pslist` mspaint no args + DLL list | LOW |
 | Credential Access | T1003.001 OS Cred Dumping | LSASS Memory | PASSWD.LOG + DumpIt.exe + RAM acquisition | HIGH |
 | Discovery | T1082 System Info Discovery | — | (inferred from hands-on cmd.exe presence) | MEDIUM |
 | Lateral Movement | T1021 Remote Services | (Fast User Switching / RDP) | Two simultaneous sessions, 5 min apart | MEDIUM |

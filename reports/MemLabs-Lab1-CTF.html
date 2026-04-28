@@ -765,7 +765,7 @@ const STAGES = [
   {
     id: 4,
     title: "Stage 4 — Masquerading in System32",
-    tactic: "TA0005 Defense Evasion",
+    tactic: "TA0005 Stealth",
     technique: "T1036.005 Masquerading: Match Legitimate Name or Location",
     techniqueNote: "(Suspicious file blended into trusted OS directory.)",
     difficulty: "medium",
@@ -785,7 +785,7 @@ const STAGES = [
     question: `What is the <b>full filename</b> (with extension) of the suspicious batch file masquerading in System32?`,
     answer: "St4G3$1.bat",
     answerNote: `<b>St4G3$1.bat</b> — leet-speak decoding: <i>4→a, 3→e, $→s</i> = <b>"Stage$1"</b>. The <code>$1</code> suffix suggests this is the first in a numbered series of staging scripts. Found in BOTH <code>C:\\Windows\\System32\\</code> and <code>C:\\Users\\SmartNet\\Desktop\\</code>. Registry RecentDocs proves SmartNet recently opened it as both .bat and .txt — meaning it was both <b>edited and executed</b>.`,
-    attMap: "TA0005 Defense Evasion → T1036.005 Masquerading: Match Legitimate Name or Location",
+    attMap: "TA0005 Stealth → T1036.005 Masquerading: Match Legitimate Name or Location",
     hints: [
       "Pipe filescan output through grep to filter — try grep '.bat' or grep 'System32'.",
       "The filename uses leet-speak with a $ symbol. Capitalisation matters for the answer."
@@ -914,7 +914,7 @@ const STAGES = [
     question: `Which ATT&CK <b>sub-technique ID</b> covers placing a malicious file in <code>C:\\Windows\\System32\\</code> to blend with legitimate OS binaries? (format: T####.###)`,
     answer: "T1036.005",
     answerNote: `<b>T1036.005 Masquerading: Match Legitimate Name or Location</b>. This sub-technique specifically covers naming/placing files to blend with legitimate components. It pairs naturally with T1059.003 (the bat file is also script execution) and T1564 (hiding artefacts more broadly).`,
-    attMap: "TA0005 Defense Evasion → T1036.005 Masquerading",
+    attMap: "TA0005 Stealth → T1036.005 Masquerading",
     hints: [
       "Type 'tactics' in the terminal to see the full ATT&CK reference.",
       "The technique ID starts with T1036. The sub-technique is .005."
@@ -1292,7 +1292,8 @@ const TACTICS_TEXT = `MITRE ATT&CK Enterprise Tactics — Kill Chain Order
   TA0002  Execution                ← T1059.003 Windows Command Shell
   TA0003  Persistence
   TA0004  Privilege Escalation
-  TA0005  Defense Evasion          ← T1036.005 Masquerading
+  TA0005  Stealth                  ← T1036.005 Masquerading  (was Defense Evasion pre-v19)
+  TA00??  Impair Defenses          (new in ATT&CK v19 — split from TA0005; not used in this lab)
   TA0006  Credential Access        ← T1003.001 LSASS Memory
   TA0007  Discovery                ← T1082 System Information
   TA0008  Lateral Movement
@@ -1300,6 +1301,10 @@ const TACTICS_TEXT = `MITRE ATT&CK Enterprise Tactics — Kill Chain Order
   TA0011  Command and Control
   TA0010  Exfiltration             ← T1041 Exfil over C2 Channel
   TA0040  Impact
+
+v19 note: TA0005 was renamed Defense Evasion → Stealth. Active disabling /
+degrading of security controls (formerly T1562) is now its own tactic,
+"Impair Defenses." See https://attack.mitre.org/tactics/enterprise/
 
 For full details: https://attack.mitre.org/`;
 
