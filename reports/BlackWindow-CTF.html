@@ -86,8 +86,6 @@
      Input row sits ABOVE this block so the prompt is always visible at the
      top — flipped border radii reflect that. */
   .terminal { background: #000; border: 1px solid var(--border); border-radius: 0 0 6px 6px; border-top: none; height: 320px; overflow-y: auto; padding: 10px 14px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; }
-  /* When the input row is hidden (tap-only mode), restore full rounding on the terminal */
-  .terminal-wrapper:has(.term-input-row.hidden) .terminal { border-radius: 6px; border-top: 1px solid var(--border); }
   .terminal::-webkit-scrollbar { width: 8px; }
   .terminal::-webkit-scrollbar-track { background: #000; }
   .terminal::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
@@ -103,7 +101,7 @@
      the prompt without scrolling. Bottom border removed so it joins the
      terminal cleanly. */
   .term-input-row { display: flex; align-items: center; padding: 8px 14px; background: #000; border: 1px solid var(--border); border-bottom: none; border-radius: 6px 6px 0 0; }
-  .term-input-row::before { content: 'analyst@dfir:~/case#'; color: var(--green); font-size: 0.78rem; margin-right: 8px; white-space: nowrap; }
+  .term-input-row::before { content: 'analyst@dfir:/cases#'; color: var(--green); font-size: 0.78rem; margin-right: 8px; white-space: nowrap; }
   .term-input-field { flex: 1; background: transparent; border: none; outline: none; color: #fff; font-family: inherit; font-size: 0.78rem; caret-color: var(--term-green); }
 
   /* Question sits ABOVE the terminal so it isn't missed at first glance. */
@@ -147,18 +145,8 @@
   .att-flow .step.done { background: rgba(63,185,80,0.1); border-color: var(--green); color: var(--green); }
   .att-flow .step.current { background: rgba(88,166,255,0.2); border-color: var(--accent); color: var(--accent); }
 
-  /* === Tap-to-run command buttons === */
-  .cmd-suggestions { margin-bottom: 8px; }
-  .cmd-sugg-label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; display: block; }
-  .cmd-sugg-row { display: flex; flex-wrap: wrap; gap: 6px; }
-  .cmd-sugg-btn { display: inline-flex; align-items: center; padding: 8px 12px; background: var(--code-bg); border: 1px solid var(--border); border-radius: 5px; color: var(--accent); font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 0.72rem; cursor: pointer; transition: all 0.12s; min-height: 34px; max-width: 100%; }
-  .cmd-sugg-btn:hover, .cmd-sugg-btn:active { background: rgba(88,166,255,0.12); border-color: var(--accent); }
-  .cmd-sugg-btn::before { content: '▸ '; color: var(--green); margin-right: 4px; }
-
-  /* === Input mode toggle === */
-  .term-mode-toggle { font-size: 0.65rem; color: var(--muted); cursor: pointer; user-select: none; padding: 3px 8px; border: 1px solid var(--border); border-radius: 3px; background: transparent; font-family: inherit; }
-  .term-mode-toggle:hover { background: rgba(88,166,255,0.06); color: var(--text); }
-  .term-input-row.hidden { display: none; }
+  /* (Tap-to-run suggestions and the type/tap mode toggle were removed —
+     analysts type their own commands.) */
 
   /* === Hamburger button (mobile only) === */
   .hamburger { display: none; cursor: pointer; padding: 6px 10px; background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; color: var(--text); font-size: 1.1rem; font-family: inherit; line-height: 1; }
@@ -220,8 +208,7 @@
     .term-input-field { font-size: 1rem; min-width: 0; }
     .term-input-field::placeholder { font-size: 0.85rem; }
 
-    .briefing-toggle, .term-mode-toggle, .hint-link { padding: 8px 14px; min-height: 36px; display: inline-flex; align-items: center; }
-    .cmd-sugg-btn { font-size: 0.78rem; padding: 10px 14px; min-height: 40px; }
+    .briefing-toggle, .hint-link { padding: 8px 14px; min-height: 36px; display: inline-flex; align-items: center; }
   }
 
   /* === Very small phones (≤380px) === */
@@ -289,13 +276,8 @@
       <div class="terminal-wrapper">
         <div class="terminal-label">
           <span>🖥️ ANALYST TERMINAL</span>
-          <span style="display:flex;gap:8px;align-items:center">
-            <button class="term-mode-toggle" id="mode-toggle" onclick="toggleInputMode()">⌨️ Type</button>
-            <span class="hint-link" onclick="showHint()">💡 Need a hint?</span>
-          </span>
+          <span class="hint-link" onclick="showHint()">💡 Need a hint?</span>
         </div>
-
-        <div class="cmd-suggestions" id="cmd-suggestions"></div>
 
         <div class="term-input-row" id="term-input-row">
           <input type="text" class="term-input-field" id="term-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Type a command or 'help'">
@@ -655,7 +637,7 @@ SmartNet`,
 
 // File listings
 const FILES = {
-  "~/case": [
+  "/cases": [
     { name: "MemoryDump_Lab1.raw", size: 1073676288, type: "file" },
   ],
 };
@@ -1013,7 +995,7 @@ function termWrite(html, cls = "") {
 }
 
 function termWritePrompt(input) {
-  termWrite(`<span class="term-prompt">analyst@dfir:~/case#</span> <span class="term-input">${escapeHtml(input)}</span>`);
+  termWrite(`<span class="term-prompt">analyst@dfir:/cases#</span> <span class="term-input">${escapeHtml(input)}</span>`);
 }
 
 function termWriteOutput(output, cls = "term-output") {
@@ -1077,7 +1059,7 @@ function runCommand(cmd, stdin) {
     case 'ls':
       return cmdLs(tokens.slice(1));
     case 'pwd':
-      return { text: "~/case" };
+      return { text: "/cases" };
     case 'file':
       return cmdFile(tokens.slice(1));
     case 'head':
@@ -1460,8 +1442,6 @@ function renderCurrentStage() {
   document.getElementById('hint-popup').classList.remove('show');
   state.hintIdx[s.id] = state.hintIdx[s.id] || 0;
 
-  renderCommandSuggestions();
-
   // Don't auto-focus on mobile — pulls up keyboard unnecessarily
   if (window.innerWidth > 768) ai.focus();
 }
@@ -1629,46 +1609,6 @@ function closeSidebar() {
   document.getElementById('sidebar-overlay').classList.remove('show');
 }
 
-// === Tap-to-run command suggestions ===
-function renderCommandSuggestions() {
-  const s = STAGES[state.current];
-  const cmds = s.expectedCommands || [];
-  const wrap = document.getElementById('cmd-suggestions');
-  if (cmds.length === 0) { wrap.innerHTML = ''; return; }
-  wrap.innerHTML = `
-    <span class="cmd-sugg-label">⚡ Tap to run a suggested command</span>
-    <div class="cmd-sugg-row">
-      ${cmds.map((c, i) => `<button class="cmd-sugg-btn" onclick="runSuggestedCommand(${i})" title="${escapeHtml(c)}">${escapeHtml(c)}</button>`).join('')}
-    </div>`;
-}
-
-function runSuggestedCommand(idx) {
-  const s = STAGES[state.current];
-  const cmd = (s.expectedCommands || [])[idx];
-  if (!cmd) return;
-  // Focus terminal if visible, then execute
-  executeLine(cmd);
-  // Brief visual flash on the input to show what ran
-  const inp = document.getElementById('term-input');
-  if (inp) inp.value = '';
-}
-
-// === Tap/Type input mode toggle ===
-function toggleInputMode() {
-  const row = document.getElementById('term-input-row');
-  const btn = document.getElementById('mode-toggle');
-  const isHidden = row.classList.toggle('hidden');
-  btn.textContent = isHidden ? '🖱 Tap-only' : '⌨️ Type';
-}
-
-// On first load, hide the input row by default on phones for a cleaner look
-function autoSetMobileMode() {
-  if (window.innerWidth <= 768) {
-    document.getElementById('term-input-row').classList.add('hidden');
-    document.getElementById('mode-toggle').textContent = '🖱 Tap-only';
-  }
-}
-
 // ============================================================
 // EVENT WIRING
 // ============================================================
@@ -1700,29 +1640,10 @@ document.getElementById('answer-input').addEventListener('keydown', (e) => {
   if (e.key === 'Enter') checkAnswer();
 });
 
-// Initial banner
-function bootTerminal() {
-  termWrite("╔════════════════════════════════════════════════════════════════════╗", "term-info");
-  termWrite("║  DFIR Analyst Console — Memory Forensics                           ║", "term-info");
-  termWrite("║  Image: MemoryDump_Lab1.raw  (1023 MB, Win7 SP1 x64)               ║", "term-info");
-  termWrite("║  Type 'help' for commands, 'tactics' for ATT&CK reference          ║", "term-info");
-  termWrite("╚════════════════════════════════════════════════════════════════════╝", "term-info");
-  termWrite("");
-  termWrite(`<span class="term-prompt">analyst@dfir:~/case#</span> file MemoryDump_Lab1.raw`);
-  termWrite("MemoryDump_Lab1.raw: data", "term-output");
-  termWrite("[Identified as raw physical memory dump, x86-64 layout, ~1023 MB]", "term-output");
-  termWrite("");
-  termWrite("→ Begin investigation by selecting a stage from the left, then run", "term-warn");
-  termWrite("  the suggested commands in this terminal.", "term-warn");
-  termWrite("");
-}
-
 // Init
 renderStagesList();
 renderCurrentStage();
 updateScoreboard();
-bootTerminal();
-autoSetMobileMode();
 </script>
 </body>
 </html>
