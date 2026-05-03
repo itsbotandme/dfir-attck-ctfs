@@ -2,7 +2,7 @@
 
 The canonical, working CTF HTML implementation is at:
 ```
-./reports/MemLabs-Lab1-CTF.html
+./reports/BlackWindow-CTF.html
 ```
 
 **To bootstrap a new CTF:** copy that file, rename, and replace the three data structures listed below. The HTML/CSS/JS skeleton is reusable as-is.
@@ -156,7 +156,7 @@ Then populate the corresponding canned-data object (`TSHARK_OUTPUTS`).
 
 ```bash
 # 1. Copy the canonical CTF HTML
-cp ./reports/MemLabs-Lab1-CTF.html \
+cp ./reports/BlackWindow-CTF.html \
    ./reports/<NEW-CASE>-CTF.html
 
 # 2. Open in editor and:
@@ -172,4 +172,4 @@ xdg-open ./reports/<NEW-CASE>-CTF.html
 
 ---
 
-*The canonical implementation at `MemLabs-Lab1-CTF.html` is ~900 lines of HTML/CSS/JS. Reading through it once gives you everything you need to build derivatives.*
+*The canonical implementation at `BlackWindow-CTF.html` is ~900 lines of HTML/CSS/JS. Reading through it once gives you everything you need to build derivatives.*

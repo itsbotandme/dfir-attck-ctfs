@@ -222,8 +222,8 @@ All generated CTF HTML files MUST end with `-CTF.html`. This is enforced
 because the system-wide `start` shell command launches CTFs by name:
 
 ```bash
-start MemLabs-Lab1       # opens MemLabs-Lab1-CTF.html in browser
-start memlabs            # case-insensitive partial match also works
+start BlackWindow        # opens BlackWindow-CTF.html in browser
+start black              # case-insensitive partial match also works
 start                    # no args → list all available CTFs
 ```
 
@@ -238,7 +238,7 @@ Place generated CTFs in one of these locations (or any sub-directory under
 them) and they are automatically launchable by name.
 
 **Naming guidelines:**
-- Use a stable, hyphenated case identifier (e.g. `MemLabs-Lab1`,
+- Use a stable, hyphenated case identifier (e.g. `BlackWindow`,
   `PhishCorp-2024-01`, `IRcase-AlphaBank`).
 - Avoid spaces. Avoid generic names like `ctf` or `lab1` alone.
 - Match the `<CaseID>` across all three deliverables (report,
@@ -283,7 +283,7 @@ Always **include at least one negative-finding stage** (e.g., "Find the persiste
 The skill ships with three templates in `./templates/`:
 
 - `report-template.md` — DFIR report with placeholder sections
-- `ctf-template.html` — interactive CTF with terminal emulator (copy from `MemLabs-Lab1-CTF.html` and replace `STAGES`, `VOL_OUTPUTS`, `STRINGS_HITS`)
+- `ctf-template.html` — interactive CTF with terminal emulator (copy from `BlackWindow-CTF.html` and replace `STAGES`, `VOL_OUTPUTS`, `STRINGS_HITS`)
 - `answersheet-template.md` — junior analyst training guide
 
 **To bootstrap a new CTF:** copy these three files into `<project>/reports/`, rename, and replace the data structures inside.

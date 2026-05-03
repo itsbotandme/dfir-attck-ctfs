@@ -1,6 +1,8 @@
-# MemLabs Lab 1 — Junior Analyst Training Guide
+# The Black Window Case — Junior Analyst Training Guide
 
-> **Attribution:** This guide is derivative training material based on the publicly available **MemLabs Lab 1** challenge by **stuxnet999** ([github.com/stuxnet999/MemLabs](https://github.com/stuxnet999/MemLabs)). The original challenge is © stuxnet999. This walkthrough, methodology, and ATT&CK reasoning are educational content produced to teach memory forensics analytical thinking.
+> **Attribution:** The memory image and case scenario for this lab are taken from **MemLabs Lab 1** by **stuxnet999** ([github.com/stuxnet999/MemLabs/tree/master/Lab%201](https://github.com/stuxnet999/MemLabs/tree/master/Lab%201)). The walkthrough, hypothesis-driven methodology, and ATT&CK reasoning in this guide are original training content.
+
+> **Scenario:** *"My sister's computer crashed. We were very fortunate to recover this memory dump. Your job is to get all her important files from the system. From what we remember, we suddenly saw a black window pop up with something being executed. When the crash happened, she was trying to draw something. That's all we remember from the time of crash…"*
 
 **Audience:** Junior DFIR analysts learning memory forensics and the ATT&CK kill chain method.
 **Purpose:** Teach analytical thinking, not just answers. Read the reasoning before peeking at the solution.
@@ -206,29 +208,18 @@ vol -f MemoryDump_Lab1.raw windows.filescan | grep debug
 ### Answer
 **`C:\Windows\debug\PASSWD.LOG`**
 
-### Why this is T1003.001 even without Mimikatz
-LSASS contains plaintext credentials in memory (Win7 with WDigest enabled). The attacker's workflow:
+### Why this maps to T1003.001 (as a working hypothesis)
+LSASS contains plaintext credentials in memory on this OS (Win7 SP1 with WDigest on by default). The artefacts visible in the image — a `PASSWD.LOG` file in `\Windows\debug\` plus DPAPI credential blobs touched in both user profiles — establish *credential-stealing intent*, not yet confirmed extraction.
 
-```
-1. Drop a credential-capture aid (PASSWD.LOG)        ← visible in this image
-2. Run DumpIt to capture full RAM (~1 GB)            ← visible in this image
-3. Take .raw file off-system                         ← not in this image but inferable
-4. Run on attacker's machine:
-     mimikatz.exe
-     sekurlsa::minidump SMARTNET-PC-...raw
-     sekurlsa::logonpasswords                        ← extracts cleartext on attacker host
-5. Authenticated, undetected by EDR                  ← detection happens too late
-```
-
-Dumping a RAM image is the **delivery mechanism** for T1003.001. Mimikatz never runs on the target; nothing alerts.
+What you can defensibly say from RAM alone: **"Two converging artefacts indicate an attempt at credential collection on this host. The mechanism (LSASS dump, manual credential file generation, or other) requires disk-side carving of `PASSWD.LOG` to confirm."**
 
 ### How to confirm
-1. Recover `PASSWD.LOG` from disk and read it (cleartext credentials? hashes? Netlogon error format?)
-2. Check Netlogon DbFlag — if it was never enabled, this file is attacker-generated
-3. Check whether `DumpIt.exe` execution is in any approved IR runbook for this org
+1. Recover `PASSWD.LOG` from disk and read it. Cleartext credentials? Hashes? Netlogon-style error log?
+2. Check the Netlogon `DbFlag` registry value — if it was never enabled, this file is not a legitimate Netlogon log
+3. Re-examine LSASS process state in memory — has its handle/memory been touched anomalously?
 
 ### Junior-analyst lesson
-**Credential access doesn't require Mimikatz to run on the box.** Any tool that captures LSASS-containing memory and exfils it offline is T1003.001. Detection should target the *acquisition* (DumpIt, procdump, taskmgr 'Create Dump File' on lsass.exe) and the *unusual file types/sizes* in user Downloads.
+**"Working hypothesis" is a real verdict.** A junior analyst's instinct is to escalate to "T1003.001 confirmed" when they see `PASSWD.LOG`. The mature read is "T1003.001 hypothesised; one more step needed to confirm." That extra step is what separates a defensible report from a report that gets pulled apart in court / on a bridge call.
 
 ---
 
@@ -261,34 +252,45 @@ The most parsimonious explanation: SmartNet (or whoever controls SmartNet) opene
 
 ---
 
-## Stage 7 — TA0010 Exfiltration (memory image as carrier)
+## Stage 7 — TA0010 Exfiltration (channel hypothesis)
 
 ### Hypothesis to test
-*"What tool produced the artefact I'm analysing? If the attacker dumped this image, that's the smoking gun for credential exfiltration."*
+*"Important.rar is staged in another user's Documents. What carrier could have taken it off the host, and is there evidence the carrier was actually used?"*
 
 ### Commands
 ```bash
-vol -f MemoryDump_Lab1.raw windows.cmdline | grep -i dump
-strings MemoryDump_Lab1.raw | grep DumpIt
+vol -f MemoryDump_Lab1.raw windows.netscan
+vol -f MemoryDump_Lab1.raw windows.cmdline | grep -iE "ftp|curl|wget|bitsadmin|powershell"
 ```
 
 ### Answer
-**`DumpIt.exe`** at `C:\Users\SmartNet\Downloads\DumpIt\DumpIt.exe`, output `SMARTNET-PC-20191211-143755.raw`.
+**TCP 445 (SMB)** is LISTENING on this host. There is no upload tool (`curl`, `bitsadmin`, PowerShell `Invoke-WebRequest`, etc.) running in `cmdline`.
 
-### Why DumpIt's location matters
-Legitimate IR teams keep memory acquisition tools in standardised paths (e.g. `C:\IR\`, `\\fileserver\IR-tools\`, or USB-mounted forensic kits). An attacker drops them in `\Users\<name>\Downloads\` — the most user-writable location.
+### Why "channel available, transfer unconfirmed" is the right verdict
+This is one of the most important lessons of memory forensics: **memory tells you what was running at the moment of capture, not what happened five minutes ago.** If exfiltration occurred and finished before the capture, you may see no trace of it in netscan.
 
-**Decision tree for dumping tools:**
+What you CAN say from this image:
+- A staged archive existed in Alissa Simpson's Documents (Stage 6)
+- SMB (445) was exposed and could plausibly have been the carrier
+- No active upload tool was running at capture time
+- No ESTABLISHED outbound connection was present at capture time
+
+What you CANNOT say from this image:
+- Whether `Important.rar` actually left the host
+- Whether the SMB channel was actually used
+- Whether a removable USB or different vector was used
+
+### Decision tree for "did the data leave?"
 ```
-DumpIt / winpmem / procdump found?
-├── In \Program Files\<vendor>\ → Probably legitimate
-├── In \Users\*\Downloads\ → Suspicious; investigate
-├── In \Windows\Temp\ → Highly suspicious
-└── In \ProgramData\<random>\ → Almost certainly malicious
+Important.rar exists on host
+├── netscan shows ESTABLISHED outbound during the staging window? → likely yes, identify peer
+├── netscan shows nothing but SMB exposed? → carrier available, pivot to firewall flow logs
+├── prefetch / shellbags show USB attached? → consider removable media
+└── nothing matches?  → state "exfiltration not confirmed from RAM; recommend disk + network log review"
 ```
 
 ### Junior-analyst lesson
-**Tool legitimacy depends on location and runtime context, not name.** DumpIt is a legitimate forensic tool. So is Mimikatz (in security-research contexts). The question is always: *who ran it, from where, and was that an authorised activity?*
+**Absence of evidence is not evidence of absence — but it is reportable.** Saying *"I cannot confirm exfil from RAM alone — request firewall flow logs covering 14:30–14:38 UTC"* is a defensible analytical conclusion. Saying *"the data was exfiltrated"* with no transfer evidence is not.
 
 ---
 
@@ -301,11 +303,11 @@ DumpIt / winpmem / procdump found?
 
 ```
 TA0001 Initial Access      → T1078         Two simultaneous sessions
-TA0002 Execution           → T1059.003     cmd.exe + St4G3$1.bat
+TA0002 Execution           → T1059.003     cmd.exe (the "black window") + St4G3$1.bat
 TA0005 Stealth             → T1036.005     Bat file in System32
-TA0006 Credential Access   → T1003.001     PASSWD.LOG + DumpIt
+TA0006 Credential Access   → T1003.001     PASSWD.LOG + DPAPI blobs (intent; extraction unconfirmed)
 TA0009 Collection          → T1560.001     WinRAR + Important.rar
-TA0010 Exfiltration        → T1041 (inferred)  RAM image as carrier
+TA0010 Exfiltration        → T1048         SMB exposed (channel available; transfer unconfirmed)
 ```
 
 ### Why ATT&CK matters in your career

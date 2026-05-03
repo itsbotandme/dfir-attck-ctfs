@@ -62,8 +62,8 @@ echo "source $(pwd)/scripts/start.sh" >> ~/.bashrc   # permanent
 
 # Then:
 start                                # list available CTFs
-start MemLabs-Lab1                   # exact match
-start memlabs                        # case-insensitive partial match
+start BlackWindow                    # exact match
+start black                          # case-insensitive partial match
 ```
 
 ---
@@ -94,10 +94,11 @@ deliverables (report, CTF HTML, answer sheet).
 
 ---
 
-## Required External Download — MemLabs Lab 1 Memory Image
+## Required External Download — Memory Image (The Black Window Case)
 
-The 1 GB memory image is **not committed to this repo** for size and
-licensing reasons. Download it from the original source:
+The Black Window Case is built on the memory image and case scenario from
+**stuxnet999/MemLabs Lab 1**. The 1 GB image is **not committed to this
+repo** for size and licensing reasons. Download it from the original source:
 
 > **Source:** [stuxnet999/MemLabs — Lab 1](https://github.com/stuxnet999/MemLabs/tree/master/Lab%201)
 
@@ -105,9 +106,9 @@ licensing reasons. Download it from the original source:
 # Manual: download MemLabs-Lab1.7z from the link above
 
 # Extract:
-mkdir -p cases/MemLabs-Lab1
-7z x MemLabs-Lab1.7z -ocases/MemLabs-Lab1/
-# → cases/MemLabs-Lab1/MemoryDump_Lab1.raw
+mkdir -p cases/BlackWindow
+7z x MemLabs-Lab1.7z -ocases/BlackWindow/
+# → cases/BlackWindow/MemoryDump_Lab1.raw
 ```
 
 **You do NOT need the memory image to play the CTF.** The CTF HTML has
@@ -123,9 +124,9 @@ validate the canned outputs.
 .
 ├── README.md                       # this file
 ├── reports/
-│   ├── MemLabs-Lab1-CTF.html       # play this
-│   ├── MemLabs-Lab1-DFIR-Report.md # full investigation write-up
-│   └── MemLabs-Lab1-AnswerSheet.md # junior-analyst training guide
+│   ├── BlackWindow-CTF.html        # play this
+│   ├── BlackWindow-DFIR-Report.md  # full investigation write-up
+│   └── BlackWindow-AnswerSheet.md  # junior-analyst training guide
 ├── skill/
 │   └── ctf-builder/                # Claude Code skill to build more CTFs
 │       ├── SKILL.md
