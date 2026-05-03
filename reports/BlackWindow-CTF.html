@@ -83,9 +83,12 @@
   .terminal-label .hint-link:hover { text-decoration: underline; }
   /* Fixed terminal height — its own content scrolls inside; outer page
      no longer fights for vertical space with the briefing.
-     Input row sits ABOVE this block so the prompt is always visible at the
-     top — flipped border radii reflect that. */
+     Initial layout: input row sits ABOVE the output area so the prompt is
+     always visible. After the analyst runs their first command, JS flips
+     the DOM order and adds .cmd-entered, so the prompt drops to the
+     bottom and history scrolls above it — like a real shell. */
   .terminal { background: #000; border: 1px solid var(--border); border-radius: 0 0 6px 6px; border-top: none; height: 320px; overflow-y: auto; padding: 10px 14px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; }
+  .terminal-wrapper.cmd-entered .terminal { border-radius: 6px 6px 0 0; border-top: 1px solid var(--border); border-bottom: none; }
   .terminal::-webkit-scrollbar { width: 8px; }
   .terminal::-webkit-scrollbar-track { background: #000; }
   .terminal::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
@@ -99,8 +102,10 @@
 
   /* Input row sits at the TOP of the terminal block — analyst always sees
      the prompt without scrolling. Bottom border removed so it joins the
-     terminal cleanly. */
+     terminal cleanly. After the first command, .cmd-entered on the parent
+     flips this so the prompt sits at the bottom (like a real shell). */
   .term-input-row { display: flex; align-items: center; padding: 8px 14px; background: #000; border: 1px solid var(--border); border-bottom: none; border-radius: 6px 6px 0 0; }
+  .terminal-wrapper.cmd-entered .term-input-row { border-radius: 0 0 6px 6px; border-top: none; border-bottom: 1px solid var(--border); }
   .term-input-row::before { content: 'analyst@dfir:/cases#'; color: var(--green); font-size: 0.78rem; margin-right: 8px; white-space: nowrap; }
   .term-input-field { flex: 1; background: transparent; border: none; outline: none; color: #fff; font-family: inherit; font-size: 0.78rem; caret-color: var(--term-green); }
 
@@ -1021,6 +1026,19 @@ function tokenize(line) {
 function executeLine(rawLine) {
   const line = rawLine.trim();
   if (!line) return;
+
+  // First command this session: drop the prompt to the bottom of the
+  // terminal block so history scrolls above it like a real shell.
+  if (state.cmdHistory.length === 0) {
+    const wrap = document.querySelector('.terminal-wrapper');
+    const inputRow = document.getElementById('term-input-row');
+    const term = document.getElementById('terminal');
+    if (wrap && inputRow && term && term.previousElementSibling === inputRow) {
+      wrap.insertBefore(term, inputRow);
+    }
+    if (wrap) wrap.classList.add('cmd-entered');
+  }
+
   termWritePrompt(line);
 
   // Add to history
