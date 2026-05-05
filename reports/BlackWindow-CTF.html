@@ -153,6 +153,79 @@
   /* (Tap-to-run suggestions and the type/tap mode toggle were removed —
      analysts type their own commands.) */
 
+  /* === Stage 0 briefing — magazine-style readability ===
+     Scoped to .intro-pane only; the rest of the lab keeps monospace. */
+  .intro-pane {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Helvetica, Arial, sans-serif;
+    display: flex; flex-direction: column; gap: 22px;
+    max-width: 740px;
+  }
+  .intro-pane code, .intro-pane pre {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  }
+  .intro-section {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+  }
+  .intro-section h3 {
+    font-size: 1.05rem; font-weight: 600;
+    color: var(--accent-2);
+    margin: 0 0 12px 0;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .intro-section p {
+    font-size: 0.97rem; line-height: 1.75;
+    color: var(--text);
+    margin: 0 0 12px 0;
+  }
+  .intro-section p:last-child { margin-bottom: 0; }
+  .intro-section ul {
+    font-size: 0.95rem; line-height: 1.8;
+    color: var(--text);
+    padding-left: 22px; margin: 0 0 12px 0;
+  }
+  .intro-section li { margin-bottom: 4px; }
+  .intro-section .muted { color: var(--muted); font-size: 0.88rem; }
+  .intro-section code {
+    background: var(--code-bg);
+    padding: 1px 6px; border-radius: 3px;
+    color: var(--accent-2); font-size: 0.88rem;
+  }
+  .intro-quote {
+    font-style: italic;
+    font-size: 1.02rem; line-height: 1.75;
+    border-left: 3px solid var(--accent);
+    padding: 12px 18px;
+    background: rgba(88,166,255,0.06);
+    margin: 0 0 14px 0;
+    color: var(--text);
+  }
+  .intro-codeblock {
+    background: #000;
+    color: var(--term-green);
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    margin: 8px 0 14px;
+    overflow-x: auto;
+  }
+  .intro-cta {
+    text-align: center;
+    font-size: 0.92rem;
+    color: var(--muted);
+    padding-top: 4px;
+  }
+  @media (max-width: 768px) {
+    .intro-pane { gap: 16px; max-width: 100%; }
+    .intro-section { padding: 16px 18px; }
+    .intro-section h3 { font-size: 1rem; }
+    .intro-section p, .intro-section ul { font-size: 0.95rem; }
+    .intro-quote { font-size: 1rem; padding: 10px 14px; }
+  }
+
   /* === Hamburger button (mobile only) === */
   .hamburger { display: none; cursor: pointer; padding: 6px 10px; background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; color: var(--text); font-size: 1.1rem; font-family: inherit; line-height: 1; }
   .hamburger:hover { background: rgba(88,166,255,0.06); }
@@ -661,55 +734,55 @@ const STAGES = [
     difficulty: "info",
     summary: ``,
     briefing: `
-<div style="display:flex;flex-direction:column;gap:18px">
+<div class="intro-pane">
 
-<div>
-  <h3 style="font-size:0.78rem;color:var(--accent-2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">📓 The case</h3>
-  <p style="font-size:0.92rem;line-height:1.7;color:var(--text);font-style:italic;border-left:3px solid var(--accent);padding:8px 14px;background:rgba(88,166,255,0.04)">
+<section class="intro-section">
+  <h3>📓 The case</h3>
+  <blockquote class="intro-quote">
     "My sister's computer crashed. We were very fortunate to recover this memory dump. Your job is to get all her important files from the system. From what we remember, we suddenly saw a black window pop up with something being executed. When the crash happened, she was trying to draw something. That's all we remember from the time of crash…"
-  </p>
-  <p style="font-size:0.85rem;line-height:1.7;color:var(--text);margin-top:10px">
+  </blockquote>
+  <p>
     Your job here is <b>not</b> to capture flags. It is to <b>form a hypothesis</b> at each stage ("the black window was probably <code>cmd.exe</code> running a script"), pick a Volatility plugin that tests it, then <b>read the output and decide</b> whether to accept, reject, or refine the hypothesis. Eight stages walk the MITRE ATT&amp;CK kill chain end-to-end. There is a story to defend at the end — not a number to maximise.
   </p>
-</div>
+</section>
 
-<div>
-  <h3 style="font-size:0.78rem;color:var(--accent-2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">🛠️ How this game works</h3>
-  <p style="font-size:0.85rem;line-height:1.7;color:var(--text)">
+<section class="intro-section">
+  <h3>🛠️ How this game works</h3>
+  <p>
     This page is a single static HTML file — about 1,800 lines of plain HTML, CSS, and JavaScript. <b>No React, no server, no Python at runtime.</b>
   </p>
-  <ul style="font-size:0.82rem;line-height:1.75;color:var(--text);padding-left:20px;margin-top:8px">
+  <ul>
     <li><b>HTML</b> = the structure (sidebar, terminal box, input field, this briefing).</li>
     <li><b>CSS</b> = how it looks (the black terminal, green prompt, the layout that makes it feel like a console).</li>
     <li><b>JavaScript</b> = how it reacts. When you type a command and hit Enter, JS reads the input, looks it up in a lookup table embedded in this file, and prints the matching output to the terminal div.</li>
   </ul>
-  <p style="font-size:0.85rem;line-height:1.7;color:var(--text);margin-top:10px">
-    The lab does <b>not</b> actually run Volatility against the memory image when you type a command. The output for each command was generated ahead of time by running the real Volatility 3 plugins against the real memory image, then pasted into the lookup table. Commands that aren't in the table will say "no canned output" — this is rails, not a sandbox. Use the <code>▸ tap-to-run</code> command suggestions in each stage as your guide.
+  <p>
+    The lab does <b>not</b> actually run Volatility against the memory image when you type a command. The output for each command was generated ahead of time by running the real Volatility 3 plugins against the real memory image, then pasted into the lookup table. Commands that aren't in the table say <i>"no canned output"</i> — this is rails, not a sandbox. Each stage briefing names the Volatility plugins relevant to its hypothesis; if you're stuck, the <b>💡 Need a hint?</b> button gives progressive nudges.
   </p>
-  <p style="font-size:0.78rem;line-height:1.6;color:var(--muted);margin-top:8px">
+  <p class="muted">
     Why this design: the lab runs on a phone with no install, no network, and no risk to evidence. The trade-off is that you can't go off-script. For real analysis, you'd run Volatility yourself on a workstation with the actual <code>MemoryDump_Lab1.raw</code> file.
   </p>
-</div>
+</section>
 
-<div>
-  <h3 style="font-size:0.78rem;color:var(--accent-2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">🧪 About Volatility</h3>
-  <p style="font-size:0.85rem;line-height:1.7;color:var(--text)">
+<section class="intro-section">
+  <h3>🧪 About Volatility</h3>
+  <p>
     <b>Volatility</b> is the open-source memory-forensics framework used to parse a raw RAM image into structured artefacts: process lists, network sockets, registry hives, command-line history, loaded DLLs, file handles. Every command in this lab is a Volatility 3 plugin invocation.
   </p>
-  <p style="font-size:0.85rem;line-height:1.7;color:var(--text);margin-top:10px">
+  <p>
     This lab uses <b>Volatility 3</b> (not 2). Plugins are namespaced and called like:
   </p>
-  <pre style="background:#000;color:var(--term-green);padding:10px 14px;border-radius:5px;font-size:0.78rem;margin-top:6px;overflow-x:auto">vol -f MemoryDump_Lab1.raw windows.pslist.PsList</pre>
-  <p style="font-size:0.85rem;line-height:1.7;color:var(--text);margin-top:10px">
+  <pre class="intro-codeblock">vol -f MemoryDump_Lab1.raw windows.pslist.PsList</pre>
+  <p>
     Volatility 3 needs a <b>symbol table</b> matching the OS kernel of the captured RAM. If you ever see <code>WinUnknownKernelException</code> in the wild, the symbol table is missing. The official explainer:
     <a href="https://volatility3.readthedocs.io/en/latest/basics.html#symbol-tables" target="_blank" rel="noopener" style="color:var(--accent-2)">volatility3.readthedocs.io/en/latest/basics.html#symbol-tables</a>.
   </p>
-  <p style="font-size:0.85rem;line-height:1.7;color:var(--text);margin-top:10px">
+  <p>
     <b>Why these specific commands?</b> Each stage states its hypothesis up front, then picks the one Volatility plugin that answers exactly that question — <code>pslist</code> for the process tree, <code>cmdline</code> for what was typed, <code>filescan</code> for files in memory, <code>netscan</code> for sockets, etc. The reasoning is shown in the briefing, not just the answer.
   </p>
-</div>
+</section>
 
-<p style="font-size:0.78rem;color:var(--muted);text-align:center;margin-top:8px;padding-top:14px;border-top:1px solid var(--border)">
+<p class="intro-cta">
   Click <b>Stage 1 — Initial System Triage</b> in the sidebar when you're ready to start. ↖
 </p>
 

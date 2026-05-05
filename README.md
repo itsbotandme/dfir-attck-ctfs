@@ -42,14 +42,13 @@ The CTF is **fully mobile-friendly** — no app store install needed.
 
 1. Open **https://itsbotandme.github.io/dfir-attck-ctfs/** in Safari or Chrome on your phone
 2. Tap a CTF card → "Play Now"
-3. Use the **⚡ tap-to-run command buttons** below the terminal — no need to type pipe `|` or backslash on a mobile keyboard
+3. Type Volatility commands directly into the terminal — analysts learn the muscle memory of the syntax this way, not by tapping pre-baked pills
 4. Optional: **Add to Home Screen** (Safari → Share → Add to Home Screen / Chrome → Menu → Install app) for a fullscreen, native-feeling experience
 
 Mobile features:
 - ☰ **Hamburger menu** opens the stages drawer
-- ⚡ **Tap-to-run** suggested commands for each stage
-- ⌨️ / 🖱 **Toggle** between typing commands and tap-only mode
-- 💡 **Touch-friendly hints**, large 44px tap targets throughout
+- 💡 **Touch-friendly hints** with progressive guidance, large 44px tap targets throughout
+- 🎆 Fireworks finale on completing all 8 stages (respects `prefers-reduced-motion`)
 
 ### Optional: `start <name>` shell launcher
 
