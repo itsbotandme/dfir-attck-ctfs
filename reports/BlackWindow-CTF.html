@@ -177,6 +177,10 @@
   .kc-placeholder { padding: 6px 16px 0; font-size: 0.72rem; color: var(--muted); letter-spacing: 0.15em; }
   .kc-counter { padding: 8px 16px 14px; font-size: 0.7rem; color: var(--muted); border-top: 1px dashed var(--border); margin-top: 6px; }
 
+  /* === Soft-locked carry-forward context (peek-ahead spoiler guard) === */
+  .briefing-summary.locked-context { background: rgba(210,153,34,0.06); border: 1px solid var(--yellow); border-radius: 5px; padding: 10px 14px; margin-bottom: 10px; color: var(--muted); line-height: 1.6; }
+  .briefing-summary.locked-context b { color: var(--yellow); }
+
   /* === ATT&CK reveal card (post-answer) === */
   .att-reveal-card { margin-top: 12px; padding: 14px 16px; background: rgba(188,140,255,0.06); border: 1px solid var(--purple); border-radius: 6px; }
   .att-reveal-card .arc-label { font-size: 0.7rem; color: var(--purple); font-weight: 600; letter-spacing: 0.05em; margin-bottom: 6px; }
@@ -1570,9 +1574,16 @@ function renderCurrentStage() {
   }
 
   // Build briefing content: whatsKnown (carried-forward context) + briefing (the question framing) + picker.
+  // Carry-forward is locked if the previous stage isn't solved yet — prevents accidental
+  // spoilers from peeking ahead. Stage 1 has no prereq, so always unlocked.
+  const prevStage = STAGES.find(x => !x.intro && x.id === s.id - 1);
+  const carryLocked = !!prevStage && !state.solved.has(prevStage.id) && !isSolved;
+  const whatsKnownHTML = carryLocked
+    ? `<div class="briefing-summary locked-context"><b>🔒 Carry-forward context unlocks once you solve Stage ${prevStage.id}.</b> You can still attempt this stage's question — but the recap of prior findings is hidden so peeking ahead doesn't spoil earlier stages for you.</div>`
+    : `<div class="briefing-summary" style="margin-bottom:10px"><b>What's known so far.</b> ${s.whatsKnown || ''}</div>`;
   const pickerHTML = renderPickerHTML(s);
   document.getElementById('briefing').innerHTML = `
-    <div class="briefing-summary" style="margin-bottom:10px"><b>What's known so far.</b> ${s.whatsKnown || ''}</div>
+    ${whatsKnownHTML}
     <div class="briefing-summary">${s.briefing || ''}</div>
     ${pickerHTML}
   `;
