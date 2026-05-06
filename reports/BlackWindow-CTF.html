@@ -335,6 +335,7 @@
   <h1>The Black Window Case — DFIR ATT&CK Investigation</h1>
   <span class="badge">Volatility 3</span>
   <span class="badge">Win7 SP1 x64</span>
+  <span class="badge">MemoryDump_Lab1.raw</span>
   <span class="score-pill">Stage <span class="v" id="solved-count">0</span> / 8</span>
 </header>
 
@@ -772,7 +773,7 @@ const STAGES = [
     "My sister's computer crashed. We were very fortunate to recover this memory dump. Your job is to get all her important files from the system. From what we remember, we suddenly saw a black window pop up with something being executed. When the crash happened, she was trying to draw something. That's all we remember from the time of crash…"
   </blockquote>
   <p>
-    Your job is <b>not</b> to find flags. Each stage gives you what's known so far and asks one investigative question. You commit to a Volatility plugin pick (the system grades the pick), then run commands in the terminal, interpret the output, and submit your finding. After you're correct, the ATT&amp;CK technique you just demonstrated is revealed — that's the language analysts use to brief other teams. Eight stages, one story to defend at the end.
+    Each stage opens with what's known so far and asks one investigative question. Pick a Volatility plugin, run commands, submit what you find. The ATT&amp;CK technique you've just demonstrated is revealed after you answer.
   </p>
 </section>
 
@@ -787,7 +788,10 @@ const STAGES = [
     <li><b>JavaScript</b> = how it reacts. When you type a command and hit Enter, JS reads the input, looks it up in a lookup table embedded in this file, and prints the matching output to the terminal div.</li>
   </ul>
   <p>
-    The lab does <b>not</b> actually run Volatility against the memory image when you type a command. The output for each command was generated ahead of time by running the real Volatility 3 plugins against the real memory image, then pasted into the lookup table. Commands that aren't in the table say <i>"no canned output"</i> — this is rails, not a sandbox. The plugin picker on each stage is the scaffolding for juniors — it grades your first-move thinking. If you're stuck, the <b>💡 Need a hint?</b> button gives progressive nudges (three escalating tiers per stage).
+    The lab does <b>not</b> actually run Volatility against the memory image when you type a command. The output for each command was generated ahead of time by running the real Volatility 3 plugins against the real memory image, then pasted into the lookup table. Commands that aren't in the table say <i>"no canned output"</i> — this is rails, not a sandbox.
+  </p>
+  <p>
+    If you get stuck, the <b>💡 Need a hint?</b> button gives progressive nudges.
   </p>
   <p class="muted">
     Why this design: the lab runs on a phone with no install, no network, and no risk to evidence. The trade-off is that you can't go off-script. For real analysis, you'd run Volatility yourself on a workstation with the actual <code>MemoryDump_Lab1.raw</code> file.
@@ -803,6 +807,9 @@ const STAGES = [
     This lab uses <b>Volatility 3</b> (not 2). Plugins are namespaced and called like:
   </p>
   <pre class="intro-codeblock">vol -f MemoryDump_Lab1.raw windows.pslist.PsList</pre>
+  <p>
+    <code>vol -f &lt;image&gt; &lt;plugin&gt;</code> is shorthand. The canonical invocation is <code>python3 vol.py -f &lt;image&gt; &lt;plugin&gt;</code> (running from the Volatility 3 source tree). The lab terminal accepts either form.
+  </p>
   <p>
     Volatility 3 needs a <b>symbol table</b> matching the OS kernel of the captured RAM. If you ever see <code>WinUnknownKernelException</code> in the wild, the symbol table is missing. The official explainer:
     <a href="https://volatility3.readthedocs.io/en/latest/basics.html#symbol-tables" target="_blank" rel="noopener" style="color:var(--accent-2)">volatility3.readthedocs.io/en/latest/basics.html#symbol-tables</a>.
@@ -853,7 +860,7 @@ const STAGES = [
       fits: "Querying basic OS metadata (version, build, kernel) is exactly what T1082 names."
     },
     hints: [
-      "Volatility 3 has a plugin that returns the basic system fingerprint. Think about what plugin would answer 'what OS is this?'",
+      "Volatility 3 commands take the shape `vol -f <memory image> <plugin>`. There's a plugin that returns the basic system fingerprint — think about what it would be called.",
       "The plugin is windows.info.",
       "Run vol -f MemoryDump_Lab1.raw windows.info and read the NTBuildLab field. The first two number groups are your answer."
     ]
@@ -883,7 +890,7 @@ const STAGES = [
       fits: "When an actor accesses a system using a legitimate account rather than exploiting a vulnerability, the behaviour falls under T1078; finding two distinct interactive sessions where there should be one is the signal that triggers it."
     },
     hints: [
-      "Each user logged in to Windows gets their own desktop shell. What process represents that desktop shell?",
+      "Same shape: `vol -f <memory image> <plugin>`. What plugin would enumerate running processes along with their session IDs?",
       "Look for explorer.exe instances in pslist. Count distinct SessionId values among them.",
       "Filter pslist for explorer.exe and count the rows."
     ]
@@ -913,7 +920,7 @@ const STAGES = [
       fits: "An interactive cmd.exe spawned from explorer.exe with a paired conhost.exe is the textbook behavioural fingerprint of T1059.003."
     },
     hints: [
-      "The 'black window' is almost certainly a shell. What shell ships with Windows by default?",
+      "Same shape: `vol -f <memory image> <plugin>`. Two plugins are relevant here — one shows process parent-child relationships, the other shows what was typed at each process's launch.",
       "cmd.exe is the answer. Find it in pstree — what's its parent PID?",
       "In pstree, look for cmd.exe whose parent is PID 604 (explorer.exe in Session 1). Take its PID."
     ]
@@ -943,7 +950,7 @@ const STAGES = [
       fits: "Naming or placing a file to blend with legitimate OS components is exactly what T1036.005 covers; a script in System32 is the canonical example."
     },
     hints: [
-      "Scripts and other non-PE files should not be in System32. What plugin shows file paths in memory?",
+      "Looking at every file path in memory unfiltered is overwhelming — pipe to filter: `vol -f <memory image> <plugin> | grep <pattern>`. What plugin enumerates files in memory, and what pattern would surface non-binary files in System32?",
       "Use windows.filescan and pipe through grep for .bat, .ps1, or .vbs.",
       "Look in System32 for a .bat file. The filename uses leet-speak with a $ symbol. Capitalisation matters."
     ]
@@ -974,7 +981,7 @@ const STAGES = [
       fits: "A credential log dropped in a diagnostic directory plus DPAPI blob access in user profiles is the behavioural signature T1003.001 covers; on Win7 SP1 with WDigest on by default, it's the technique attackers reach for."
     },
     hints: [
-      "Credential-stealing tools often write output to a known Windows debug directory. Where would they hide a log file in plain sight?",
+      "Same shape with filtering: `vol -f <memory image> <plugin> | grep <pattern>`. Credential-stealing tools write log output to a known Windows debug directory — grep for the directory name or the kind of file that would be there.",
       "Look in C:\\Windows\\debug\\. The filename will be ALL CAPS and end in .LOG.",
       "Run windows.filescan | grep -i passwd. The full path to PASSWD.LOG is your answer."
     ]
@@ -1004,7 +1011,7 @@ const STAGES = [
       fits: "T1560.001 specifically covers using a third-party archiver (WinRAR, 7-zip, tar) to bundle data for exfil; that's exactly what's happening here."
     },
     hints: [
-      "What's the most common Windows archiver tool? Look for it in process command lines.",
+      "Two-step: first find the archiver process with `vol -f <memory image> <plugin> | grep <pattern>`, then inspect its open files with `vol -f <memory image> windows.handles --pid <PID>`. What's the most common Windows archiver?",
       "Filter windows.cmdline for 'rar'. Note what archive file is the argument.",
       "WinRAR (PID 1512) was opened with a .rar file in Alissa's Documents. The filename is two words concatenated."
     ]
@@ -1035,7 +1042,7 @@ const STAGES = [
       fits: "T1048 covers exfil over non-C2 channels (SMB, FTP, DNS); SMB on 445 is one such channel. Mapping this stage to T1048 documents channel availability, not confirmed transfer — and that distinction is the finding."
     },
     hints: [
-      "What network plugin shows what's listening or connected at capture time?",
+      "Same shape: `vol -f <memory image> <plugin>`. What plugin shows network sockets and listening ports at capture time?",
       "Look at the LISTENING TCP entries in netscan. The classic Windows file-sharing port is a 3-digit number starting with 4.",
       "TCP 445 (SMB) is exposed. Either type the port number or the protocol name."
     ]
