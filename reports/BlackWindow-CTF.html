@@ -860,7 +860,7 @@ const STAGES = [
       fits: "Querying basic OS metadata (version, build, kernel) is exactly what T1082 names."
     },
     hints: [
-      "Volatility 3 commands take the shape `vol -f <memory image> <plugin>`. There's a plugin that returns the basic system fingerprint — think about what it would be called.",
+      "Volatility 3 commands take the shape <code>vol -f &lt;memory image&gt; &lt;plugin&gt;</code>. There's a plugin that returns the basic system fingerprint — think about what it would be called.",
       "The plugin is windows.info.",
       "Run vol -f MemoryDump_Lab1.raw windows.info and read the NTBuildLab field. The first two number groups are your answer."
     ]
@@ -890,7 +890,7 @@ const STAGES = [
       fits: "When an actor accesses a system using a legitimate account rather than exploiting a vulnerability, the behaviour falls under T1078; finding two distinct interactive sessions where there should be one is the signal that triggers it."
     },
     hints: [
-      "Same shape: `vol -f <memory image> <plugin>`. What plugin would enumerate running processes along with their session IDs?",
+      "Same shape: <code>vol -f &lt;memory image&gt; &lt;plugin&gt;</code>. What plugin would enumerate running processes along with their session IDs?",
       "Look for explorer.exe instances in pslist. Count distinct SessionId values among them.",
       "Filter pslist for explorer.exe and count the rows."
     ]
@@ -920,7 +920,7 @@ const STAGES = [
       fits: "An interactive cmd.exe spawned from explorer.exe with a paired conhost.exe is the textbook behavioural fingerprint of T1059.003."
     },
     hints: [
-      "Same shape: `vol -f <memory image> <plugin>`. Two plugins are relevant here — one shows process parent-child relationships, the other shows what was typed at each process's launch.",
+      "Same shape: <code>vol -f &lt;memory image&gt; &lt;plugin&gt;</code>. Two plugins are relevant here — one shows process parent-child relationships, the other shows what was typed at each process's launch.",
       "cmd.exe is the answer. Find it in pstree — what's its parent PID?",
       "In pstree, look for cmd.exe whose parent is PID 604 (explorer.exe in Session 1). Take its PID."
     ]
@@ -950,7 +950,7 @@ const STAGES = [
       fits: "Naming or placing a file to blend with legitimate OS components is exactly what T1036.005 covers; a script in System32 is the canonical example."
     },
     hints: [
-      "Looking at every file path in memory unfiltered is overwhelming — pipe to filter: `vol -f <memory image> <plugin> | grep <pattern>`. What plugin enumerates files in memory, and what pattern would surface non-binary files in System32?",
+      "Looking at every file path in memory unfiltered is overwhelming — pipe to filter: <code>vol -f &lt;memory image&gt; &lt;plugin&gt; | grep &lt;pattern&gt;</code>. What plugin enumerates files in memory, and what pattern would surface non-binary files in System32?",
       "Use windows.filescan and pipe through grep for .bat, .ps1, or .vbs.",
       "Look in System32 for a .bat file. The filename uses leet-speak with a $ symbol. Capitalisation matters."
     ]
@@ -981,7 +981,7 @@ const STAGES = [
       fits: "A credential log dropped in a diagnostic directory plus DPAPI blob access in user profiles is the behavioural signature T1003.001 covers; on Win7 SP1 with WDigest on by default, it's the technique attackers reach for."
     },
     hints: [
-      "Same shape with filtering: `vol -f <memory image> <plugin> | grep <pattern>`. Credential-stealing tools write log output to a known Windows debug directory — grep for the directory name or the kind of file that would be there.",
+      "Same shape with filtering: <code>vol -f &lt;memory image&gt; &lt;plugin&gt; | grep &lt;pattern&gt;</code>. Credential-stealing tools write log output to a known Windows debug directory — grep for the directory name or the kind of file that would be there.",
       "Look in C:\\Windows\\debug\\. The filename will be ALL CAPS and end in .LOG.",
       "Run windows.filescan | grep -i passwd. The full path to PASSWD.LOG is your answer."
     ]
@@ -1011,7 +1011,7 @@ const STAGES = [
       fits: "T1560.001 specifically covers using a third-party archiver (WinRAR, 7-zip, tar) to bundle data for exfil; that's exactly what's happening here."
     },
     hints: [
-      "Two-step: first find the archiver process with `vol -f <memory image> <plugin> | grep <pattern>`, then inspect its open files with `vol -f <memory image> windows.handles --pid <PID>`. What's the most common Windows archiver?",
+      "Two-step: first find the archiver process with <code>vol -f &lt;memory image&gt; &lt;plugin&gt; | grep &lt;pattern&gt;</code>, then inspect its open files with <code>vol -f &lt;memory image&gt; windows.handles --pid &lt;PID&gt;</code>. What's the most common Windows archiver?",
       "Filter windows.cmdline for 'rar'. Note what archive file is the argument.",
       "WinRAR (PID 1512) was opened with a .rar file in Alissa's Documents. The filename is two words concatenated."
     ]
@@ -1042,7 +1042,7 @@ const STAGES = [
       fits: "T1048 covers exfil over non-C2 channels (SMB, FTP, DNS); SMB on 445 is one such channel. Mapping this stage to T1048 documents channel availability, not confirmed transfer — and that distinction is the finding."
     },
     hints: [
-      "Same shape: `vol -f <memory image> <plugin>`. What plugin shows network sockets and listening ports at capture time?",
+      "Same shape: <code>vol -f &lt;memory image&gt; &lt;plugin&gt;</code>. What plugin shows network sockets and listening ports at capture time?",
       "Look at the LISTENING TCP entries in netscan. The classic Windows file-sharing port is a 3-digit number starting with 4.",
       "TCP 445 (SMB) is exposed. Either type the port number or the protocol name."
     ]
