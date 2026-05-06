@@ -52,11 +52,7 @@
   .stage-tactic-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
   .tactic-badge { font-size: 0.65rem; padding: 3px 8px; border-radius: 3px; background: rgba(188,140,255,0.1); color: var(--purple); border: 1px solid var(--purple); }
   .technique-badge { font-size: 0.65rem; padding: 3px 8px; border-radius: 3px; background: rgba(88,166,255,0.1); color: var(--accent); border: 1px solid var(--accent); }
-  .difficulty-badge { font-size: 0.65rem; padding: 3px 8px; border-radius: 3px; }
-  .diff-easy { background: rgba(63,185,80,0.1); color: var(--green); border: 1px solid var(--green); }
-  .diff-med { background: rgba(210,153,34,0.1); color: var(--yellow); border: 1px solid var(--yellow); }
-  .diff-hard { background: rgba(248,81,73,0.1); color: var(--red); border: 1px solid var(--red); }
-  .diff-info { background: rgba(88,166,255,0.1); color: var(--accent); border: 1px solid var(--accent); }
+  /* (Difficulty badge and diff-* classes removed — meta-spoiler inconsistent with the no-spoilers philosophy.) */
   .stage-title { font-size: 1.15rem; color: var(--accent-2); font-weight: 600; }
 
   /* Make the entire content column scroll as a single unit so briefing,
@@ -70,12 +66,9 @@
   .approach-list { margin-top: 8px; padding-left: 18px; }
   .approach-list li { font-size: 0.78rem; line-height: 1.7; color: var(--text); }
   .briefing-summary { font-size: 0.88rem; line-height: 1.6; color: var(--text); }
-  .briefing-toggle { display: inline-block; margin-top: 10px; cursor: pointer; color: var(--accent); font-size: 0.75rem; user-select: none; padding: 3px 10px; border: 1px solid var(--accent); border-radius: 3px; background: rgba(88,166,255,0.05); }
-  .briefing-toggle:hover { background: rgba(88,166,255,0.12); }
-  .briefing-details { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border); font-size: 0.8rem; line-height: 1.7; color: var(--muted); }
-  .briefing-details.show { display: block; }
-  .briefing-details strong, .briefing-details b { color: var(--text); }
-  .briefing-details code { background: var(--code-bg); padding: 1px 6px; border-radius: 3px; color: var(--accent-2); }
+  /* (.briefing-toggle / .briefing-details classes removed — the show/hide
+     full-briefing pattern was replaced by the always-visible whatsKnown +
+     briefing structure.) */
 
   .terminal-wrapper { padding: 14px 24px; flex-shrink: 0; }
   .terminal-label { font-size: 0.7rem; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.08em; display: flex; justify-content: space-between; }
@@ -152,6 +145,44 @@
 
   /* (Tap-to-run suggestions and the type/tap mode toggle were removed —
      analysts type their own commands.) */
+
+  /* === Plugin picker === */
+  .plugin-picker { margin: 14px 0 8px; padding: 14px 16px; background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; }
+  .plugin-picker .pp-title { font-size: 0.85rem; color: var(--accent-2); font-weight: 600; margin-bottom: 4px; }
+  .plugin-picker .pp-prompt { font-size: 0.78rem; color: var(--muted); margin-bottom: 10px; line-height: 1.55; }
+  .plugin-picker select { width: 100%; max-width: 380px; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 4px; padding: 8px 10px; font-family: inherit; font-size: 0.82rem; outline: none; cursor: pointer; }
+  .plugin-picker select:focus { border-color: var(--accent); }
+  .picker-feedback { margin-top: 10px; padding: 10px 14px; border-radius: 5px; font-size: 0.78rem; line-height: 1.6; display: none; }
+  .picker-feedback.show { display: block; }
+  .picker-feedback .pf-title { font-weight: 600; margin-bottom: 4px; }
+  .picker-feedback.best { background: rgba(63,185,80,0.08); border: 1px solid var(--green); color: var(--green); }
+  .picker-feedback.best .pf-title::before { content: '✓ '; }
+  .picker-feedback.best .pf-reason { color: var(--text); display: block; margin-top: 4px; }
+  .picker-feedback.plausible { background: rgba(210,153,34,0.08); border: 1px solid var(--yellow); color: var(--yellow); }
+  .picker-feedback.plausible .pf-title::before { content: '≈ '; }
+  .picker-feedback.plausible .pf-reason { color: var(--text); display: block; margin-top: 4px; }
+  .picker-feedback.off-base { background: rgba(248,81,73,0.08); border: 1px solid var(--red); color: var(--red); }
+  .picker-feedback.off-base .pf-title::before { content: '✗ '; }
+  .picker-feedback.off-base .pf-reason { color: var(--text); display: block; margin-top: 4px; }
+  .picker-summary { margin: 12px 0 8px; padding: 8px 12px; background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; font-size: 0.75rem; color: var(--muted); }
+  .picker-summary .ps-grade { font-weight: 600; margin-left: 6px; }
+  .picker-summary .ps-grade.best { color: var(--green); }
+  .picker-summary .ps-grade.plausible { color: var(--yellow); }
+  .picker-summary .ps-grade.off-base { color: var(--red); }
+
+  /* === Kill Chain Earned panel (sidebar) === */
+  .kc-row { padding: 4px 16px; font-size: 0.72rem; line-height: 1.5; color: var(--muted); }
+  .kc-row.earned { color: var(--green); }
+  .kc-row.earned .kc-id { font-weight: 600; }
+  .kc-placeholder { padding: 6px 16px 0; font-size: 0.72rem; color: var(--muted); letter-spacing: 0.15em; }
+  .kc-counter { padding: 8px 16px 14px; font-size: 0.7rem; color: var(--muted); border-top: 1px dashed var(--border); margin-top: 6px; }
+
+  /* === ATT&CK reveal card (post-answer) === */
+  .att-reveal-card { margin-top: 12px; padding: 14px 16px; background: rgba(188,140,255,0.06); border: 1px solid var(--purple); border-radius: 6px; }
+  .att-reveal-card .arc-label { font-size: 0.7rem; color: var(--purple); font-weight: 600; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .att-reveal-card .arc-technique { font-size: 0.95rem; color: var(--accent-2); font-weight: 600; margin-bottom: 8px; }
+  .att-reveal-card .arc-fits-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+  .att-reveal-card .arc-fits { font-size: 0.82rem; color: var(--text); line-height: 1.6; }
 
   /* === Stage 0 briefing — magazine-style readability ===
      Scoped to .intro-pane only; the rest of the lab keeps monospace. */
@@ -286,7 +317,7 @@
     .term-input-field { font-size: 1rem; min-width: 0; }
     .term-input-field::placeholder { font-size: 0.85rem; }
 
-    .briefing-toggle, .hint-link { padding: 8px 14px; min-height: 36px; display: inline-flex; align-items: center; }
+    .hint-link { padding: 8px 14px; min-height: 36px; display: inline-flex; align-items: center; }
   }
 
   /* === Very small phones (≤380px) === */
@@ -312,8 +343,11 @@
 <div class="container">
 
   <div class="sidebar">
-    <div class="sb-h">⚔️ ATT&CK Kill Chain</div>
+    <div class="sb-h">⚔️ Investigation</div>
     <div id="stages-list"></div>
+
+    <div class="sb-h" style="margin-top:14px">🔗 Kill Chain Earned</div>
+    <div id="kill-chain-panel"></div>
 
     <div class="sb-h" style="margin-top:14px">📚 Quick Reference</div>
     <div style="padding: 4px 16px 14px; font-size: 0.72rem; line-height: 1.7; color: var(--muted);">
@@ -331,10 +365,9 @@
 
   <div class="main">
     <div class="stage-header">
-      <div class="stage-tactic-row">
-        <span class="tactic-badge" id="cur-tactic">TA0007 Discovery</span>
-        <span class="technique-badge" id="cur-technique">T1082 System Information Discovery</span>
-        <span class="difficulty-badge diff-easy" id="cur-difficulty">EASY</span>
+      <div class="stage-tactic-row" id="stage-badges">
+        <span class="tactic-badge" id="cur-tactic" style="display:none">TA0007 Discovery</span>
+        <span class="technique-badge" id="cur-technique" style="display:none">T1082 System Information Discovery</span>
       </div>
       <div class="stage-title" id="cur-title">Stage 1 — Initial System Triage</div>
     </div>
@@ -357,11 +390,11 @@
           <span class="hint-link" onclick="showHint()">💡 Need a hint?</span>
         </div>
 
+        <div class="hint-popup" id="hint-popup"></div>
         <div class="term-input-row" id="term-input-row">
           <input type="text" class="term-input-field" id="term-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Type a command or 'help'">
         </div>
         <div class="terminal" id="terminal"></div>
-        <div class="hint-popup" id="hint-popup"></div>
       </div>
     </div>
   </div>
@@ -730,9 +763,6 @@ const STAGES = [
     intro: true,
     title: "Briefing & How This Works",
     tactic: "INTRO",
-    technique: "Read this first",
-    difficulty: "info",
-    summary: ``,
     briefing: `
 <div class="intro-pane">
 
@@ -742,7 +772,7 @@ const STAGES = [
     "My sister's computer crashed. We were very fortunate to recover this memory dump. Your job is to get all her important files from the system. From what we remember, we suddenly saw a black window pop up with something being executed. When the crash happened, she was trying to draw something. That's all we remember from the time of crash…"
   </blockquote>
   <p>
-    Your job here is <b>not</b> to capture flags. It is to <b>form a hypothesis</b> at each stage ("the black window was probably <code>cmd.exe</code> running a script"), pick a Volatility plugin that tests it, then <b>read the output and decide</b> whether to accept, reject, or refine the hypothesis. Eight stages walk the MITRE ATT&amp;CK kill chain end-to-end. There is a story to defend at the end — not a number to maximise.
+    Your job is <b>not</b> to find flags. Each stage gives you what's known so far and asks one investigative question. You commit to a Volatility plugin pick (the system grades the pick), then run commands in the terminal, interpret the output, and submit your finding. After you're correct, the ATT&amp;CK technique you just demonstrated is revealed — that's the language analysts use to brief other teams. Eight stages, one story to defend at the end.
   </p>
 </section>
 
@@ -757,7 +787,7 @@ const STAGES = [
     <li><b>JavaScript</b> = how it reacts. When you type a command and hit Enter, JS reads the input, looks it up in a lookup table embedded in this file, and prints the matching output to the terminal div.</li>
   </ul>
   <p>
-    The lab does <b>not</b> actually run Volatility against the memory image when you type a command. The output for each command was generated ahead of time by running the real Volatility 3 plugins against the real memory image, then pasted into the lookup table. Commands that aren't in the table say <i>"no canned output"</i> — this is rails, not a sandbox. Each stage briefing names the Volatility plugins relevant to its hypothesis; if you're stuck, the <b>💡 Need a hint?</b> button gives progressive nudges.
+    The lab does <b>not</b> actually run Volatility against the memory image when you type a command. The output for each command was generated ahead of time by running the real Volatility 3 plugins against the real memory image, then pasted into the lookup table. Commands that aren't in the table say <i>"no canned output"</i> — this is rails, not a sandbox. The plugin picker on each stage is the scaffolding for juniors — it grades your first-move thinking. If you're stuck, the <b>💡 Need a hint?</b> button gives progressive nudges (three escalating tiers per stage).
   </p>
   <p class="muted">
     Why this design: the lab runs on a phone with no install, no network, and no risk to evidence. The trade-off is that you can't go off-script. For real analysis, you'd run Volatility yourself on a workstation with the actual <code>MemoryDump_Lab1.raw</code> file.
@@ -778,273 +808,258 @@ const STAGES = [
     <a href="https://volatility3.readthedocs.io/en/latest/basics.html#symbol-tables" target="_blank" rel="noopener" style="color:var(--accent-2)">volatility3.readthedocs.io/en/latest/basics.html#symbol-tables</a>.
   </p>
   <p>
-    <b>Why these specific commands?</b> Each stage states its hypothesis up front, then picks the one Volatility plugin that answers exactly that question — <code>pslist</code> for the process tree, <code>cmdline</code> for what was typed, <code>filescan</code> for files in memory, <code>netscan</code> for sockets, etc. The reasoning is shown in the briefing, not just the answer.
+    <b>Why a plugin per stage?</b> Each Volatility plugin answers exactly one class of question — <code>pslist</code> for the process tree, <code>cmdline</code> for what was typed, <code>filescan</code> for files in memory, <code>netscan</code> for sockets, etc. Picking the right plugin to test your hypothesis is the actual junior-analyst skill the picker grades.
+  </p>
+</section>
+
+<section class="intro-section">
+  <h3>⚙️ Mode</h3>
+  <p>
+    <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:0.95rem;line-height:1.65">
+      <input type="checkbox" id="pro-mode-toggle" onchange="togglePromode()" style="margin-top:5px;width:16px;height:16px;cursor:pointer;flex-shrink:0">
+      <span><b>Pro mode</b> — skip the plugin picker on each stage. For analysts already familiar with Volatility 3 plugin selection. The hint button and ATT&amp;CK reveal still work.</span>
+    </label>
   </p>
 </section>
 
 <p class="intro-cta">
-  Click <b>Stage 1 — Initial System Triage</b> in the sidebar when you're ready to start. ↖
+  Click <b>Stage 1 — What am I looking at?</b> in the sidebar when you're ready to start. ↖
 </p>
 
 </div>`,
-    expectedCommands: [],
-    question: ``,
-    answer: ``,
-    answerNote: ``,
-    attMap: ``,
     hints: []
   },
   {
     id: 1,
-    title: "Stage 1 — Initial System Triage",
+    title: "Stage 1 — What am I looking at?",
     tactic: "TA0007 Discovery",
     technique: "T1082 System Information Discovery",
-    techniqueNote: "(Used here as analyst recon, not attacker.)",
-    difficulty: "easy",
-    points: 30,
-    summary: `Identify the OS, build, and capture time. Run <code>windows.info</code>.`,
-    briefing: `<b>Hypothesis:</b> the sister's machine is an unremarkable Windows workstation that crashed at the time she noticed the "black window". Before chasing artefacts, anchor the investigation in three facts — what OS, what build, and exactly what time the memory was captured.<br><br>
-<b>Why this command:</b> <code>windows.info</code> is the cheapest, safest first call. It validates that Volatility has a matching symbol table for this kernel (no point running other plugins until that's confirmed), and gives you the timestamp every later finding will be measured against.<br><br>
-<b>Suggested approach:</b>
-<ol class="approach-list">
-<li>Run <code>vol -f MemoryDump_Lab1.raw windows.info</code> to get the OS and capture timestamp.</li>
-<li>Note the <b>NTBuildLab</b> field — gives OS version + architecture in one string.</li>
-<li>The <b>SystemTime</b> is when the memory was captured — anchor your investigation timeline to this.</li>
-</ol>
-<b>Why this matters:</b> Win7 SP1 x64 means LSASS contains plaintext credentials by default (WDigest enabled), and your Volatility plugins must use the matching symbol set. This single command confirms both.`,
-    expectedCommands: ["vol -f MemoryDump_Lab1.raw windows.info"],
+    whatsKnown: `The sister's PC crashed mid-session. Her family recovered a memory image. That's all you have right now.`,
+    briefing: `What system are we looking at, and at what moment in time? Anchor in OS, build, and capture time before chasing artefacts — every later finding gets compared back to those.`,
+    pluginGrades: {
+      "windows.info":             { grade: "best",      reason: "Returns OS, kernel, build, and capture timestamp in one call. Exactly what this stage asks for." },
+      "windows.envars":           { grade: "plausible", reason: "Shows environment variables (USERNAME, COMPUTERNAME, PATH) — useful context, but won't give you OS build or capture timestamp." },
+      "windows.pslist":           { grade: "off-base",  reason: "Lists running processes. Doesn't tell you what OS or when the image was captured." },
+      "windows.cmdline":          { grade: "off-base",  reason: "Shows process command lines. Wrong layer for OS metadata." },
+      "windows.netscan":          { grade: "off-base",  reason: "Shows network connections. Wrong layer for OS metadata." },
+      "windows.filescan":         { grade: "off-base",  reason: "Shows file paths in memory. Wrong layer for OS metadata." },
+      "windows.registry.printkey":{ grade: "off-base",  reason: "Reads registry keys. Could surface OS info via specific keys, but windows.info is the direct call." }
+    },
     question: `What is the exact <b>NTBuildLab build number</b> of the OS? (Format: NNNN.NNNNN — first two number groups only)`,
     answer: "7601.17514",
-    answerNote: `<b>7601.17514</b> = Windows 7 Service Pack 1, build 7601 revision 17514, AMD64. This OS reached End-of-Life January 2020 — one month after this capture. WDigest is enabled by default on this version, meaning LSASS holds plaintext passwords.`,
-    attMap: "TA0007 Discovery → T1082 System Information Discovery",
+    answerNote: `<b>7601.17514</b> = Windows 7 Service Pack 1, build 7601 revision 17514, AMD64. EOL January 2020 — one month after this capture. WDigest enabled by default — LSASS holds plaintext passwords. Note that for the credential-access stage.`,
+    attReveal: {
+      technique: "T1082 — System Information Discovery",
+      fits: "Querying basic OS metadata (version, build, kernel) is exactly what T1082 names."
+    },
     hints: [
-      "Run windows.info and look at the NTBuildLab field. Take only the first two groups of numbers.",
-      "Format: build.revision (e.g., XXXX.XXXXX)"
+      "Volatility 3 has a plugin that returns the basic system fingerprint. Think about what plugin would answer 'what OS is this?'",
+      "The plugin is windows.info.",
+      "Run vol -f MemoryDump_Lab1.raw windows.info and read the NTBuildLab field. The first two number groups are your answer."
     ]
   },
 
   {
     id: 2,
-    title: "Stage 2 — Identify Valid Accounts",
+    title: "Stage 2 — Who else is here?",
     tactic: "TA0001 Initial Access",
     technique: "T1078 Valid Accounts",
-    techniqueNote: "(Multiple simultaneous user sessions on a single workstation.)",
-    difficulty: "easy",
-    points: 40,
-    summary: `Count distinct interactive user sessions on this workstation. Hint: each <code>explorer.exe</code> instance = one user desktop.`,
-    briefing: `<b>Hypothesis:</b> the sister's PC is a single-user workstation. Anything other than one interactive session at the moment of capture is anomalous and worth chasing.<br><br>
-<b>Why this command:</b> every interactive Windows session has its own <code>explorer.exe</code> instance with a distinct <code>SessionId</code>. Counting unique SessionIds in <code>windows.pslist</code> answers "how many people were logged in at once?" in one query.<br><br>
-<b>Suggested approach:</b>
-<ol class="approach-list">
-<li>List processes and watch the <b>SessionId</b> column: <code>vol -f MemoryDump_Lab1.raw windows.pslist</code></li>
-<li>Each <code>explorer.exe</code> instance = one user desktop session.</li>
-<li>Check creation timestamps — were the sessions created together, or far apart?</li>
-</ol>
-<b>Why this matters:</b> On a single-user workstation, multiple simultaneous sessions are anomalous and may indicate lateral movement, fast-user-switching abuse, or RDP pivoting. If the count is &gt; 1, the hypothesis "this is just the sister using her PC" is rejected — and the mechanism (local logon vs. RDP vs. runas) becomes your initial-access angle.`,
-    expectedCommands: [
-      "vol -f MemoryDump_Lab1.raw windows.pslist",
-      "vol -f MemoryDump_Lab1.raw windows.pstree"
-    ],
+    whatsKnown: `Win7 SP1 x64, captured 2019-12-11 14:38 UTC. Sister described it as a single-user PC.`,
+    briefing: `If this is a single-user machine, you should expect exactly one interactive desktop session. If you find more than one at the moment of capture, the single-user assumption is wrong — and that's the start of an initial-access angle.`,
+    pluginGrades: {
+      "windows.pslist":           { grade: "best",      reason: "Process list with the SessionId column — count distinct SessionIds among interactive processes." },
+      "windows.pstree":           { grade: "best",      reason: "Same data with parent/child relationships, easier to spot per-session process trees." },
+      "windows.envars":           { grade: "plausible", reason: "Shows USERNAME for processes — can confirm which user owns each session, but you have to find the sessions first." },
+      "windows.netscan":          { grade: "off-base",  reason: "Network sockets. Doesn't tell you about user sessions." },
+      "windows.filescan":         { grade: "off-base",  reason: "Files in memory. Wrong layer for session enumeration." },
+      "windows.cmdline":          { grade: "off-base",  reason: "Command lines per process. Useful later, doesn't help count sessions." },
+      "windows.registry.printkey":{ grade: "off-base",  reason: "Registry keys. Doesn't enumerate live sessions." }
+    },
     question: `How many <b>distinct interactive user sessions</b> are active on the system? (count distinct SessionId values among <code>explorer.exe</code> processes — number only)`,
     answer: "2",
-    answerNote: `Two interactive sessions: <b>Session 1 (SmartNet, explorer PID 604, started 14:32:25)</b> and <b>Session 2 (Alissa Simpson, explorer PID 2504, started 14:37:14)</b>. The 5-minute gap and the fact that this is a workstation make the second session worth investigating as possible lateral movement (T1078).`,
-    attMap: "TA0001 Initial Access → T1078 Valid Accounts (Local)",
+    answerNote: `Two interactive sessions: <b>Session 1 (SmartNet, explorer PID 604, started 14:32:25)</b> and <b>Session 2 (Alissa Simpson, explorer PID 2504, started 14:37:14)</b>. The 5-minute gap on a single-user PC is anomalous. Carry forward: Alissa Simpson's session is your investigative pivot.`,
+    attReveal: {
+      technique: "T1078 — Valid Accounts (Local)",
+      fits: "When an actor accesses a system using a legitimate account rather than exploiting a vulnerability, the behaviour falls under T1078; finding two distinct interactive sessions where there should be one is the signal that triggers it."
+    },
     hints: [
-      "Filter pslist for explorer.exe — each instance is one user desktop.",
-      "Count the unique SessionId values (column 7 in pslist output)."
+      "Each user logged in to Windows gets their own desktop shell. What process represents that desktop shell?",
+      "Look for explorer.exe instances in pslist. Count distinct SessionId values among them.",
+      "Filter pslist for explorer.exe and count the rows."
     ]
   },
 
   {
     id: 3,
-    title: "Stage 3 — Hands-on-Keyboard Execution",
+    title: "Stage 3 — What did they type?",
     tactic: "TA0002 Execution",
     technique: "T1059.003 Windows Command Shell",
-    techniqueNote: "(Interactive cmd.exe spawned from Explorer.)",
-    difficulty: "medium",
-    points: 50,
-    summary: `Find the PID of the interactive cmd.exe spawned from explorer.exe.`,
-    briefing: `<b>Hypothesis:</b> the "black window" the sister described is most likely <code>cmd.exe</code> spawned from her desktop shell. If true, there will be a cmd.exe whose parent PID is <code>explorer.exe</code>, and a paired <code>conhost.exe</code> created within the same second.<br><br>
-<b>Why this command:</b> <code>windows.pstree</code> shows the parent-child relationship visually and lets you spot a shell hanging directly off Explorer (interactive launch) vs. one spawned by a service (which would be a different concern). <code>windows.cmdline</code> then tells you what was typed into it.<br><br>
-<b>Suggested approach:</b>
-<ol class="approach-list">
-<li>Identify the cmd.exe process and its parent: <code>vol -f MemoryDump_Lab1.raw windows.pstree</code></li>
-<li>Check the command lines: <code>vol -f MemoryDump_Lab1.raw windows.cmdline</code></li>
-<li>Look for the <code>conhost.exe</code> sibling — confirms interactive use.</li>
-</ol>
-<b>Why this matters:</b> A spawned shell is not malware itself, but it is the <b>entry point</b> for everything else the actor did. Once you have the cmd.exe timestamp, every other artefact gets compared against it — anything before is baseline, anything after is in scope.`,
-    expectedCommands: [
-      "vol -f MemoryDump_Lab1.raw windows.pstree",
-      "vol -f MemoryDump_Lab1.raw windows.cmdline"
-    ],
+    whatsKnown: `Two simultaneous interactive sessions on a single-user PC. The sister mentioned a "black window" popping up.`,
+    briefing: `The "black window" is almost certainly an interactive shell. If true, you should see a shell process whose parent is the desktop shell, with a paired console-host helper created in the same second.`,
+    pluginGrades: {
+      "windows.pstree":           { grade: "best",      reason: "Parent-child tree shows which process spawned the shell — interactive vs service launch is obvious here." },
+      "windows.cmdline":          { grade: "best",      reason: "Tells you what was typed into each shell process." },
+      "windows.pslist":           { grade: "plausible", reason: "Has the PIDs and PPIDs but lacks the visual hierarchy of pstree." },
+      "windows.netscan":          { grade: "off-base",  reason: "Network sockets. Wrong layer for shell discovery." },
+      "windows.filescan":         { grade: "off-base",  reason: "Files in memory. Doesn't tell you which shell was running." },
+      "windows.envars":           { grade: "off-base",  reason: "Environment variables per process. You first need to find the shell process before this is useful." },
+      "windows.registry.printkey":{ grade: "off-base",  reason: "Registry keys. Wrong layer for live process inspection." }
+    },
     question: `What is the <b>PID of the interactive cmd.exe</b> process spawned from explorer.exe? (number only)`,
     answer: "1984",
-    answerNote: `<b>cmd.exe PID 1984</b>, parent explorer.exe (PID 604), Session 1 (SmartNet), created 2019-12-11 14:34:54 UTC. The associated <b>conhost.exe (PID 2692)</b> created at the same second confirms hands-on-keyboard activity.`,
-    attMap: "TA0002 Execution → T1059.003 Windows Command Shell",
+    answerNote: `<b>cmd.exe PID 1984</b>, parent explorer.exe (PID 604), Session 1 (SmartNet), created 2019-12-11 14:34:54 UTC. Paired conhost.exe PID 2692 confirms hands-on-keyboard. This is the "black window" — every other artefact gets compared against this timestamp.`,
+    attReveal: {
+      technique: "T1059.003 — Windows Command Shell",
+      fits: "An interactive cmd.exe spawned from explorer.exe with a paired conhost.exe is the textbook behavioural fingerprint of T1059.003."
+    },
     hints: [
-      "In pstree, look for cmd.exe with parent PID 604 (explorer).",
-      "The PID is in the first column of pstree/pslist output."
+      "The 'black window' is almost certainly a shell. What shell ships with Windows by default?",
+      "cmd.exe is the answer. Find it in pstree — what's its parent PID?",
+      "In pstree, look for cmd.exe whose parent is PID 604 (explorer.exe in Session 1). Take its PID."
     ]
   },
 
   {
     id: 4,
-    title: "Stage 4 — Masquerading in System32",
+    title: "Stage 4 — A file where it doesn't belong?",
     tactic: "TA0005 Stealth",
     technique: "T1036.005 Masquerading: Match Legitimate Name or Location",
-    techniqueNote: "(Suspicious file blended into trusted OS directory.)",
-    difficulty: "medium",
-    points: 60,
-    summary: `Find the suspicious file in <code>C:\\Windows\\System32\\</code> that doesn't belong (a non-PE).`,
-    briefing: `<b>Hypothesis:</b> the cmd.exe the sister saw didn't run nothing — it ran <i>something</i>. If the actor wanted that something to look legitimate, they'd drop it where the OS already lives: <code>C:\\Windows\\System32\\</code>. A non-PE file (<code>.bat</code>, <code>.ps1</code>, <code>.vbs</code>) in System32 is the cheapest tell of masquerading.<br><br>
-<b>Why this command:</b> <code>windows.filescan</code> walks the file object pool in memory and lists every path Windows touched. Filtering for <code>.bat</code> in <code>System32</code> tests the hypothesis directly — either there's a script there or there isn't.<br><br>
-<b>Suggested approach:</b>
-<ol class="approach-list">
-<li>Pipe filescan through grep to find non-EXE/DLL files in System32: <code>windows.filescan | grep -i \\.bat</code></li>
-<li>Look for unusual extensions (<code>.bat</code>, <code>.ps1</code>, <code>.vbs</code>, <code>.txt</code>) where only compiled binaries should live.</li>
-<li>Cross-reference with <code>RecentDocs</code> registry to see if a user opened the suspicious file.</li>
-</ol>
-<b>Why this matters:</b> Allowlisting tools and analysts trust files in System32 — that's exactly why attackers target the location. Confirming a script there + recent user access is enough evidence to map this stage to T1036.005 Masquerading.`,
-    expectedCommands: [
-      "vol -f MemoryDump_Lab1.raw windows.filescan | grep -i \\.bat",
-      "vol -f MemoryDump_Lab1.raw windows.filescan | grep System32"
-    ],
+    whatsKnown: `A cmd.exe (PID 1984) ran interactively in Session 1. Whatever it executed should be discoverable as a script or binary it touched.`,
+    briefing: `If the actor wanted their script to look legitimate, they'd drop it where the OS already lives — <code>C:\\Windows\\System32\\</code>. A non-PE file (<code>.bat</code>, <code>.ps1</code>, <code>.vbs</code>) in that directory is the cheapest tell. You're looking for exactly one such file.`,
+    pluginGrades: {
+      "windows.filescan":         { grade: "best",      reason: "Walks the file object pool and lists every path Windows touched — filter for .bat in System32." },
+      "windows.registry.printkey":{ grade: "plausible", reason: "RecentDocs / MRU keys can confirm a user opened the file recently — useful corroboration once you've found it." },
+      "windows.pslist":           { grade: "off-base",  reason: "Process list. The file is on disk, not running as a process." },
+      "windows.cmdline":          { grade: "off-base",  reason: "Process command lines. cmd.exe was interactive — its cmdline doesn't show what was typed inside it." },
+      "windows.netscan":          { grade: "off-base",  reason: "Network sockets. Wrong layer for file discovery." },
+      "windows.envars":           { grade: "off-base",  reason: "Environment variables. Doesn't enumerate files in System32." },
+      "windows.handles":          { grade: "off-base",  reason: "Open handles for a specific PID. You don't yet know which PID had the file open." }
+    },
     question: `What is the <b>full filename</b> (with extension) of the suspicious batch file masquerading in System32?`,
     answer: "St4G3$1.bat",
-    answerNote: `<b>St4G3$1.bat</b> — leet-speak decoding: <i>4→a, 3→e, $→s</i> = <b>"Stage$1"</b>. The <code>$1</code> suffix suggests this is the first in a numbered series of staging scripts. Found in BOTH <code>C:\\Windows\\System32\\</code> and <code>C:\\Users\\SmartNet\\Desktop\\</code>. Registry RecentDocs proves SmartNet recently opened it as both .bat and .txt — meaning it was both <b>edited and executed</b>.`,
-    attMap: "TA0005 Stealth → T1036.005 Masquerading: Match Legitimate Name or Location",
+    answerNote: `<b>St4G3$1.bat</b> — leet-decode = <i>4→a, 3→e, $→s</i> = "Stage$1", suggesting the first in a series. Found in BOTH <code>C:\\Windows\\System32\\</code> and <code>C:\\Users\\SmartNet\\Desktop\\</code>. Registry RecentDocs proves the user opened it as both .bat and .txt — meaning it was edited and executed.`,
+    attReveal: {
+      technique: "T1036.005 — Masquerading: Match Legitimate Name or Location",
+      fits: "Naming or placing a file to blend with legitimate OS components is exactly what T1036.005 covers; a script in System32 is the canonical example."
+    },
     hints: [
-      "Pipe filescan output through grep to filter — try grep '.bat' or grep 'System32'.",
-      "The filename uses leet-speak with a $ symbol. Capitalisation matters for the answer."
+      "Scripts and other non-PE files should not be in System32. What plugin shows file paths in memory?",
+      "Use windows.filescan and pipe through grep for .bat, .ps1, or .vbs.",
+      "Look in System32 for a .bat file. The filename uses leet-speak with a $ symbol. Capitalisation matters."
     ]
   },
 
   {
     id: 5,
-    title: "Stage 5 — Credential Access",
+    title: "Stage 5 — Were credentials at risk?",
     tactic: "TA0006 Credential Access",
     technique: "T1003.001 OS Credential Dumping: LSASS Memory",
-    techniqueNote: "(Credential log file + DPAPI blobs = credential-dumping intent.)",
-    difficulty: "hard",
-    points: 60,
-    summary: `Find the credential log file dropped in a Windows diagnostic directory.`,
-    briefing: `<b>Hypothesis:</b> if the actor was after credentials, evidence will exist in two converging places — a dropped log file in a diagnostic directory, and DPAPI credential blobs in the user profiles.<br><br>
-<b>Why this command:</b> <code>windows.filescan</code> walks the file objects in memory and shows file paths that were touched at capture time. A path like <code>C:\\Windows\\debug\\</code> is a known dropping ground for credential-log output — if it's there, that's a strong signal.<br><br>
-<b>Suggested approach:</b>
-<ol class="approach-list">
-<li><code>vol -f MemoryDump_Lab1.raw windows.filescan | grep -i passwd</code></li>
-<li>Look in <code>C:\\Windows\\debug\\</code> — Windows' Netlogon debug directory.</li>
-<li>Cross-check with the DPAPI blobs in each user's <code>AppData\\…\\Microsoft\\Credentials</code>.</li>
-</ol>
-<b>Why this matters:</b> A dropped <code>PASSWD.LOG</code> in <code>C:\\Windows\\debug\\</code> is the kind of artefact junior analysts learn to flag instantly. It is also a hypothesis-test, not a verdict — the file's mere presence shows credential-stealing intent; what was actually captured needs separate analysis.`,
-    expectedCommands: [
-      "vol -f MemoryDump_Lab1.raw windows.filescan | grep -i passwd",
-      "vol -f MemoryDump_Lab1.raw windows.filescan | grep debug",
-      "vol -f MemoryDump_Lab1.raw windows.filescan | grep Credentials"
-    ],
+    whatsKnown: `A leet-named batch script (St4G3$1.bat) was executed via cmd.exe in System32. The actor was hands-on-keyboard with intent.`,
+    briefing: `If the actor's goal was credential theft, evidence should converge in two places — a dropped log/output file in a diagnostic directory like <code>\\Windows\\debug\\</code>, and DPAPI credential blobs touched in the user profiles. If either is missing, the credential angle is unconfirmed and needs refinement.`,
+    pluginGrades: {
+      "windows.filescan":         { grade: "best",      reason: "Looks for credential-log files (PASSWD.LOG and similar) in known dropping grounds like \\Windows\\debug\\." },
+      "windows.handles":          { grade: "plausible", reason: "If the credential-stealing process is still running, its open handles would show DPAPI blob paths — but you'd need to know the PID first." },
+      "windows.pslist":           { grade: "off-base",  reason: "Lists processes. Doesn't surface dropped log files in system directories." },
+      "windows.cmdline":          { grade: "off-base",  reason: "Process command lines. Won't reveal log files dropped by short-lived utilities." },
+      "windows.netscan":          { grade: "off-base",  reason: "Network sockets. Wrong layer." },
+      "windows.envars":           { grade: "off-base",  reason: "Environment variables. Wrong layer." },
+      "windows.registry.printkey":{ grade: "off-base",  reason: "Registry. Could check Netlogon DbFlag value, but the log file itself is on disk." }
+    },
     question: `What is the <b>full Windows path</b> to the credential log file dropped by the attacker? (use double-backslashes <code>\\\\</code> or single — both accepted)`,
     answer: "C:\\Windows\\debug\\PASSWD.LOG",
     altAnswers: ["C:/Windows/debug/PASSWD.LOG", "\\Windows\\debug\\PASSWD.LOG", "/Windows/debug/PASSWD.LOG", "Windows\\debug\\PASSWD.LOG"],
-    answerNote: `<b>C:\\Windows\\debug\\PASSWD.LOG</b> — this directory is normally used by Netlogon for debug logging when DbFlag is enabled, but is also a well-known dumping ground for credential-stealing tool output. Its presence in memory, combined with DPAPI blobs touched in both user profiles, is enough to map this stage to T1003.001 LSASS Memory as a working hypothesis. The next analyst step would be carving the file out of disk to confirm contents.`,
-    attMap: "TA0006 Credential Access → T1003.001 OS Credential Dumping: LSASS Memory",
+    answerNote: `<b>C:\\Windows\\debug\\PASSWD.LOG</b> — Netlogon's debug directory, but also a well-known dumping ground for credential-stealing tool output. Its presence in memory + DPAPI blobs touched in both user profiles is enough to flag credential-stealing intent. Extraction unconfirmed — next analyst step is carving the file off disk to confirm contents.`,
+    attReveal: {
+      technique: "T1003.001 — OS Credential Dumping: LSASS Memory",
+      fits: "A credential log dropped in a diagnostic directory plus DPAPI blob access in user profiles is the behavioural signature T1003.001 covers; on Win7 SP1 with WDigest on by default, it's the technique attackers reach for."
+    },
     hints: [
-      "Try grep -i passwd or grep debug on filescan output.",
-      "The filename is in ALL CAPS. The directory ends in 'debug'."
+      "Credential-stealing tools often write output to a known Windows debug directory. Where would they hide a log file in plain sight?",
+      "Look in C:\\Windows\\debug\\. The filename will be ALL CAPS and end in .LOG.",
+      "Run windows.filescan | grep -i passwd. The full path to PASSWD.LOG is your answer."
     ]
   },
 
   {
     id: 6,
-    title: "Stage 6 — Collection & Staging",
+    title: "Stage 6 — Was data being staged?",
     tactic: "TA0009 Collection",
     technique: "T1560.001 Archive Collected Data: Archive via Utility",
-    techniqueNote: "(WinRAR archiving data from another user's Documents.)",
-    difficulty: "medium",
-    points: 60,
-    summary: `Find the archive being staged in another user's Documents folder.`,
-    briefing: `<b>Hypothesis:</b> if the actor is preparing data to take, you should see an archiving utility (WinRAR, 7-zip, tar) running with a target file in another user's profile as its argument.<br><br>
-<b>Why this command:</b> <code>windows.cmdline | grep -i rar</code> filters for any process whose command line mentions a RAR archive — fastest way to confirm or rule out the hypothesis. Following up with <code>windows.handles --pid &lt;PID&gt;</code> on any hit confirms the file is actually open and lets you see the user context the archiver is running under.<br><br>
-<b>Suggested approach:</b>
-<ol class="approach-list">
-<li>Check process command lines: <code>vol -f MemoryDump_Lab1.raw windows.cmdline | grep -i rar</code></li>
-<li>Look at WinRAR's open file handles: <code>vol -f MemoryDump_Lab1.raw windows.handles --pid 1512</code></li>
-<li>Note <b>whose</b> documents are being archived — accessing another user's files is a strong collection signal.</li>
-</ol>
-<b>Why this matters:</b> Pay attention to the <b>session ownership pattern</b>: WinRAR running in user A's session and reading user B's documents is one of the cleanest collection signals on Windows. It also forces a refinement of the lateral-access hypothesis from Stage 2 — either user B did it themselves, or their credentials/profile are now in user A's hands.`,
-    expectedCommands: [
-      "vol -f MemoryDump_Lab1.raw windows.cmdline | grep -i rar",
-      "vol -f MemoryDump_Lab1.raw windows.handles --pid 1512"
-    ],
+    whatsKnown: `Credential-stealing intent was confirmed. The actor likely has access to both user accounts.`,
+    briefing: `If the actor is preparing data to take, you should see an archiving utility (WinRAR, 7-zip) running with a target file in a user profile as its argument. Bonus signal: if the archive lives in user A's Documents but the archiver runs in user B's session, that's cross-account access — confirming the credential stage paid off.`,
+    pluginGrades: {
+      "windows.cmdline":          { grade: "best",      reason: "Filter for archive tools (rar, 7z, tar) — fastest way to confirm or rule out the staging hypothesis." },
+      "windows.handles":          { grade: "best",      reason: "On any archiver process you find, handles show which files are open and confirm the user-context the archiver is running under." },
+      "windows.pslist":           { grade: "plausible", reason: "Lists processes — you'd see WinRAR.exe but you wouldn't see what it's working on without cmdline." },
+      "windows.pstree":           { grade: "plausible", reason: "Shows WinRAR's parent (which session launched it) — useful corroboration." },
+      "windows.filescan":         { grade: "off-base",  reason: "Lists files in memory. Could show .rar files but doesn't tell you which process is staging them." },
+      "windows.netscan":          { grade: "off-base",  reason: "Network sockets. Wrong layer for archiving activity." },
+      "windows.registry.printkey":{ grade: "off-base",  reason: "Registry. Wrong layer." }
+    },
     question: `What is the <b>filename of the archive</b> being staged in Alissa Simpson's Documents folder?`,
     answer: "Important.rar",
-    answerNote: `<b>Important.rar</b>, located at <code>C:\\Users\\Alissa Simpson\\Documents\\Important.rar</code>. WinRAR (PID 1512) was opened with this as its argument 31 seconds before the memory dump completed. A password-protected RAR named "Important" in another user's documents = textbook data staging for exfiltration.`,
-    attMap: "TA0009 Collection → T1560.001 Archive Collected Data: Archive via Utility (WinRAR)",
+    answerNote: `<b>Important.rar</b> at <code>C:\\Users\\Alissa Simpson\\Documents\\</code>. WinRAR (PID 1512) was launched in Alissa's session, but the archive sits in her Documents — the cross-account access pattern confirming the second session was opened to reach her files.`,
+    attReveal: {
+      technique: "T1560.001 — Archive Collected Data: Archive via Utility",
+      fits: "T1560.001 specifically covers using a third-party archiver (WinRAR, 7-zip, tar) to bundle data for exfil; that's exactly what's happening here."
+    },
     hints: [
-      "Filter cmdline for 'rar' or '.rar'.",
-      "The file is in Alissa Simpson's Documents folder. Just the filename, not the full path."
+      "What's the most common Windows archiver tool? Look for it in process command lines.",
+      "Filter windows.cmdline for 'rar'. Note what archive file is the argument.",
+      "WinRAR (PID 1512) was opened with a .rar file in Alissa's Documents. The filename is two words concatenated."
     ]
   },
 
   {
     id: 7,
-    title: "Stage 7 — Exfiltration: Channel Hypothesis",
+    title: "Stage 7 — Could it have left the host?",
     tactic: "TA0010 Exfiltration",
     technique: "T1048 Exfiltration Over Alternative Protocol",
-    techniqueNote: "(A staged archive needs a carrier — what carrier was available?)",
-    difficulty: "medium",
-    summary: `Identify what network channel could have carried the staged Important.rar off the host.`,
-    briefing: `<b>Hypothesis:</b> the password-protected <code>Important.rar</code> from Stage 6 is a prepared exfiltration payload. Two questions follow — <i>could</i> it have left, and <i>did</i> it leave? Memory can answer the first directly. The second usually requires disk/firewall pivots.<br><br>
-<b>Why this command:</b> <code>windows.netscan</code> walks the in-memory network connection structures — every listening port, every active connection at capture time. Cross-checked against <code>windows.cmdline</code> (looking for upload tools like <code>curl</code>, <code>ftp</code>, <code>powershell -c Invoke-WebRequest</code>, <code>bitsadmin</code>), this either reveals the exfil channel or — equally important — proves its absence.<br><br>
-<b>Suggested approach:</b>
-<ol class="approach-list">
-<li><code>vol -f MemoryDump_Lab1.raw windows.netscan</code></li>
-<li><code>vol -f MemoryDump_Lab1.raw windows.cmdline | grep -iE "ftp|curl|wget|bitsadmin|powershell"</code></li>
-<li>Note the well-known Windows file-sharing port that's exposed.</li>
-</ol>
-<b>Why this matters:</b> "Absence of evidence is not evidence of absence" — but in DFIR, not finding an exfil tool in memory IS a finding worth reporting. It tells the IR lead "I cannot confirm exfil from RAM alone — you need firewall logs or disk artefacts." That's a defensible analytical step, not a hand-wave.`,
-    expectedCommands: [
-      "vol -f MemoryDump_Lab1.raw windows.netscan",
-      "vol -f MemoryDump_Lab1.raw windows.cmdline"
-    ],
+    whatsKnown: `A password-protected RAR is staged in Alissa's Documents. The actor has the means to take it. The questions: did they, and through what.`,
+    briefing: `If exfil happened during the capture window, you should expect either an ESTABLISHED outbound connection or an upload tool (curl, bitsadmin, PowerShell <code>Invoke-WebRequest</code>) running. If both are absent, the data hasn't left during this capture — but the channel may still be exposed and worth flagging.`,
+    pluginGrades: {
+      "windows.netscan":          { grade: "best",      reason: "Walks the in-memory network connection structures — every listening port, every active connection at capture time." },
+      "windows.cmdline":          { grade: "plausible", reason: "Filter for curl/wget/bitsadmin/powershell to spot upload tools — useful corroboration with netscan." },
+      "windows.pslist":           { grade: "off-base",  reason: "Process list. Doesn't show network state." },
+      "windows.pstree":           { grade: "off-base",  reason: "Process tree. Doesn't show network state." },
+      "windows.filescan":         { grade: "off-base",  reason: "Files in memory. Wrong layer for network exfil." },
+      "windows.envars":           { grade: "off-base",  reason: "Environment variables. Wrong layer." },
+      "windows.registry.printkey":{ grade: "off-base",  reason: "Registry. Wrong layer for live network state." }
+    },
     question: `Based on <code>windows.netscan</code>, which Windows file-sharing <b>port number</b> is exposed (LISTENING) and could plausibly have been used as the exfil channel for <code>Important.rar</code>?`,
     answer: "445",
     altAnswers: ["SMB", "smb", "tcp/445", "445/tcp"],
-    answerNote: `<b>TCP 445 (SMB)</b> — the host is listening on port 445 (Server Message Block, file sharing). With a staged archive in another user's Documents and SMB exposed, a credentialed attacker could pull the file over <code>\\\\HOST\\C$</code> from a peer machine, leaving minimal local trace. <b>Critically:</b> we have not <i>confirmed</i> exfil happened — only that the channel was available. Next pivot for a real analyst: firewall flow logs around the capture window, plus disk-side WinRAR archive timestamps. Mapping this to T1048 is a working hypothesis, not a verdict.`,
-    attMap: "TA0010 Exfiltration → T1048 Exfiltration Over Alternative Protocol (SMB available; not yet confirmed used)",
+    answerNote: `<b>TCP 445 (SMB)</b> — the host is listening on port 445. With the staged archive in Alissa's Documents and SMB exposed, a credentialed peer could pull <code>Important.rar</code> over <code>\\\\HOST\\C$</code> with minimal local trace. <b>Critically:</b> exfil is unconfirmed — only that the channel was available. Next pivot for a real analyst: firewall flow logs around the capture window, plus disk-side WinRAR archive timestamps.`,
+    attReveal: {
+      technique: "T1048 — Exfiltration Over Alternative Protocol",
+      fits: "T1048 covers exfil over non-C2 channels (SMB, FTP, DNS); SMB on 445 is one such channel. Mapping this stage to T1048 documents channel availability, not confirmed transfer — and that distinction is the finding."
+    },
     hints: [
-      "Look at the LISTENING TCP entries in windows.netscan. The classic Windows file-sharing port is a 3-digit number starting with 4.",
-      "Two answers accepted: the port number, or the protocol name."
+      "What network plugin shows what's listening or connected at capture time?",
+      "Look at the LISTENING TCP entries in netscan. The classic Windows file-sharing port is a 3-digit number starting with 4.",
+      "TCP 445 (SMB) is exposed. Either type the port number or the protocol name."
     ]
   },
 
   {
     id: 8,
-    title: "Stage 8 — Synthesis: Map the Kill Chain",
-    tactic: "Reporting / Post-Investigation",
-    technique: "All techniques observed",
-    techniqueNote: "(Final analytical step — produce defensible ATT&CK mapping.)",
-    difficulty: "medium",
-    points: 40,
-    summary: `Map the System32 batch file finding to its specific ATT&CK sub-technique ID.`,
-    briefing: `<b>Behaviours observed across the kill chain:</b>
-<ol class="approach-list">
-<li>Two simultaneous user sessions (lateral access hypothesis)</li>
-<li>cmd.exe spawned interactively from Explorer (the "black window" the sister saw)</li>
-<li>Batch file (St4G3$1.bat) placed in System32</li>
-<li>Credential log (PASSWD.LOG) in Windows debug directory</li>
-<li>WinRAR staging another user's data into Important.rar</li>
-<li>SMB (TCP 445) listening — viable exfil channel, not yet confirmed used</li>
-<li>mspaint.exe launched without arguments (potential steganography — needs disk follow-up)</li>
-</ol>
-<b>Why this matters:</b> ATT&CK is the universal language between analysts globally. "T1003.001" tells every blue-teamer in the world exactly what happened in two seconds. "They got credentials" requires ten clarifying questions. Type <code>tactics</code> in the terminal for the reference card.`,
-    expectedCommands: ["tactics"],
+    noPicker: true,
+    title: "Stage 8 — Map your findings to ATT&CK",
+    tactic: "TA0005 Stealth",
+    technique: "T1036.005 Masquerading: Match Legitimate Name or Location",
+    whatsKnown: `You've earned 7 ATT&CK techniques across the previous stages — Discovery, Valid Accounts, Command Shell, Masquerading, Credential Access, Archive via Utility, and an exfil channel. This stage is the synthesis: do the mapping yourself, no reveal handing it to you.`,
+    briefing: `Take one specific finding — the <code>St4G3$1.bat</code> file placed in <code>C:\\Windows\\System32\\</code> — and name the ATT&CK sub-technique that captures the <i>placement</i>, not the execution. The terminal's <code>tactics</code> command shows the reference if you need it.`,
     question: `Which ATT&CK <b>sub-technique ID</b> covers placing a malicious file in <code>C:\\Windows\\System32\\</code> to blend with legitimate OS binaries? (format: T####.###)`,
     answer: "T1036.005",
-    answerNote: `<b>T1036.005 Masquerading: Match Legitimate Name or Location</b>. This sub-technique specifically covers naming/placing files to blend with legitimate components. It pairs naturally with T1059.003 (the bat file is also script execution) and T1564 (hiding artefacts more broadly).`,
-    attMap: "TA0005 Stealth → T1036.005 Masquerading",
+    answerNote: `<b>T1036.005 — Masquerading: Match Legitimate Name or Location.</b> You earned this technique back at Stage 4. Re-stating it here in formal ATT&CK is the writing-up muscle that turns an investigation into a defensible report.`,
+    attReveal: {
+      technique: "T1036.005 — Masquerading: Match Legitimate Name or Location",
+      fits: "This is where you become the producer of the mapping, not the recipient. Every previous stage handed you a technique; here, you reached for it yourself. That's the writing-up muscle every junior analyst has to grow."
+    },
     hints: [
-      "Type 'tactics' in the terminal to see the full ATT&CK reference.",
-      "The technique ID starts with T1036. The sub-technique is .005."
+      "The placement of the file is the key signal — not what the file does, but where it lives. What ATT&CK tactic covers blending in?",
+      "The tactic is TA0005 Stealth. What sub-technique covers naming/placing files to look legitimate?",
+      "The technique is T1036, the sub-technique is .005."
     ]
   }
 ];
@@ -1057,7 +1072,9 @@ let state = {
   solved: new Set(),
   hintIdx: {},
   cmdHistory: [],
-  cmdHistoryIdx: -1
+  cmdHistoryIdx: -1,
+  proMode: false,
+  picks: {}              // stageId -> { plugin, grade }
 };
 
 // ============================================================
@@ -1467,12 +1484,38 @@ function renderStagesList() {
   list.innerHTML = STAGES.map((s, idx) => {
     const cls = state.solved.has(s.id) ? 'solved' : (idx === state.current ? 'active' : '');
     const check = state.solved.has(s.id) ? '<span class="si-check">✓</span>' : '';
+    let label;
+    if (s.intro) {
+      label = 'INTRO';
+    } else if (state.solved.has(s.id)) {
+      const techId = (s.attReveal && s.attReveal.technique) ? s.attReveal.technique.split(' ')[0] : '';
+      label = `✓ STAGE ${s.id}${techId ? ' · ' + techId : ''}`;
+    } else {
+      label = `STAGE ${s.id}`;
+    }
     return `<div class="stage-item ${cls}" onclick="selectStage(${idx})">
-      <div class="si-tactic">${s.tactic}</div>
-      <div class="si-name">${s.title}</div>
-      <div class="si-meta"><span>${(s.difficulty || '').toUpperCase()}</span>${check}</div>
+      <div class="si-tactic">${label}</div>
+      <div class="si-name">${s.title.replace(/^Stage \d+ — /, '')}</div>
+      ${check ? `<div class="si-meta">${check}</div>` : ''}
     </div>`;
   }).join('');
+  renderKillChain();
+}
+
+function renderKillChain() {
+  const wrap = document.getElementById('kill-chain-panel');
+  if (!wrap) return;
+  const solvable = STAGES.filter(s => !s.intro);
+  const solved = solvable.filter(s => state.solved.has(s.id));
+  const earnedRows = solved.map(s => {
+    const tech = (s.attReveal && s.attReveal.technique) || s.technique || '';
+    return `<div class="kc-row earned"><span class="kc-id">✓ ${tech.split(' — ')[0]}</span> · ${tech.split(' — ').slice(1).join(' — ') || ''}</div>`;
+  }).join('');
+  const remaining = solvable.length - solved.length;
+  const placeholder = remaining > 0
+    ? `<div class="kc-placeholder">${'·  '.repeat(Math.max(remaining, 1))}</div><div class="kc-row" style="padding-top:2px;font-style:italic">more to discover</div>`
+    : '';
+  wrap.innerHTML = `${earnedRows}${placeholder}<div class="kc-counter">${solved.length} / ${solvable.length} mapped</div>`;
 }
 
 function selectStage(idx) {
@@ -1484,43 +1527,58 @@ function selectStage(idx) {
 
 function renderCurrentStage() {
   const s = STAGES[state.current];
-  document.getElementById('cur-tactic').textContent = s.tactic;
-  document.getElementById('cur-technique').textContent = s.technique;
-  document.getElementById('cur-difficulty').className = 'difficulty-badge diff-' + (s.difficulty === 'easy' ? 'easy' : s.difficulty === 'hard' ? 'hard' : s.difficulty === 'info' ? 'info' : 'med');
-  document.getElementById('cur-difficulty').textContent = s.difficulty.toUpperCase();
   document.getElementById('cur-title').textContent = s.title;
 
-  // Intro stage: render the briefing as full HTML, hide the question + terminal blocks.
   const qa = document.getElementById('question-area');
   const tw = document.querySelector('.terminal-wrapper');
+  const tacticBadge = document.getElementById('cur-tactic');
+  const techniqueBadge = document.getElementById('cur-technique');
+
+  // Intro stage: render the briefing as full HTML, hide the question + terminal blocks.
   if (s.intro) {
     document.getElementById('briefing').innerHTML = s.briefing;
     qa.style.display = 'none';
     tw.style.display = 'none';
+    tacticBadge.style.display = 'none';
+    techniqueBadge.style.display = 'none';
     document.getElementById('hint-popup').classList.remove('show');
+    // Reflect the persisted toggle state in the checkbox (in case of re-entry).
+    const cb = document.getElementById('pro-mode-toggle');
+    if (cb) cb.checked = !!state.proMode;
     return;
   }
   qa.style.display = '';
   tw.style.display = '';
 
-  const summaryHTML = s.summary
-    ? `<div class="briefing-summary">${s.summary}</div>
-       <span class="briefing-toggle" onclick="toggleBriefing()">▸ Show full briefing</span>
-       <div class="briefing-details" id="briefing-details">${s.briefing}</div>`
-    : `<p>${s.briefing}</p>`;
-  document.getElementById('briefing').innerHTML =
-    `<h3>Mission — ${s.tactic}</h3>${summaryHTML}`;
+  // ATT&CK badges — hidden until solved, then revealed.
+  const isSolved = state.solved.has(s.id);
+  if (isSolved) {
+    tacticBadge.textContent = s.tactic;
+    techniqueBadge.textContent = s.technique;
+    tacticBadge.style.display = '';
+    techniqueBadge.style.display = '';
+  } else {
+    tacticBadge.style.display = 'none';
+    techniqueBadge.style.display = 'none';
+  }
+
+  // Build briefing content: whatsKnown (carried-forward context) + briefing (the question framing) + picker.
+  const pickerHTML = renderPickerHTML(s);
+  document.getElementById('briefing').innerHTML = `
+    <div class="briefing-summary" style="margin-bottom:10px"><b>What's known so far.</b> ${s.whatsKnown || ''}</div>
+    <div class="briefing-summary">${s.briefing || ''}</div>
+    ${pickerHTML}
+  `;
   document.getElementById('question-text').innerHTML = `<b>QUESTION:</b> ${s.question}`;
 
   const ai = document.getElementById('answer-input');
   const fb = document.getElementById('feedback');
-  if (state.solved.has(s.id)) {
+  if (isSolved) {
     ai.value = s.answer;
     ai.disabled = true;
     ai.classList.add('correct');
     document.getElementById('submit-btn').disabled = true;
-    fb.className = 'feedback show ok';
-    fb.innerHTML = `✓ <b>Correct!</b><span class="reveal">${s.answerNote}</span><span class="att-map">⬡ ATT&CK: ${s.attMap}</span>`;
+    renderSolvedFeedback(s);
   } else {
     ai.value = '';
     ai.disabled = false;
@@ -1535,6 +1593,75 @@ function renderCurrentStage() {
 
   // Don't auto-focus on mobile — pulls up keyboard unnecessarily
   if (window.innerWidth > 768) ai.focus();
+}
+
+// Build the plugin picker HTML for a stage. Returns either the full picker
+// (with dropdown + any current feedback or summary), or empty string when
+// hidden (Pro mode, noPicker stage, or intro).
+function renderPickerHTML(s) {
+  if (state.proMode || s.noPicker || !s.pluginGrades) return '';
+  const pick = state.picks[s.id];
+  // After the stage is solved, collapse to the summary line.
+  if (state.solved.has(s.id) && pick) {
+    const gradeLabel = pick.grade === 'best' ? '✓ Strongest first move'
+                     : pick.grade === 'plausible' ? '≈ Plausible'
+                     : '✗ Off-base';
+    return `<div class="picker-summary">🔍 Plugin picked: <code>${pick.plugin}</code><span class="ps-grade ${pick.grade}">${gradeLabel}</span></div>`;
+  }
+  const opts = Object.keys(s.pluginGrades).map(p => {
+    const sel = (pick && pick.plugin === p) ? ' selected' : '';
+    return `<option value="${p}"${sel}>${p}</option>`;
+  }).join('');
+  let feedbackHTML = '';
+  if (pick) {
+    const g = s.pluginGrades[pick.plugin];
+    const titleText = pick.grade === 'best' ? 'Strongest first move'
+                    : pick.grade === 'plausible' ? 'Plausible, but not the most direct'
+                    : 'Unlikely to help here';
+    feedbackHTML = `<div class="picker-feedback show ${pick.grade}">
+      <div class="pf-title">${titleText}</div>
+      <span class="pf-reason">${g.reason}</span>
+    </div>`;
+  }
+  return `<div class="plugin-picker">
+    <div class="pp-title">🔍 Pick your plugin</div>
+    <div class="pp-prompt">Before you run anything, commit to a first move. Which Volatility 3 plugin would best answer this stage's question?</div>
+    <select onchange="pickPlugin(this.value)">
+      <option value="">— Select a plugin —</option>
+      ${opts}
+    </select>
+    ${feedbackHTML}
+  </div>`;
+}
+
+// Plugin pick handler — stores the pick and re-renders the briefing.
+function pickPlugin(plugin) {
+  if (!plugin) return;
+  const s = STAGES[state.current];
+  if (!s.pluginGrades || !s.pluginGrades[plugin]) return;
+  state.picks[s.id] = { plugin, grade: s.pluginGrades[plugin].grade };
+  // Re-render only the briefing (cheap and keeps focus state simple).
+  renderCurrentStage();
+}
+
+// Render the post-correct-answer feedback: finding card + ATT&CK reveal card.
+function renderSolvedFeedback(s) {
+  const fb = document.getElementById('feedback');
+  const reveal = s.attReveal || {};
+  const attCard = (reveal.technique || reveal.fits) ? `
+    <div class="att-reveal-card">
+      <div class="arc-label">🎯 ATT&CK MAPPING</div>
+      <div class="arc-technique">${reveal.technique || ''}</div>
+      ${reveal.fits ? `<div class="arc-fits-label">Why this label fits</div><div class="arc-fits">${reveal.fits}</div>` : ''}
+    </div>` : '';
+  fb.className = 'feedback show ok';
+  fb.innerHTML = `✓ <b>Correct!</b><span class="reveal">${s.answerNote || ''}</span>${attCard}`;
+}
+
+// Stage 0 Pro-mode toggle handler.
+function togglePromode() {
+  const cb = document.getElementById('pro-mode-toggle');
+  state.proMode = !!(cb && cb.checked);
 }
 
 function checkAnswer() {
@@ -1552,11 +1679,12 @@ function checkAnswer() {
     ai.classList.add('correct');
     ai.disabled = true;
     document.getElementById('submit-btn').disabled = true;
-    fb.className = 'feedback show ok';
-    fb.innerHTML = `✓ <b>Correct!</b><span class="reveal">${s.answerNote}</span><span class="att-map">⬡ ATT&CK: ${s.attMap}</span>`;
     if (!state.solved.has(s.id)) {
       state.solved.add(s.id);
     }
+    // Re-render the briefing so the picker collapses to its summary,
+    // and reveal the ATT&CK badges in the stage header.
+    renderCurrentStage();
     renderStagesList();
     updateScoreboard();
     const solvableCount = STAGES.filter(x => !x.intro).length;
@@ -1680,13 +1808,6 @@ function runFireworks(durationMs) {
 
 function closeModal() { document.getElementById('completion-modal').classList.remove('show'); }
 
-function toggleBriefing() {
-  const d = document.getElementById('briefing-details');
-  const t = document.querySelector('.briefing-toggle');
-  if (!d || !t) return;
-  d.classList.toggle('show');
-  t.textContent = d.classList.contains('show') ? '▾ Hide full briefing' : '▸ Show full briefing';
-}
 
 // === Mobile sidebar drawer ===
 function toggleSidebar() {
