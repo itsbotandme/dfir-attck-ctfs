@@ -29,8 +29,11 @@
   header { border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; align-items: center; gap: 14px; background: var(--panel); }
   header h1 { font-size: 0.95rem; color: var(--accent); font-weight: 600; }
   .badge { background: var(--code-bg); border: 1px solid var(--border); border-radius: 3px; padding: 2px 8px; font-size: 0.7rem; color: var(--muted); }
-  .score-pill { margin-left: auto; background: var(--code-bg); border: 1px solid var(--border); padding: 4px 12px; border-radius: 16px; font-size: 0.75rem; }
+  .score-pill { background: var(--code-bg); border: 1px solid var(--border); padding: 4px 12px; border-radius: 16px; font-size: 0.75rem; }
   .score-pill .v { color: var(--accent); font-weight: 600; }
+  .pro-toggle { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; background: var(--code-bg); border: 1px solid var(--border); padding: 4px 10px; border-radius: 16px; font-size: 0.72rem; color: var(--muted); cursor: pointer; user-select: none; }
+  .pro-toggle:hover { color: var(--text); border-color: var(--accent); }
+  .pro-toggle input { margin: 0; cursor: pointer; }
 
   .container { display: grid; grid-template-columns: 290px 1fr; height: calc(100vh - 49px); }
   .sidebar { border-right: 1px solid var(--border); padding: 8px 0; overflow-y: auto; background: var(--panel); }
@@ -72,8 +75,8 @@
 
   .terminal-wrapper { padding: 14px 24px; flex-shrink: 0; }
   .terminal-label { font-size: 0.7rem; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.08em; display: flex; justify-content: space-between; }
-  .terminal-label .hint-link { color: var(--yellow); cursor: pointer; text-transform: none; }
-  .terminal-label .hint-link:hover { text-decoration: underline; }
+  .terminal-label .hint-link { color: var(--yellow); cursor: pointer; text-transform: none; border: 1px solid var(--yellow); border-radius: 12px; padding: 3px 10px; background: rgba(210,153,34,0.05); font-weight: 500; }
+  .terminal-label .hint-link:hover { background: rgba(210,153,34,0.15); }
   /* Fixed terminal height — its own content scrolls inside; outer page
      no longer fights for vertical space with the briefing.
      Initial layout: input row sits ABOVE the output area so the prompt is
@@ -146,8 +149,13 @@
   /* (Tap-to-run suggestions and the type/tap mode toggle were removed —
      analysts type their own commands.) */
 
+  /* === Stage 1 only — first-touch terminal hint (orientation for true beginners) === */
+  .terminal-first-touch { display: none; padding: 10px 14px; margin-bottom: 10px; background: rgba(88,166,255,0.06); border: 1px solid var(--accent); border-radius: 5px; font-size: 0.78rem; color: var(--text); line-height: 1.5; }
+  .terminal-first-touch.show { display: block; }
+
   /* === Plugin picker === */
   .plugin-picker { margin: 14px 0 8px; padding: 14px 16px; background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; }
+  .picker-nudge { margin-bottom: 10px; padding: 8px 12px; background: rgba(210,153,34,0.08); border: 1px solid var(--yellow); border-radius: 4px; font-size: 0.78rem; color: var(--text); line-height: 1.5; }
   .plugin-picker .pp-title { font-size: 0.85rem; color: var(--accent-2); font-weight: 600; margin-bottom: 4px; }
   .plugin-picker .pp-prompt { font-size: 0.78rem; color: var(--muted); margin-bottom: 10px; line-height: 1.55; }
   .plugin-picker select { width: 100%; max-width: 380px; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 4px; padding: 8px 10px; font-family: inherit; font-size: 0.82rem; outline: none; cursor: pointer; }
@@ -180,6 +188,10 @@
   /* === Soft-locked carry-forward context (peek-ahead spoiler guard) === */
   .briefing-summary.locked-context { background: rgba(210,153,34,0.06); border: 1px solid var(--yellow); border-radius: 5px; padding: 10px 14px; margin-bottom: 10px; color: var(--muted); line-height: 1.6; }
   .briefing-summary.locked-context b { color: var(--yellow); }
+
+  /* === Continue-to-next-stage button (post-answer) === */
+  .continue-btn { display: inline-block; margin-top: 14px; padding: 10px 18px; background: var(--accent); color: #000; border: none; border-radius: 6px; font-family: inherit; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: opacity 0.15s; min-height: 40px; }
+  .continue-btn:hover { opacity: 0.85; }
 
   /* === ATT&CK reveal card (post-answer) === */
   .att-reveal-card { margin-top: 12px; padding: 14px 16px; background: rgba(188,140,255,0.06); border: 1px solid var(--purple); border-radius: 6px; }
@@ -340,6 +352,10 @@
   <span class="badge">Volatility 3</span>
   <span class="badge">Win7 SP1 x64</span>
   <span class="badge">MemoryDump_Lab1.raw</span>
+  <label class="pro-toggle" title="Hide the plugin picker on each stage. For analysts already familiar with Volatility 3.">
+    <input type="checkbox" id="pro-mode-toggle-header" onchange="togglePromodeHeader()">
+    <span>Pro mode</span>
+  </label>
   <span class="score-pill">Stage <span class="v" id="solved-count">0</span> / 8</span>
 </header>
 
@@ -390,6 +406,7 @@
       </div>
 
       <div class="terminal-wrapper">
+        <div class="terminal-first-touch" id="terminal-first-touch"></div>
         <div class="terminal-label">
           <span>🖥️ ANALYST TERMINAL</span>
           <span class="hint-link" onclick="showHint()">💡 Need a hint?</span>
@@ -771,6 +788,10 @@ const STAGES = [
     briefing: `
 <div class="intro-pane">
 
+<p style="text-align:right;margin:0;font-size:0.88rem">
+  <a href="javascript:selectStage(1)" style="color:var(--accent);text-decoration:none;border-bottom:1px dashed var(--accent)">Skip intro → Start Stage 1 ↗</a>
+</p>
+
 <section class="intro-section">
   <h3>📓 The case</h3>
   <blockquote class="intro-quote">
@@ -820,16 +841,6 @@ const STAGES = [
   </p>
   <p>
     <b>Why a plugin per stage?</b> Each Volatility plugin answers exactly one class of question — <code>pslist</code> for the process tree, <code>cmdline</code> for what was typed, <code>filescan</code> for files in memory, <code>netscan</code> for sockets, etc. Picking the right plugin to test your hypothesis is the actual junior-analyst skill the picker grades.
-  </p>
-</section>
-
-<section class="intro-section">
-  <h3>⚙️ Mode</h3>
-  <p>
-    <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:0.95rem;line-height:1.65">
-      <input type="checkbox" id="pro-mode-toggle" onchange="togglePromode()" style="margin-top:5px;width:16px;height:16px;cursor:pointer;flex-shrink:0">
-      <span><b>Pro mode</b> — skip the plugin picker on each stage. For analysts already familiar with Volatility 3 plugin selection. The hint button and ATT&amp;CK reveal still work.</span>
-    </label>
   </p>
 </section>
 
@@ -1085,7 +1096,8 @@ let state = {
   cmdHistory: [],
   cmdHistoryIdx: -1,
   proMode: false,
-  picks: {}              // stageId -> { plugin, grade }
+  picks: {},             // stageId -> { plugin, grade }
+  pickerSkipped: {}      // stageId -> true if user submitted without picking
 };
 
 // ============================================================
@@ -1534,6 +1546,10 @@ function selectStage(idx) {
   renderStagesList();
   renderCurrentStage();
   closeSidebar();  // close drawer on mobile after selection
+  // Scroll the new stage's content to the top — important when navigating via
+  // the post-answer Continue button or sidebar click mid-page.
+  const grid = document.querySelector('.body-grid');
+  if (grid) grid.scrollTop = 0;
 }
 
 function renderCurrentStage() {
@@ -1553,9 +1569,6 @@ function renderCurrentStage() {
     tacticBadge.style.display = 'none';
     techniqueBadge.style.display = 'none';
     document.getElementById('hint-popup').classList.remove('show');
-    // Reflect the persisted toggle state in the checkbox (in case of re-entry).
-    const cb = document.getElementById('pro-mode-toggle');
-    if (cb) cb.checked = !!state.proMode;
     return;
   }
   qa.style.display = '';
@@ -1571,6 +1584,16 @@ function renderCurrentStage() {
   } else {
     tacticBadge.style.display = 'none';
     techniqueBadge.style.display = 'none';
+  }
+
+  // Stage 1 only — first-touch terminal orientation hint. Hidden on stages 2+.
+  const ft = document.getElementById('terminal-first-touch');
+  if (s.id === 1) {
+    ft.innerHTML = `👇 <b>Type your Volatility command in the terminal below</b> — e.g. <code>vol -f MemoryDump_Lab1.raw windows.info</code>. Press Enter to run. Then submit the answer above.`;
+    ft.classList.add('show');
+  } else {
+    ft.classList.remove('show');
+    ft.innerHTML = '';
   }
 
   // Build briefing content: whatsKnown (carried-forward context) + briefing (the question framing) + picker.
@@ -1641,9 +1664,14 @@ function renderPickerHTML(s) {
       <span class="pf-reason">${g.reason}</span>
     </div>`;
   }
+  // Soft-gate nudge: if the analyst submitted without picking, show a
+  // one-line educational nudge above the dropdown until they pick.
+  const skippedNudge = (state.pickerSkipped[s.id] && !pick) ? `
+    <div class="picker-nudge">💡 Try picking a plugin first — the system grades your first-move thinking. You can still submit either way.</div>` : '';
   return `<div class="plugin-picker">
     <div class="pp-title">🔍 Pick your plugin</div>
     <div class="pp-prompt">Before you run anything, commit to a first move. Which Volatility 3 plugin would best answer this stage's question?</div>
+    ${skippedNudge}
     <select onchange="pickPlugin(this.value)">
       <option value="">— Select a plugin —</option>
       ${opts}
@@ -1672,14 +1700,21 @@ function renderSolvedFeedback(s) {
       <div class="arc-technique">${reveal.technique || ''}</div>
       ${reveal.fits ? `<div class="arc-fits-label">Why this label fits</div><div class="arc-fits">${reveal.fits}</div>` : ''}
     </div>` : '';
+  // Continue-to-next-stage button — only if there's a next solvable stage.
+  const idx = STAGES.findIndex(x => x.id === s.id);
+  const next = STAGES[idx + 1];
+  const continueBtn = (next && !next.intro) ? `
+    <button class="continue-btn" onclick="selectStage(${idx + 1})">Continue → ${next.title.replace(/^Stage \d+ — /, 'Stage ' + next.id + ': ')} →</button>` : '';
   fb.className = 'feedback show ok';
-  fb.innerHTML = `✓ <b>Correct!</b><span class="reveal">${s.answerNote || ''}</span>${attCard}`;
+  fb.innerHTML = `✓ <b>Correct!</b><span class="reveal">${s.answerNote || ''}</span>${attCard}${continueBtn}`;
 }
 
 // Stage 0 Pro-mode toggle handler.
-function togglePromode() {
-  const cb = document.getElementById('pro-mode-toggle');
+function togglePromodeHeader() {
+  const cb = document.getElementById('pro-mode-toggle-header');
   state.proMode = !!(cb && cb.checked);
+  // Re-render the current stage so the picker is hidden/shown immediately.
+  renderCurrentStage();
 }
 
 function checkAnswer() {
@@ -1688,6 +1723,23 @@ function checkAnswer() {
   const fb = document.getElementById('feedback');
   const val = ai.value.trim();
   if (!val) return;
+
+  // Soft-gate: if the picker is shown for this stage but no pick was made,
+  // flag it AND inject a one-line nudge directly above the picker dropdown.
+  // Direct DOM injection (vs full re-render) avoids wiping the analyst's
+  // typed answer on the wrong-answer path.
+  const pickerActive = !state.proMode && !s.noPicker && s.pluginGrades;
+  if (pickerActive && !state.picks[s.id]) {
+    state.pickerSkipped[s.id] = true;
+    const picker = document.querySelector('.plugin-picker');
+    if (picker && !picker.querySelector('.picker-nudge')) {
+      const nudge = document.createElement('div');
+      nudge.className = 'picker-nudge';
+      nudge.innerHTML = '💡 Try picking a plugin first — the system grades your first-move thinking. You can still submit either way.';
+      const sel = picker.querySelector('select');
+      if (sel) sel.insertAdjacentElement('beforebegin', nudge);
+    }
+  }
 
   const all = [s.answer, ...(s.altAnswers || [])];
   const correct = all.some(a => normalise(a) === normalise(val));
