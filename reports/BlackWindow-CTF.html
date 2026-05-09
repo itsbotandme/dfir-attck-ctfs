@@ -152,9 +152,14 @@
   /* (Tap-to-run suggestions and the type/tap mode toggle were removed —
      analysts type their own commands.) */
 
-  /* === Stage 1 only — first-touch terminal hint (orientation for true beginners) === */
-  .terminal-first-touch { display: none; padding: 10px 14px; margin-bottom: 10px; background: rgba(88,166,255,0.06); border: 1px solid var(--accent); border-radius: 5px; font-size: 0.78rem; color: var(--text); line-height: 1.5; }
+  /* === Stage 1 only — first-touch terminal hint (orientation for true beginners) ===
+     No box: just green text inline. The question above has its own accent
+     border, so a second blue box here would duplicate visual emphasis. Green
+     associates with the terminal/prompt colour and reads as terminal context. */
+  .terminal-first-touch { display: none; padding: 4px 0; margin-bottom: 8px; font-size: 0.78rem; color: var(--term-green); line-height: 1.5; }
   .terminal-first-touch.show { display: block; }
+  .terminal-first-touch b { color: var(--text); }
+  .terminal-first-touch code { background: rgba(74,246,38,0.08); padding: 1px 6px; border-radius: 3px; color: var(--term-green); font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; }
 
   /* === Plugin picker === */
   .plugin-picker { margin: 14px 0 8px; padding: 14px 16px; background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; }
