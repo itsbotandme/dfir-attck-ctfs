@@ -1,15 +1,15 @@
 # DFIR ATT&CK CTF Lab Pack
 
 Browser-playable, self-contained DFIR Capture-the-Flag challenges organised
-by **MITRE ATT&CK Enterprise tactics**. Each CTF includes an interactive
-analyst terminal, a full DFIR investigation report, and a junior-analyst
-training guide that explains the *why* behind every finding.
+by **MITRE ATT&CK Enterprise tactics**. Each CTF ships as three deliverables:
+an interactive analyst terminal, a full DFIR investigation report, and a
+junior-analyst training guide.
 
 ## Currently Included
 
 | Lab | Source | Format |
 |-----|--------|--------|
-| **MemLabs Lab 1** | Memory image (1 GB raw) | 8-stage ATT&CK kill-chain CTF |
+| **The Black Window Case** | Memory image (1 GB raw) | 8-stage ATT&CK kill-chain CTF |
 
 ---
 
@@ -186,9 +186,3 @@ When adding a new CTF, please ensure:
 - [ ] Clear attribution if derived from a public challenge
 - [ ] All three deliverables (HTML, report, answer sheet) are present
 - [ ] Filename pattern `<name>-CTF.html` so the launcher finds it
-
----
-
-*Built with [Claude Code](https://claude.com/claude-code) and the
-`ctf-builder` skill — see `skill/ctf-builder/SKILL.md` for the
-methodology.*
