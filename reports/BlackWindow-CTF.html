@@ -83,7 +83,10 @@
      always visible. After the analyst runs their first command, JS flips
      the DOM order and adds .cmd-entered, so the prompt drops to the
      bottom and history scrolls above it — like a real shell. */
-  .terminal { background: #000; border: 1px solid var(--border); border-radius: 0 0 6px 6px; border-top: none; height: 320px; overflow-y: auto; padding: 10px 14px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; }
+  .terminal { background: #000; border: 1px solid var(--border); border-radius: 0 0 6px 6px; border-top: none; max-height: 320px; overflow-y: auto; padding: 10px 14px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; }
+  /* Hide the terminal output box entirely when there's no output — avoids
+     an awkward empty box sitting between the prompt and the question. */
+  .terminal:empty { padding: 0; border: none; }
   .terminal-wrapper.cmd-entered .terminal { border-radius: 6px 6px 0 0; border-top: 1px solid var(--border); border-bottom: none; }
   .terminal::-webkit-scrollbar { width: 8px; }
   .terminal::-webkit-scrollbar-track { background: #000; }
@@ -317,7 +320,7 @@
     .terminal-wrapper { padding: 10px 14px; }
     .question-area { padding: 12px 14px; }
 
-    .terminal { height: 240px; font-size: 0.75rem; padding: 8px 10px; }
+    .terminal { max-height: 240px; font-size: 0.75rem; padding: 8px 10px; }
 
     /* Bigger tap targets — Apple HIG / Material spec */
     .submit-btn { padding: 12px 18px; font-size: 0.95rem; min-height: 44px; }
@@ -338,7 +341,7 @@
 
   /* === Very small phones (≤380px) === */
   @media (max-width: 380px) {
-    .terminal { height: 200px; }
+    .terminal { max-height: 200px; }
     header h1 { display: none; }
   }
 </style>
@@ -813,7 +816,7 @@ const STAGES = [
     <li><b>JavaScript</b> = how it reacts. When you type a command and hit Enter, JS reads the input, looks it up in a lookup table embedded in this file, and prints the matching output to the terminal div.</li>
   </ul>
   <p>
-    The lab does <b>not</b> actually run Volatility against the memory image when you type a command. The output for each command was generated ahead of time by running the real Volatility 3 plugins against the real memory image, then pasted into the lookup table. Commands that aren't in the table say <i>"no canned output"</i> — this is rails, not a sandbox.
+    The lab does <b>not</b> actually run Volatility against the memory image when you type a command. The output for each command was generated ahead of time by running the real Volatility 3 plugins against the real memory image, then pasted into the lookup table. Commands that aren't in the table say <i>"no canned output"</i>.
   </p>
   <p>
     If you get stuck, the <b>💡 Need a hint?</b> button gives progressive nudges.
@@ -1097,7 +1100,8 @@ let state = {
   cmdHistoryIdx: -1,
   proMode: false,
   picks: {},             // stageId -> { plugin, grade }
-  pickerSkipped: {}      // stageId -> true if user submitted without picking
+  pickerSkipped: {},     // stageId -> true if user submitted without picking
+  promptAtTop: true      // true = empty/cleared terminal, prompt above output
 };
 
 // ============================================================
@@ -1140,9 +1144,10 @@ function executeLine(rawLine) {
   const line = rawLine.trim();
   if (!line) return;
 
-  // First command this session: drop the prompt to the bottom of the
-  // terminal block so history scrolls above it like a real shell.
-  if (state.cmdHistory.length === 0) {
+  // First command after empty/cleared terminal: drop the prompt to the bottom
+  // of the terminal block so history scrolls above it like a real shell.
+  // Resets after `clear` so the next command moves the prompt down again.
+  if (state.promptAtTop) {
     const wrap = document.querySelector('.terminal-wrapper');
     const inputRow = document.getElementById('term-input-row');
     const term = document.getElementById('terminal');
@@ -1150,6 +1155,7 @@ function executeLine(rawLine) {
       wrap.insertBefore(term, inputRow);
     }
     if (wrap) wrap.classList.add('cmd-entered');
+    state.promptAtTop = false;
   }
 
   termWritePrompt(line);
@@ -1205,9 +1211,20 @@ function runCommand(cmd, stdin) {
       return cmdUniq(tokens.slice(1), stdin);
     case 'help': case '?':
       return { text: HELP_TEXT, cls: "term-info" };
-    case 'clear':
+    case 'clear': {
+      // Empty the output AND reset the prompt to the top — like a real shell
+      // after `clear`, the next command will start fresh from the top.
       document.getElementById('terminal').innerHTML = '';
+      const wrap = document.querySelector('.terminal-wrapper');
+      const inputRow = document.getElementById('term-input-row');
+      const term = document.getElementById('terminal');
+      if (wrap && inputRow && term && wrap.classList.contains('cmd-entered')) {
+        wrap.classList.remove('cmd-entered');
+        wrap.insertBefore(inputRow, term);
+      }
+      state.promptAtTop = true;
       return { text: "" };
+    }
     case 'tactics':
       return { text: TACTICS_TEXT, cls: "term-info" };
     case 'progress':
