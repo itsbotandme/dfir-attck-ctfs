@@ -865,8 +865,8 @@ const STAGES = [
     },
     hints: [
       "Volatility 3 commands take the shape <code>vol -f &lt;memory image&gt; &lt;plugin&gt;</code>. There's a plugin that returns the basic system fingerprint — think about what it would be called.",
-      "The plugin is windows.info.",
-      "Run vol -f MemoryDump_Lab1.raw windows.info and read the NTBuildLab field. The first two number groups are your answer."
+      "The plugin namespace is <code>windows.</code>; the suffix is the obvious word for 'basic info about the system'.",
+      "Run <code>vol -f MemoryDump_Lab1.raw windows.info</code>. Read the NTBuildLab field, first two number groups."
     ]
   },
 
@@ -895,14 +895,14 @@ const STAGES = [
     },
     hints: [
       "Same shape: <code>vol -f &lt;memory image&gt; &lt;plugin&gt;</code>. What plugin would enumerate running processes along with their session IDs?",
-      "Look for explorer.exe instances in pslist. Count distinct SessionId values among them.",
-      "Filter pslist for explorer.exe and count the rows."
+      "Each interactive Windows desktop spawns exactly one of a particular process. Find it in the process list and count distinct SessionIds.",
+      "Run <code>vol -f MemoryDump_Lab1.raw windows.pslist</code>. Count distinct SessionIds among the explorer.exe rows."
     ]
   },
 
   {
     id: 3,
-    title: "Stage 3 — What did they type?",
+    title: "Stage 3 — What spawned from the desktop?",
     tactic: "TA0002 Execution",
     technique: "T1059.003 Windows Command Shell",
     whatsKnown: `Two simultaneous interactive sessions on a single-user PC. The sister mentioned a "black window" popping up.`,
@@ -925,8 +925,8 @@ const STAGES = [
     },
     hints: [
       "Same shape: <code>vol -f &lt;memory image&gt; &lt;plugin&gt;</code>. Two plugins are relevant here — one shows process parent-child relationships, the other shows what was typed at each process's launch.",
-      "cmd.exe is the answer. Find it in pstree — what's its parent PID?",
-      "In pstree, look for cmd.exe whose parent is PID 604 (explorer.exe in Session 1). Take its PID."
+      "An interactive shell on Windows has the desktop process as its parent and a console-host helper as its sibling, both created within the same second.",
+      "Run <code>vol -f MemoryDump_Lab1.raw windows.pstree</code>. The cmd.exe with parent PID 604 — take its PID."
     ]
   },
 
@@ -938,7 +938,7 @@ const STAGES = [
     whatsKnown: `A cmd.exe (PID 1984) ran interactively in Session 1. Whatever it executed should be discoverable as a script or binary it touched.`,
     briefing: `If the actor wanted their script to look legitimate, they'd drop it where the OS already lives — <code>C:\\Windows\\System32\\</code>. A non-PE file (<code>.bat</code>, <code>.ps1</code>, <code>.vbs</code>) in that directory is the cheapest tell. You're looking for exactly one such file.`,
     pluginGrades: {
-      "windows.filescan":         { grade: "best",      reason: "Walks the file object pool and lists every path Windows touched — filter for .bat in System32." },
+      "windows.filescan":         { grade: "best",      reason: "Walks the file object pool. Pipe to `grep` to search for specific file types or paths." },
       "windows.registry.printkey":{ grade: "plausible", reason: "RecentDocs / MRU keys can confirm a user opened the file recently — useful corroboration once you've found it." },
       "windows.pslist":           { grade: "off-base",  reason: "Process list. The file is on disk, not running as a process." },
       "windows.cmdline":          { grade: "off-base",  reason: "Process command lines. cmd.exe was interactive — its cmdline doesn't show what was typed inside it." },
@@ -955,7 +955,7 @@ const STAGES = [
     },
     hints: [
       "Looking at every file path in memory unfiltered is overwhelming — pipe to filter: <code>vol -f &lt;memory image&gt; &lt;plugin&gt; | grep &lt;pattern&gt;</code>. What plugin enumerates files in memory, and what pattern would surface non-binary files in System32?",
-      "Use windows.filescan and pipe through grep for .bat, .ps1, or .vbs.",
+      "Filter file paths in memory by extension. What extension would a script have, and which OS directory should never contain a script?",
       "Look in System32 for a .bat file. The filename uses leet-speak with a $ symbol. Capitalisation matters."
     ]
   },
@@ -968,7 +968,7 @@ const STAGES = [
     whatsKnown: `A leet-named batch script (St4G3$1.bat) was executed via cmd.exe in System32. The actor was hands-on-keyboard with intent.`,
     briefing: `If the actor's goal was credential theft, evidence should converge in two places — a dropped log/output file in a diagnostic directory like <code>\\Windows\\debug\\</code>, and DPAPI credential blobs touched in the user profiles. If either is missing, the credential angle is unconfirmed and needs refinement.`,
     pluginGrades: {
-      "windows.filescan":         { grade: "best",      reason: "Looks for credential-log files (PASSWD.LOG and similar) in known dropping grounds like \\Windows\\debug\\." },
+      "windows.filescan":         { grade: "best",      reason: "Walks the file object pool. Pipe to `grep` to search for credential-related files Windows touched recently." },
       "windows.handles":          { grade: "plausible", reason: "If the credential-stealing process is still running, its open handles would show DPAPI blob paths — but you'd need to know the PID first." },
       "windows.pslist":           { grade: "off-base",  reason: "Lists processes. Doesn't surface dropped log files in system directories." },
       "windows.cmdline":          { grade: "off-base",  reason: "Process command lines. Won't reveal log files dropped by short-lived utilities." },
@@ -986,8 +986,8 @@ const STAGES = [
     },
     hints: [
       "Same shape with filtering: <code>vol -f &lt;memory image&gt; &lt;plugin&gt; | grep &lt;pattern&gt;</code>. Credential-stealing tools write log output to a known Windows debug directory — grep for the directory name or the kind of file that would be there.",
-      "Look in C:\\Windows\\debug\\. The filename will be ALL CAPS and end in .LOG.",
-      "Run windows.filescan | grep -i passwd. The full path to PASSWD.LOG is your answer."
+      "Pipe <code>filescan</code> to <code>grep -i &lt;pattern&gt;</code>. As a first pass, filter on a credential-related word.",
+      "Run <code>vol -f MemoryDump_Lab1.raw windows.filescan | grep -i passwd</code>. The full path is <code>C:\\Windows\\debug\\PASSWD.LOG</code>."
     ]
   },
 
@@ -999,10 +999,10 @@ const STAGES = [
     whatsKnown: `Credential-stealing intent was confirmed. The actor likely has access to both user accounts.`,
     briefing: `If the actor is preparing data to take, you should see an archiving utility (WinRAR, 7-zip) running with a target file in a user profile as its argument. Bonus signal: if the archive lives in user A's Documents but the archiver runs in user B's session, that's cross-account access — confirming the credential stage paid off.`,
     pluginGrades: {
-      "windows.cmdline":          { grade: "best",      reason: "Filter for archive tools (rar, 7z, tar) — fastest way to confirm or rule out the staging hypothesis." },
+      "windows.cmdline":          { grade: "best",      reason: "Shows what command each running process was launched with. Filter to spot an archiving tool that's been run." },
       "windows.handles":          { grade: "best",      reason: "On any archiver process you find, handles show which files are open and confirm the user-context the archiver is running under." },
-      "windows.pslist":           { grade: "plausible", reason: "Lists processes — you'd see WinRAR.exe but you wouldn't see what it's working on without cmdline." },
-      "windows.pstree":           { grade: "plausible", reason: "Shows WinRAR's parent (which session launched it) — useful corroboration." },
+      "windows.pslist":           { grade: "plausible", reason: "Lists processes — you'd see the archiver process exists, but not what file it's archiving." },
+      "windows.pstree":           { grade: "plausible", reason: "Shows the archiver process's parent (which session launched it) — useful corroboration." },
       "windows.filescan":         { grade: "off-base",  reason: "Lists files in memory. Could show .rar files but doesn't tell you which process is staging them." },
       "windows.netscan":          { grade: "off-base",  reason: "Network sockets. Wrong layer for archiving activity." },
       "windows.registry.printkey":{ grade: "off-base",  reason: "Registry. Wrong layer." }
@@ -1016,8 +1016,8 @@ const STAGES = [
     },
     hints: [
       "Two-step: first find the archiver process with <code>vol -f &lt;memory image&gt; &lt;plugin&gt; | grep &lt;pattern&gt;</code>, then inspect its open files with <code>vol -f &lt;memory image&gt; windows.handles --pid &lt;PID&gt;</code>. What's the most common Windows archiver?",
-      "Filter windows.cmdline for 'rar'. Note what archive file is the argument.",
-      "WinRAR (PID 1512) was opened with a .rar file in Alissa's Documents. The filename is two words concatenated."
+      "Filter cmdline by archive format. Whose user folder does the archive sit in?",
+      "Run <code>vol -f MemoryDump_Lab1.raw windows.cmdline | grep rar</code>. WinRAR (PID 1512) was launched with a .rar in Alissa's Documents. Filename is two words concatenated."
     ]
   },
 
@@ -1048,7 +1048,7 @@ const STAGES = [
     hints: [
       "Same shape: <code>vol -f &lt;memory image&gt; &lt;plugin&gt;</code>. What plugin shows network sockets and listening ports at capture time?",
       "Look at the LISTENING TCP entries in netscan. The classic Windows file-sharing port is a 3-digit number starting with 4.",
-      "TCP 445 (SMB) is exposed. Either type the port number or the protocol name."
+      "Run <code>vol -f MemoryDump_Lab1.raw windows.netscan</code>. The TCP LISTENING entry on port 445 (SMB) — type either the port number or 'SMB'."
     ]
   },
 
