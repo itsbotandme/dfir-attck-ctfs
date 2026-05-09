@@ -154,13 +154,13 @@
      analysts type their own commands.) */
 
   /* === Stage 1 only — first-touch terminal hint (orientation for true beginners) ===
-     No box: just green text inline. The question above has its own accent
-     border, so a second blue box here would duplicate visual emphasis. Green
-     associates with the terminal/prompt colour and reads as terminal context. */
-  .terminal-first-touch { display: none; padding: 4px 0; margin-bottom: 8px; font-size: 0.78rem; color: var(--term-green); line-height: 1.5; }
+     No box (the question above already has its accent border). White body text
+     reads as instruction; blue inline code distinguishes the example command
+     from both the body text and the green prompt below. */
+  .terminal-first-touch { display: none; padding: 4px 0; margin-bottom: 8px; font-size: 0.78rem; color: var(--text); line-height: 1.5; }
   .terminal-first-touch.show { display: block; }
   .terminal-first-touch b { color: var(--text); }
-  .terminal-first-touch code { background: rgba(74,246,38,0.08); padding: 1px 6px; border-radius: 3px; color: var(--term-green); font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; }
+  .terminal-first-touch code { background: var(--code-bg); padding: 1px 6px; border-radius: 3px; color: var(--accent-2); font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; }
 
   /* === Plugin picker === */
   .plugin-picker { margin: 14px 0 8px; padding: 14px 16px; background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; }
@@ -1164,6 +1164,14 @@ function executeLine(rawLine) {
     state.promptAtTop = false;
   }
 
+  // Capture where the new command's prompt+output will start in the scroll
+  // buffer, so we can scroll to it once all output is written. Without this,
+  // termWrite's scroll-to-bottom default hides the prompt+command at the top
+  // of long output (e.g. windows.pslist) — the analyst would have to scroll
+  // up within the terminal to see what they typed.
+  const t = document.getElementById('terminal');
+  const promptStartOffset = t.scrollHeight;
+
   termWritePrompt(line);
 
   // Add to history
@@ -1177,12 +1185,23 @@ function executeLine(rawLine) {
     stdin = runCommand(pipeline[i], stdin);
     if (stdin && stdin.error) {
       termWriteOutput(stdin.error, "term-error");
+      scrollTerminalToPrompt(t, promptStartOffset);
       return;
     }
   }
   if (stdin && stdin.text) {
     termWriteOutput(stdin.text, stdin.cls || "term-output");
   }
+  scrollTerminalToPrompt(t, promptStartOffset);
+}
+
+// Scroll the terminal so the latest command's prompt sits at the top of the
+// visible area (overrides termWrite's scroll-to-bottom). Wrapped in rAF so
+// it runs after the browser has computed the new layout.
+function scrollTerminalToPrompt(t, offset) {
+  requestAnimationFrame(() => {
+    t.scrollTop = offset;
+  });
 }
 
 function runCommand(cmd, stdin) {
