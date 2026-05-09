@@ -431,69 +431,69 @@
 const VOL_OUTPUTS = {
   "windows.info": `Volatility 3 Framework 2.28.1
 
-Variable\tValue
+Variable                        Value
 
-Kernel Base\t0xf8000261f000
-DTB\t0x187000
-Symbols\tfile://&lt;symbols&gt;/windows/ntkrnlmp.pdb/3844DBB920174967BE7AA4A2C20430FA-2.json.xz
-Is64Bit\tTrue
-IsPAE\tFalse
-layer_name\t0 WindowsIntel32e
-memory_layer\t1 FileLayer
-KdDebuggerDataBlock\t0xf800028100a0
-NTBuildLab\t7601.17514.amd64fre.win7sp1_rtm.
-CSDVersion\t1
-KdVersionBlock\t0xf80002810068
-Major/Minor\t15.7601
-MachineType\t34404
-KeNumberProcessors\t1
-SystemTime\t2019-12-11 14:38:00+00:00
-NtSystemRoot\tC:\\Windows
-NtProductType\tNtProductWinNt
-NtMajorVersion\t6
-NtMinorVersion\t1
-PE MajorOperatingSystemVersion\t6
-PE MinorOperatingSystemVersion\t1
-PE Machine\t34404
-PE TimeDateStamp\tSat Nov 20 09:30:02 2010`,
+Kernel Base                     0xf8000261f000
+DTB                             0x187000
+Symbols                         file://&lt;symbols&gt;/windows/ntkrnlmp.pdb/3844DBB920174967BE7AA4A2C20430FA-2.json.xz
+Is64Bit                         True
+IsPAE                           False
+layer_name                      0 WindowsIntel32e
+memory_layer                    1 FileLayer
+KdDebuggerDataBlock             0xf800028100a0
+NTBuildLab                      7601.17514.amd64fre.win7sp1_rtm.
+CSDVersion                      1
+KdVersionBlock                  0xf80002810068
+Major/Minor                     15.7601
+MachineType                     34404
+KeNumberProcessors              1
+SystemTime                      2019-12-11 14:38:00+00:00
+NtSystemRoot                    C:\\Windows
+NtProductType                   NtProductWinNt
+NtMajorVersion                  6
+NtMinorVersion                  1
+PE MajorOperatingSystemVersion  6
+PE MinorOperatingSystemVersion  1
+PE Machine                      34404
+PE TimeDateStamp                Sat Nov 20 09:30:02 2010`,
 
   "windows.pslist": `Volatility 3 Framework 2.28.1
 
-PID\tPPID\tImageFileName\tOffset(V)\tThreads\tHandles\tSessionId\tWow64\tCreateTime\tExitTime
-4\t0\tSystem\t0xfa8000ca0040\t80\t570\tN/A\tFalse\t2019-12-11 13:41:25\tN/A
-248\t4\tsmss.exe\t0xfa800148f040\t3\t37\tN/A\tFalse\t2019-12-11 13:41:25\tN/A
-320\t312\tcsrss.exe\t0xfa800154f740\t9\t457\t0\tFalse\t2019-12-11 13:41:32\tN/A
-368\t360\tcsrss.exe\t0xfa8000ca81e0\t7\t199\t1\tFalse\t2019-12-11 13:41:33\tN/A
-416\t360\twinlogon.exe\t0xfa8001c5f060\t4\t118\t1\tFalse\t2019-12-11 13:41:34\tN/A
-424\t312\twininit.exe\t0xfa8001c5f630\t3\t75\t0\tFalse\t2019-12-11 13:41:34\tN/A
-484\t424\tservices.exe\t0xfa8001c98530\t13\t219\t0\tFalse\t2019-12-11 13:41:35\tN/A
-492\t424\tlsass.exe\t0xfa8001ca0580\t9\t764\t0\tFalse\t2019-12-11 13:41:35\tN/A
-500\t424\tlsm.exe\t0xfa8001ca4b30\t11\t185\t0\tFalse\t2019-12-11 13:41:35\tN/A
-588\t484\tsvchost.exe\t0xfa8001cf4b30\t11\t358\t0\tFalse\t2019-12-11 13:41:39\tN/A
-652\t484\tVBoxService.ex\t0xfa8001d327c0\t13\t137\t0\tFalse\t2019-12-11 13:41:40\tN/A
-720\t484\tsvchost.exe\t0xfa8001d49b30\t8\t279\t0\tFalse\t2019-12-11 13:41:41\tN/A
-816\t484\tsvchost.exe\t0xfa8001d8c420\t23\t569\t0\tFalse\t2019-12-11 13:41:42\tN/A
-852\t484\tsvchost.exe\t0xfa8001da5b30\t28\t542\t0\tFalse\t2019-12-11 13:41:43\tN/A
-876\t484\tsvchost.exe\t0xfa8001da96c0\t32\t941\t0\tFalse\t2019-12-11 13:41:43\tN/A
-1208\t484\tspoolsv.exe\t0xfa8001eba230\t13\t282\t0\tFalse\t2019-12-11 13:41:51\tN/A
-1416\t484\tTCPSVCS.EXE\t0xfa8001f91b30\t4\t97\t0\tFalse\t2019-12-11 13:41:55\tN/A
-1508\t484\tsppsvc.exe\t0xfa8000d3c400\t4\t141\t0\tFalse\t2019-12-11 14:16:06\tN/A
-1856\t484\twmpnetwk.exe\t0xfa8002170630\t16\t451\t0\tFalse\t2019-12-11 14:16:08\tN/A
-480\t484\tSearchIndexer.\t0xfa8001d376f0\t14\t701\t0\tFalse\t2019-12-11 14:16:09\tN/A
-296\t484\ttaskhost.exe\t0xfa8001eb47f0\t8\t151\t1\tFalse\t2019-12-11 14:32:24\tN/A
-1988\t852\tdwm.exe\t0xfa8001dfa910\t5\t72\t1\tFalse\t2019-12-11 14:32:25\tN/A
-604\t2016\texplorer.exe\t0xfa8002046960\t33\t927\t1\tFalse\t2019-12-11 14:32:25\tN/A
-2064\t816\taudiodg.exe\t0xfa80021da060\t6\t131\t0\tFalse\t2019-12-11 14:32:37\tN/A
-1984\t604\tcmd.exe\t0xfa8002222780\t1\t21\t1\tFalse\t2019-12-11 14:34:54\tN/A
-2692\t368\tconhost.exe\t0xfa8002227140\t2\t50\t1\tFalse\t2019-12-11 14:34:54\tN/A
-2424\t604\tmspaint.exe\t0xfa80022bab30\t6\t128\t1\tFalse\t2019-12-11 14:35:14\tN/A
-2660\t484\tsvchost.exe\t0xfa8000eac770\t6\t100\t0\tFalse\t2019-12-11 14:35:14\tN/A
-2760\t2680\tcsrss.exe\t0xfa8001e68060\t7\t172\t2\tFalse\t2019-12-11 14:37:05\tN/A
-2808\t2680\twinlogon.exe\t0xfa8000ecbb30\t4\t119\t2\tFalse\t2019-12-11 14:37:05\tN/A
-2908\t484\ttaskhost.exe\t0xfa8000f3aab0\t9\t158\t2\tFalse\t2019-12-11 14:37:13\tN/A
-3004\t852\tdwm.exe\t0xfa8000f4db30\t5\t72\t2\tFalse\t2019-12-11 14:37:14\tN/A
-2504\t3000\texplorer.exe\t0xfa8000f4c670\t34\t825\t2\tFalse\t2019-12-11 14:37:14\tN/A
-1512\t2504\tWinRAR.exe\t0xfa8001010b30\t6\t207\t2\tFalse\t2019-12-11 14:37:23\tN/A`,
+PID   PPID  ImageFileName   Offset(V)       Threads  Handles  SessionId  Wow64  CreateTime           ExitTime
+4     0     System          0xfa8000ca0040  80       570      N/A        False  2019-12-11 13:41:25  N/A
+248   4     smss.exe        0xfa800148f040  3        37       N/A        False  2019-12-11 13:41:25  N/A
+320   312   csrss.exe       0xfa800154f740  9        457      0          False  2019-12-11 13:41:32  N/A
+368   360   csrss.exe       0xfa8000ca81e0  7        199      1          False  2019-12-11 13:41:33  N/A
+416   360   winlogon.exe    0xfa8001c5f060  4        118      1          False  2019-12-11 13:41:34  N/A
+424   312   wininit.exe     0xfa8001c5f630  3        75       0          False  2019-12-11 13:41:34  N/A
+484   424   services.exe    0xfa8001c98530  13       219      0          False  2019-12-11 13:41:35  N/A
+492   424   lsass.exe       0xfa8001ca0580  9        764      0          False  2019-12-11 13:41:35  N/A
+500   424   lsm.exe         0xfa8001ca4b30  11       185      0          False  2019-12-11 13:41:35  N/A
+588   484   svchost.exe     0xfa8001cf4b30  11       358      0          False  2019-12-11 13:41:39  N/A
+652   484   VBoxService.ex  0xfa8001d327c0  13       137      0          False  2019-12-11 13:41:40  N/A
+720   484   svchost.exe     0xfa8001d49b30  8        279      0          False  2019-12-11 13:41:41  N/A
+816   484   svchost.exe     0xfa8001d8c420  23       569      0          False  2019-12-11 13:41:42  N/A
+852   484   svchost.exe     0xfa8001da5b30  28       542      0          False  2019-12-11 13:41:43  N/A
+876   484   svchost.exe     0xfa8001da96c0  32       941      0          False  2019-12-11 13:41:43  N/A
+1208  484   spoolsv.exe     0xfa8001eba230  13       282      0          False  2019-12-11 13:41:51  N/A
+1416  484   TCPSVCS.EXE     0xfa8001f91b30  4        97       0          False  2019-12-11 13:41:55  N/A
+1508  484   sppsvc.exe      0xfa8000d3c400  4        141      0          False  2019-12-11 14:16:06  N/A
+1856  484   wmpnetwk.exe    0xfa8002170630  16       451      0          False  2019-12-11 14:16:08  N/A
+480   484   SearchIndexer.  0xfa8001d376f0  14       701      0          False  2019-12-11 14:16:09  N/A
+296   484   taskhost.exe    0xfa8001eb47f0  8        151      1          False  2019-12-11 14:32:24  N/A
+1988  852   dwm.exe         0xfa8001dfa910  5        72       1          False  2019-12-11 14:32:25  N/A
+604   2016  explorer.exe    0xfa8002046960  33       927      1          False  2019-12-11 14:32:25  N/A
+2064  816   audiodg.exe     0xfa80021da060  6        131      0          False  2019-12-11 14:32:37  N/A
+1984  604   cmd.exe         0xfa8002222780  1        21       1          False  2019-12-11 14:34:54  N/A
+2692  368   conhost.exe     0xfa8002227140  2        50       1          False  2019-12-11 14:34:54  N/A
+2424  604   mspaint.exe     0xfa80022bab30  6        128      1          False  2019-12-11 14:35:14  N/A
+2660  484   svchost.exe     0xfa8000eac770  6        100      0          False  2019-12-11 14:35:14  N/A
+2760  2680  csrss.exe       0xfa8001e68060  7        172      2          False  2019-12-11 14:37:05  N/A
+2808  2680  winlogon.exe    0xfa8000ecbb30  4        119      2          False  2019-12-11 14:37:05  N/A
+2908  484   taskhost.exe    0xfa8000f3aab0  9        158      2          False  2019-12-11 14:37:13  N/A
+3004  852   dwm.exe         0xfa8000f4db30  5        72       2          False  2019-12-11 14:37:14  N/A
+2504  3000  explorer.exe    0xfa8000f4c670  34       825      2          False  2019-12-11 14:37:14  N/A
+1512  2504  WinRAR.exe      0xfa8001010b30  6        207      2          False  2019-12-11 14:37:23  N/A`,
 
   "windows.psscan": `(same as pslist for this image — no hidden processes detected)
 [See windows.pslist output. psscan walks the pool tag scan and found identical processes —
@@ -501,132 +501,132 @@ PID\tPPID\tImageFileName\tOffset(V)\tThreads\tHandles\tSessionId\tWow64\tCreateT
 
   "windows.pstree": `Volatility 3 Framework 2.28.1
 
-PID\tPPID\tImageFileName\tCreateTime\tCmd
-4\t0\tSystem\t2019-12-11 13:41:25\t-
-* 248\t4\tsmss.exe\t2019-12-11 13:41:25\t\\SystemRoot\\System32\\smss.exe
-** 376\t248\tpsxss.exe\t2019-12-11 13:41:33\t%SystemRoot%\\system32\\psxss.exe
-320\t312\tcsrss.exe\t2019-12-11 13:41:32\t%SystemRoot%\\system32\\csrss.exe
-368\t360\tcsrss.exe\t2019-12-11 13:41:33\t%SystemRoot%\\system32\\csrss.exe
-* 2260\t368\tconhost.exe\t2019-12-11 14:37:54\t\\??\\C:\\Windows\\system32\\conhost.exe
-* 2692\t368\tconhost.exe\t2019-12-11 14:34:54\t\\??\\C:\\Windows\\system32\\conhost.exe
-416\t360\twinlogon.exe\t2019-12-11 13:41:34\twinlogon.exe
-424\t312\twininit.exe\t2019-12-11 13:41:34\twininit.exe
-* 484\t424\tservices.exe\t2019-12-11 13:41:35\tC:\\Windows\\system32\\services.exe
-** 1416\t484\tTCPSVCS.EXE\t2019-12-11 13:41:55\tC:\\Windows\\System32\\tcpsvcs.exe
-** 652\t484\tVBoxService.ex\t2019-12-11 13:41:40\tC:\\Windows\\System32\\VBoxService.exe
+PID      PPID  ImageFileName   CreateTime           Cmd
+4        0     System          2019-12-11 13:41:25  -
+* 248    4     smss.exe        2019-12-11 13:41:25  \\SystemRoot\\System32\\smss.exe
+** 376   248   psxss.exe       2019-12-11 13:41:33  %SystemRoot%\\system32\\psxss.exe
+320      312   csrss.exe       2019-12-11 13:41:32  %SystemRoot%\\system32\\csrss.exe
+368      360   csrss.exe       2019-12-11 13:41:33  %SystemRoot%\\system32\\csrss.exe
+* 2260   368   conhost.exe     2019-12-11 14:37:54  \\??\\C:\\Windows\\system32\\conhost.exe
+* 2692   368   conhost.exe     2019-12-11 14:34:54  \\??\\C:\\Windows\\system32\\conhost.exe
+416      360   winlogon.exe    2019-12-11 13:41:34  winlogon.exe
+424      312   wininit.exe     2019-12-11 13:41:34  wininit.exe
+* 484    424   services.exe    2019-12-11 13:41:35  C:\\Windows\\system32\\services.exe
+** 1416  484   TCPSVCS.EXE     2019-12-11 13:41:55  C:\\Windows\\System32\\tcpsvcs.exe
+** 652   484   VBoxService.ex  2019-12-11 13:41:40  C:\\Windows\\System32\\VBoxService.exe
 ** 484 svchost.exe instances...
-* 492\t424\tlsass.exe\t2019-12-11 13:41:35\tC:\\Windows\\system32\\lsass.exe
-* 500\t424\tlsm.exe\t2019-12-11 13:41:35\tC:\\Windows\\system32\\lsm.exe
+* 492  424  lsass.exe  2019-12-11 13:41:35  C:\\Windows\\system32\\lsass.exe
+* 500  424  lsm.exe    2019-12-11 13:41:35  C:\\Windows\\system32\\lsm.exe
 
 [SESSION 1 — User SmartNet]
-604\t2016\texplorer.exe\t2019-12-11 14:32:25\tC:\\Windows\\Explorer.EXE
-* 1984\t604\tcmd.exe\t2019-12-11 14:34:54\t"C:\\Windows\\system32\\cmd.exe"
-* 2424\t604\tmspaint.exe\t2019-12-11 14:35:14\t"C:\\Windows\\system32\\mspaint.exe"
+604     2016  explorer.exe  2019-12-11 14:32:25  C:\\Windows\\Explorer.EXE
+* 1984  604   cmd.exe       2019-12-11 14:34:54  "C:\\Windows\\system32\\cmd.exe"
+* 2424  604   mspaint.exe   2019-12-11 14:35:14  "C:\\Windows\\system32\\mspaint.exe"
 
 [SESSION 2 — User Alissa Simpson]
-2760\t2680\tcsrss.exe\t2019-12-11 14:37:05\t%SystemRoot%\\system32\\csrss.exe
-2808\t2680\twinlogon.exe\t2019-12-11 14:37:05\twinlogon.exe
-2504\t3000\texplorer.exe\t2019-12-11 14:37:14\tC:\\Windows\\Explorer.EXE
-* 1512\t2504\tWinRAR.exe\t2019-12-11 14:37:23\t"C:\\Program Files\\WinRAR\\WinRAR.exe" "C:\\Users\\Alissa Simpson\\Documents\\Important.rar"`,
+2760    2680  csrss.exe     2019-12-11 14:37:05  %SystemRoot%\\system32\\csrss.exe
+2808    2680  winlogon.exe  2019-12-11 14:37:05  winlogon.exe
+2504    3000  explorer.exe  2019-12-11 14:37:14  C:\\Windows\\Explorer.EXE
+* 1512  2504  WinRAR.exe    2019-12-11 14:37:23  "C:\\Program Files\\WinRAR\\WinRAR.exe" "C:\\Users\\Alissa Simpson\\Documents\\Important.rar"`,
 
   "windows.cmdline": `Volatility 3 Framework 2.28.1
 
-PID\tProcess\tArgs
+PID   Process       Args
 
-4\tSystem\t-
-248\tsmss.exe\t\\SystemRoot\\System32\\smss.exe
-320\tcsrss.exe\t%SystemRoot%\\system32\\csrss.exe
-368\tcsrss.exe\t%SystemRoot%\\system32\\csrss.exe
-416\twinlogon.exe\twinlogon.exe
-424\twininit.exe\twininit.exe
-484\tservices.exe\tC:\\Windows\\system32\\services.exe
-492\tlsass.exe\tC:\\Windows\\system32\\lsass.exe
-500\tlsm.exe\tC:\\Windows\\system32\\lsm.exe
-588\tsvchost.exe\tC:\\Windows\\system32\\svchost.exe -k DcomLaunch
-604\texplorer.exe\tC:\\Windows\\Explorer.EXE
-1208\tspoolsv.exe\tC:\\Windows\\System32\\spoolsv.exe
-1416\tTCPSVCS.EXE\tC:\\Windows\\System32\\tcpsvcs.exe
-1512\tWinRAR.exe\t"C:\\Program Files\\WinRAR\\WinRAR.exe" "C:\\Users\\Alissa Simpson\\Documents\\Important.rar"
-1984\tcmd.exe\t"C:\\Windows\\system32\\cmd.exe"
-2064\taudiodg.exe\tC:\\Windows\\system32\\AUDIODG.EXE 0x20c
-2260\tconhost.exe\t\\??\\C:\\Windows\\system32\\conhost.exe
-2424\tmspaint.exe\t"C:\\Windows\\system32\\mspaint.exe"
-2504\texplorer.exe\tC:\\Windows\\Explorer.EXE
-2692\tconhost.exe\t\\??\\C:\\Windows\\system32\\conhost.exe`,
+4     System        -
+248   smss.exe      \\SystemRoot\\System32\\smss.exe
+320   csrss.exe     %SystemRoot%\\system32\\csrss.exe
+368   csrss.exe     %SystemRoot%\\system32\\csrss.exe
+416   winlogon.exe  winlogon.exe
+424   wininit.exe   wininit.exe
+484   services.exe  C:\\Windows\\system32\\services.exe
+492   lsass.exe     C:\\Windows\\system32\\lsass.exe
+500   lsm.exe       C:\\Windows\\system32\\lsm.exe
+588   svchost.exe   C:\\Windows\\system32\\svchost.exe -k DcomLaunch
+604   explorer.exe  C:\\Windows\\Explorer.EXE
+1208  spoolsv.exe   C:\\Windows\\System32\\spoolsv.exe
+1416  TCPSVCS.EXE   C:\\Windows\\System32\\tcpsvcs.exe
+1512  WinRAR.exe    "C:\\Program Files\\WinRAR\\WinRAR.exe" "C:\\Users\\Alissa Simpson\\Documents\\Important.rar"
+1984  cmd.exe       "C:\\Windows\\system32\\cmd.exe"
+2064  audiodg.exe   C:\\Windows\\system32\\AUDIODG.EXE 0x20c
+2260  conhost.exe   \\??\\C:\\Windows\\system32\\conhost.exe
+2424  mspaint.exe   "C:\\Windows\\system32\\mspaint.exe"
+2504  explorer.exe  C:\\Windows\\Explorer.EXE
+2692  conhost.exe   \\??\\C:\\Windows\\system32\\conhost.exe`,
 
   "windows.netscan": `Volatility 3 Framework 2.28.1
 
-Offset\tProto\tLocalAddr\tLocalPort\tForeignAddr\tForeignPort\tState\tPID\tOwner
-0x3ea5a640\tTCPv4\t0.0.0.0\t445\t0.0.0.0\t0\tLISTENING\t4\tSystem
-0x3eaaece0\tUDPv4\t10.0.2.15\t137\t*\t0\t\t4\tSystem
-0x3ec6fa40\tUDPv4\t10.0.2.15\t138\t*\t0\t\t4\tSystem
-0x3ef0c6c0\tTCPv4\t10.0.2.15\t139\t0.0.0.0\t0\tLISTENING\t4\tSystem
-0x3ef4d010\tTCPv4\t0.0.0.0\t135\t0.0.0.0\t0\tLISTENING\t720\tsvchost.exe
-0x3ec97240\tTCPv4\t0.0.0.0\t49154\t0.0.0.0\t0\tLISTENING\t492\tlsass.exe
-0x3ea01720\tTCPv4\t0.0.0.0\t19\t0.0.0.0\t0\tLISTENING\t1416\tTCPSVCS.EXE
-0x3ea0b900\tTCPv4\t0.0.0.0\t17\t0.0.0.0\t0\tLISTENING\t1416\tTCPSVCS.EXE
-0x3ede4ef0\tTCPv4\t0.0.0.0\t9\t0.0.0.0\t0\tLISTENING\t1416\tTCPSVCS.EXE
-0x3ede75d0\tTCPv4\t0.0.0.0\t13\t0.0.0.0\t0\tLISTENING\t1416\tTCPSVCS.EXE
-0x3ede8010\tTCPv4\t0.0.0.0\t7\t0.0.0.0\t0\tLISTENING\t1416\tTCPSVCS.EXE
-0x3ecb12e0\tTCPv4\t0.0.0.0\t554\t0.0.0.0\t0\tLISTENING\t1856\twmpnetwk.exe
+Offset      Proto  LocalAddr  LocalPort  ForeignAddr  ForeignPort  State      PID   Owner
+0x3ea5a640  TCPv4  0.0.0.0    445        0.0.0.0      0            LISTENING  4     System
+0x3eaaece0  UDPv4  10.0.2.15  137        *            0                       4     System
+0x3ec6fa40  UDPv4  10.0.2.15  138        *            0                       4     System
+0x3ef0c6c0  TCPv4  10.0.2.15  139        0.0.0.0      0            LISTENING  4     System
+0x3ef4d010  TCPv4  0.0.0.0    135        0.0.0.0      0            LISTENING  720   svchost.exe
+0x3ec97240  TCPv4  0.0.0.0    49154      0.0.0.0      0            LISTENING  492   lsass.exe
+0x3ea01720  TCPv4  0.0.0.0    19         0.0.0.0      0            LISTENING  1416  TCPSVCS.EXE
+0x3ea0b900  TCPv4  0.0.0.0    17         0.0.0.0      0            LISTENING  1416  TCPSVCS.EXE
+0x3ede4ef0  TCPv4  0.0.0.0    9          0.0.0.0      0            LISTENING  1416  TCPSVCS.EXE
+0x3ede75d0  TCPv4  0.0.0.0    13         0.0.0.0      0            LISTENING  1416  TCPSVCS.EXE
+0x3ede8010  TCPv4  0.0.0.0    7          0.0.0.0      0            LISTENING  1416  TCPSVCS.EXE
+0x3ecb12e0  TCPv4  0.0.0.0    554        0.0.0.0      0            LISTENING  1856  wmpnetwk.exe
 
 [NOTE: No ESTABLISHED outbound connections at capture time. All sockets
  are LISTENING-only or local broadcast. Host IP: 10.0.2.15 (RFC1918, VBox NAT).]`,
 
   "windows.filescan": `Volatility 3 Framework 2.28.1
 
-Offset\tName
+Offset  Name
 
 [--- Standard system files truncated for readability ---]
-0x3ed31a30\t\\Windows\\System32\\cmd.exe
-0x3edcfc20\t\\Windows\\System32\\St4G3$1.bat
-0x3eedbea0\t\\Windows\\debug\\PASSWD.LOG
-0x3edeee60\t\\Windows\\explorer.exe
-0x3ee9ff20\t\\Windows\\System32\\lsass.exe
-0x3eef18a0\t\\Windows\\System32\\conhost.exe
-0x3fc97c50\t\\Windows\\System32\\mspaint.exe
-0x3eba1e50\t\\Users\\SmartNet\\AppData\\Local\\Temp\\FXSAPIDebugLogFile.txt
-0x3ebb39b0\t\\Users\\SmartNet\\AppData\\Roaming\\Microsoft\\Windows\\Themes\\TranscodedWallpaper.jpg
-0x3ecb62b0\t\\Users\\SmartNet\\AppData\\Roaming\\Microsoft\\Credentials
-0x3eeb8730\t\\Users\\SmartNet\\AppData\\Local\\Microsoft\\Credentials
-0x3fa3ebc0\t\\Users\\Alissa Simpson\\Documents\\Important.rar
-0x3fac3bc0\t\\Users\\Alissa Simpson\\Documents\\Important.rar
-0x3fb48bc0\t\\Users\\Alissa Simpson\\Documents\\Important.rar
-0x3fcf3840\t\\Users\\Alissa Simpson\\AppData\\Roaming\\Microsoft\\Credentials
-0x3fcf6860\t\\Users\\Alissa Simpson\\AppData\\Local\\Microsoft\\Credentials
-0x3eb5ed50\t\\Windows\\bfsvc.exe
-0x3ed8f1e0\t\\Windows\\System32\\TCPSVCS.EXE
-0x3ed65680\t\\Windows\\System32\\snmptrap.exe
-0x3ee57950\t\\Windows\\System32\\winlogon.exe
-0x3ee58410\t\\Windows\\System32\\wininit.exe
-0x3ee98070\t\\Windows\\System32\\services.exe
-0x3eef0480\t\\Windows\\System32\\SearchIndexer.exe
-0x3ef39500\t\\Windows\\System32\\psxss.exe
-0x3ef25db0\t\\Windows\\System32\\VBoxControl.exe
+0x3ed31a30  \\Windows\\System32\\cmd.exe
+0x3edcfc20  \\Windows\\System32\\St4G3$1.bat
+0x3eedbea0  \\Windows\\debug\\PASSWD.LOG
+0x3edeee60  \\Windows\\explorer.exe
+0x3ee9ff20  \\Windows\\System32\\lsass.exe
+0x3eef18a0  \\Windows\\System32\\conhost.exe
+0x3fc97c50  \\Windows\\System32\\mspaint.exe
+0x3eba1e50  \\Users\\SmartNet\\AppData\\Local\\Temp\\FXSAPIDebugLogFile.txt
+0x3ebb39b0  \\Users\\SmartNet\\AppData\\Roaming\\Microsoft\\Windows\\Themes\\TranscodedWallpaper.jpg
+0x3ecb62b0  \\Users\\SmartNet\\AppData\\Roaming\\Microsoft\\Credentials
+0x3eeb8730  \\Users\\SmartNet\\AppData\\Local\\Microsoft\\Credentials
+0x3fa3ebc0  \\Users\\Alissa Simpson\\Documents\\Important.rar
+0x3fac3bc0  \\Users\\Alissa Simpson\\Documents\\Important.rar
+0x3fb48bc0  \\Users\\Alissa Simpson\\Documents\\Important.rar
+0x3fcf3840  \\Users\\Alissa Simpson\\AppData\\Roaming\\Microsoft\\Credentials
+0x3fcf6860  \\Users\\Alissa Simpson\\AppData\\Local\\Microsoft\\Credentials
+0x3eb5ed50  \\Windows\\bfsvc.exe
+0x3ed8f1e0  \\Windows\\System32\\TCPSVCS.EXE
+0x3ed65680  \\Windows\\System32\\snmptrap.exe
+0x3ee57950  \\Windows\\System32\\winlogon.exe
+0x3ee58410  \\Windows\\System32\\wininit.exe
+0x3ee98070  \\Windows\\System32\\services.exe
+0x3eef0480  \\Windows\\System32\\SearchIndexer.exe
+0x3ef39500  \\Windows\\System32\\psxss.exe
+0x3ef25db0  \\Windows\\System32\\VBoxControl.exe
 
 [Total entries: 2,847 — type 'help filescan' for filtering tips]`,
 
   "windows.malfind": `Volatility 3 Framework 2.28.1
 
-PID\tProcess\tStart VPN\tEnd VPN\tTag\tProtection\tCommitCharge\tHexdump
+PID  Process      Start VPN  End VPN   Tag   Protection              CommitCharge  Hexdump
 
-816\tsvchost.exe\t0xdf0000\t0xdfffff\tVadS\tPAGE_EXECUTE_READWRITE\t16
+816  svchost.exe  0xdf0000   0xdfffff  VadS  PAGE_EXECUTE_READWRITE  16
 41 ba 80 00 00 00 48 b8 38 a1 b7 fe fe 07 00 00   A.....H.8.......
 [Pattern: Windows kernel callback trampoline — common false positive on Win7]
 
-472\tsvchost.exe\t0xb30000\t0xb3ffff\tVadS\tPAGE_EXECUTE_READWRITE\t16
+472  svchost.exe  0xb30000  0xb3ffff  VadS  PAGE_EXECUTE_READWRITE  16
 41 ba 80 00 00 00 48 b8 38 a1 b7 fe fe 07 00 00
 [Same trampoline pattern — false positive]
 
-948\tsvchost.exe\t0x23f0000\t0x246ffff\tVadS\tPAGE_EXECUTE_READWRITE\t128
+948  svchost.exe  0x23f0000  0x246ffff  VadS  PAGE_EXECUTE_READWRITE  128
 20 00 00 00 e0 ff 07 00 0c 00 00 00 01 00 05 00
 00 42 00 50 00 30 00 70 00 60 00 00 00 00 00 00
 [Different pattern — warrants triage in real investigation]
 
-604\texplorer.exe\t0x2810000\t0x281ffff\tVadS\tPAGE_EXECUTE_READWRITE\t16
+604  explorer.exe  0x2810000  0x281ffff  VadS  PAGE_EXECUTE_READWRITE  16
 [Same trampoline pattern]
 
-2424\tmspaint.exe\t0x2150000\t0x2150fff\tVadS\tPAGE_EXECUTE_READWRITE\t1
+2424  mspaint.exe  0x2150000  0x2150fff  VadS  PAGE_EXECUTE_READWRITE  1
 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 [Mostly null page — low concern]
 
@@ -638,40 +638,40 @@ PID\tProcess\tStart VPN\tEnd VPN\tTag\tProtection\tCommitCharge\tHexdump
 
 [Standard Windows 7 SP1 service set — abbreviated]
 
-Offset\tPID\tName\tDisplay\tType\tState\tStart\tBinaryPath
+Offset  PID  Name  Display  Type  State  Start  BinaryPath
 ...
-\t484\tWdiSystemHost\tWdiSystemHost\tSERVICE_WIN32_SHARE_PROCESS\tSERVICE_RUNNING\tSERVICE_DEMAND_START\tC:\\Windows\\System32\\svchost.exe -k LocalSystemNetworkRestricted
-\t876\tWinmgmt\tWMI\tSERVICE_WIN32_SHARE_PROCESS\tSERVICE_RUNNING\tSERVICE_AUTO_START\tC:\\Windows\\System32\\svchost.exe -k netsvcs
-\t816\tCryptSvc\tCryptographic Services\tSERVICE_WIN32_SHARE_PROCESS\tSERVICE_RUNNING\tSERVICE_AUTO_START\tC:\\Windows\\System32\\svchost.exe -k NetworkService
-\t1208\tSpooler\tPrint Spooler\tSERVICE_WIN32_OWN_PROCESS\tSERVICE_RUNNING\tSERVICE_AUTO_START\tC:\\Windows\\System32\\spoolsv.exe
-\t1416\tSimpTcp\tSimple TCP/IP Services\tSERVICE_WIN32_OWN_PROCESS\tSERVICE_RUNNING\tSERVICE_AUTO_START\tC:\\Windows\\System32\\tcpsvcs.exe
+  484   WdiSystemHost  WdiSystemHost           SERVICE_WIN32_SHARE_PROCESS  SERVICE_RUNNING  SERVICE_DEMAND_START  C:\\Windows\\System32\\svchost.exe -k LocalSystemNetworkRestricted
+  876   Winmgmt        WMI                     SERVICE_WIN32_SHARE_PROCESS  SERVICE_RUNNING  SERVICE_AUTO_START    C:\\Windows\\System32\\svchost.exe -k netsvcs
+  816   CryptSvc       Cryptographic Services  SERVICE_WIN32_SHARE_PROCESS  SERVICE_RUNNING  SERVICE_AUTO_START    C:\\Windows\\System32\\svchost.exe -k NetworkService
+  1208  Spooler        Print Spooler           SERVICE_WIN32_OWN_PROCESS    SERVICE_RUNNING  SERVICE_AUTO_START    C:\\Windows\\System32\\spoolsv.exe
+  1416  SimpTcp        Simple TCP/IP Services  SERVICE_WIN32_OWN_PROCESS    SERVICE_RUNNING  SERVICE_AUTO_START    C:\\Windows\\System32\\tcpsvcs.exe
 [NOTE: SimpTcp running — provides chargen/echo/discard/daytime/qotd. Rarely needed.]
 [All services match expected Win7 SP1 default set. No unsigned or anomalous service binaries detected.]`,
 
   "windows.envars-1984": `Volatility 3 Framework 2.28.1
 
-PID\tProcess\tBlock\tVariable\tValue
-1984\tcmd.exe\t0x12d000\tCOMPUTERNAME\tSMARTNET-PC
-1984\tcmd.exe\t0x12d000\tHOMEDRIVE\tC:
-1984\tcmd.exe\t0x12d000\tHOMEPATH\t\\Users\\SmartNet
-1984\tcmd.exe\t0x12d000\tUSERPROFILE\tC:\\Users\\SmartNet
-1984\tcmd.exe\t0x12d000\tUSERNAME\tSmartNet
-1984\tcmd.exe\t0x12d000\tUSERDOMAIN\tSMARTNET-PC
-1984\tcmd.exe\t0x12d000\tPATH\tC:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\
-1984\tcmd.exe\t0x12d000\tPROMPT\t$P$G
-1984\tcmd.exe\t0x12d000\tCD\tC:\\Users\\SmartNet
-1984\tcmd.exe\t0x12d000\tCOMSPEC\tC:\\Windows\\system32\\cmd.exe`,
+PID   Process  Block     Variable      Value
+1984  cmd.exe  0x12d000  COMPUTERNAME  SMARTNET-PC
+1984  cmd.exe  0x12d000  HOMEDRIVE     C:
+1984  cmd.exe  0x12d000  HOMEPATH      \\Users\\SmartNet
+1984  cmd.exe  0x12d000  USERPROFILE   C:\\Users\\SmartNet
+1984  cmd.exe  0x12d000  USERNAME      SmartNet
+1984  cmd.exe  0x12d000  USERDOMAIN    SMARTNET-PC
+1984  cmd.exe  0x12d000  PATH          C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\
+1984  cmd.exe  0x12d000  PROMPT        $P$G
+1984  cmd.exe  0x12d000  CD            C:\\Users\\SmartNet
+1984  cmd.exe  0x12d000  COMSPEC       C:\\Windows\\system32\\cmd.exe`,
 
   "windows.handles-2424": `Volatility 3 Framework 2.28.1
 [Filtered to mspaint.exe (PID 2424) — Files only]
 
-PID\tProcess\tType\tName
-2424\tmspaint.exe\tFile\t\\Device\\HarddiskVolume2\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Accessories
-2424\tmspaint.exe\tFile\t\\Device\\HarddiskVolume2\\Windows\\winsxs\\amd64_microsoft.windows.common-controls...
-2424\tmspaint.exe\tFile\t\\Device\\HarddiskVolume2\\Windows\\System32\\en-US\\mspaint.exe.mui
-2424\tmspaint.exe\tFile\t\\Device\\HarddiskVolume2\\Windows\\System32\\en-US\\odbcint.dll.mui
-2424\tmspaint.exe\tFile\t\\Device\\HarddiskVolume2\\Windows\\System32\\en-US\\MFC42u.dll.mui
-2424\tmspaint.exe\tKey\tUSER\\S-1-5-21-3073570648-3149397540-2269648332-1001
+PID   Process      Type  Name
+2424  mspaint.exe  File  \\Device\\HarddiskVolume2\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Accessories
+2424  mspaint.exe  File  \\Device\\HarddiskVolume2\\Windows\\winsxs\\amd64_microsoft.windows.common-controls...
+2424  mspaint.exe  File  \\Device\\HarddiskVolume2\\Windows\\System32\\en-US\\mspaint.exe.mui
+2424  mspaint.exe  File  \\Device\\HarddiskVolume2\\Windows\\System32\\en-US\\odbcint.dll.mui
+2424  mspaint.exe  File  \\Device\\HarddiskVolume2\\Windows\\System32\\en-US\\MFC42u.dll.mui
+2424  mspaint.exe  Key   USER\\S-1-5-21-3073570648-3149397540-2269648332-1001
 [The user SID (-1001) is SmartNet's RID. mspaint is running as SmartNet.]
 [NOTE: No image file (.bmp/.png/.jpg) is open as a handle. Image was likely
  loaded into the heap then closed, OR pasted from clipboard.]`,
@@ -679,22 +679,22 @@ PID\tProcess\tType\tName
   "windows.handles-1512": `Volatility 3 Framework 2.28.1
 [Filtered to WinRAR.exe (PID 1512) — Files only]
 
-PID\tProcess\tType\tName
-1512\tWinRAR.exe\tFile\t\\Device\\HarddiskVolume2\\Users\\Alissa Simpson\\Documents
-1512\tWinRAR.exe\tFile\t\\Device\\HarddiskVolume2\\Windows\\winsxs\\amd64_microsoft.windows.common-controls...
-1512\tWinRAR.exe\tFile\t\\Device\\HarddiskVolume2\\Windows\\winsxs\\amd64_microsoft.windows.gdiplus...
-1512\tWinRAR.exe\tFile\t\\Device\\KsecDD
-1512\tWinRAR.exe\tFile\t\\Device\\HarddiskVolume2\\Windows\\Fonts\\StaticCache.dat
-1512\tWinRAR.exe\tKey\tUSER\\S-1-5-21-3073570648-3149397540-2269648332-1003\\SOFTWARE\\MICROSOFT\\WINDOWS\\CURRENTVERSION\\EXPLORER\\FILEEXTS
+PID   Process     Type  Name
+1512  WinRAR.exe  File  \\Device\\HarddiskVolume2\\Users\\Alissa Simpson\\Documents
+1512  WinRAR.exe  File  \\Device\\HarddiskVolume2\\Windows\\winsxs\\amd64_microsoft.windows.common-controls...
+1512  WinRAR.exe  File  \\Device\\HarddiskVolume2\\Windows\\winsxs\\amd64_microsoft.windows.gdiplus...
+1512  WinRAR.exe  File  \\Device\\KsecDD
+1512  WinRAR.exe  File  \\Device\\HarddiskVolume2\\Windows\\Fonts\\StaticCache.dat
+1512  WinRAR.exe  Key   USER\\S-1-5-21-3073570648-3149397540-2269648332-1003\\SOFTWARE\\MICROSOFT\\WINDOWS\\CURRENTVERSION\\EXPLORER\\FILEEXTS
 [The user SID (-1003) is Alissa Simpson's RID.]
 [WinRAR has Alissa Simpson's Documents folder open as a handle, confirming
  file access. Important.rar is loaded into WinRAR's process memory.]`,
 
   "windows.registry.run": `Volatility 3 Framework 2.28.1
 
-Last Write Time\tHive\tKey\tName\tData
-2009-07-14 04:45:47\t\\??\\C:\\Windows\\ServiceProfiles\\NetworkService\\NTUSER.DAT\tSidebar\t%ProgramFiles%\\Windows Sidebar\\Sidebar.exe /autoRun
-2009-07-14 04:45:48\t\\??\\C:\\Windows\\ServiceProfiles\\LocalService\\NTUSER.DAT\tSidebar\t%ProgramFiles%\\Windows Sidebar\\Sidebar.exe /autoRun
+Last Write Time      Hive                                                            Key      Name                                                   Data
+2009-07-14 04:45:47  \\??\\C:\\Windows\\ServiceProfiles\\NetworkService\\NTUSER.DAT  Sidebar  %ProgramFiles%\\Windows Sidebar\\Sidebar.exe /autoRun
+2009-07-14 04:45:48  \\??\\C:\\Windows\\ServiceProfiles\\LocalService\\NTUSER.DAT    Sidebar  %ProgramFiles%\\Windows Sidebar\\Sidebar.exe /autoRun
 
 [NOTE: Run keys for SmartNet and Alissa Simpson NTUSER.DAT exist but contain
  no Run entries. No persistence via classic Run/RunOnce registry mechanism
@@ -703,13 +703,13 @@ Last Write Time\tHive\tKey\tName\tData
   "windows.registry.recentdocs": `Volatility 3 Framework 2.28.1
 [Filtered to SmartNet NTUSER.DAT — RecentDocs]
 
-Last Write Time\tHive\tKey\tName\tData
-2019-12-11 09:02:13\t\\??\\C:\\Users\\SmartNet\\ntuser.dat\\...RecentDocs\t.txt\t-
-2019-12-11 09:02:13\t\\??\\C:\\Users\\SmartNet\\ntuser.dat\\...RecentDocs\\.txt\tMRUListEx\t02 00 00 00 01 00 00 00 00 00 00 00 ff ff ff ff
-2019-12-11 09:02:13\t\\??\\C:\\Users\\SmartNet\\ntuser.dat\\...RecentDocs\\.txt\t0
-\t  S t 4 g 3 $ 1 . b a t . t x t   (with .lnk redirect)
-2019-12-11 09:02:13\t\\??\\C:\\Users\\SmartNet\\ntuser.dat\\...RecentDocs\\.txt\t1
-\t  S t 4 g 3 $ 1 . t x t   (with .lnk redirect)
+Last Write Time      Hive                                                        Key        Name                                             Data
+2019-12-11 09:02:13  \\??\\C:\\Users\\SmartNet\\ntuser.dat\\...RecentDocs        .txt       -
+2019-12-11 09:02:13  \\??\\C:\\Users\\SmartNet\\ntuser.dat\\...RecentDocs\\.txt  MRUListEx  02 00 00 00 01 00 00 00 00 00 00 00 ff ff ff ff
+2019-12-11 09:02:13  \\??\\C:\\Users\\SmartNet\\ntuser.dat\\...RecentDocs\\.txt  0
+                       S t 4 g 3 $ 1 . b a t . t x t   (with .lnk redirect)
+2019-12-11 09:02:13  \\??\\C:\\Users\\SmartNet\\ntuser.dat\\...RecentDocs\\.txt  1
+                       S t 4 g 3 $ 1 . t x t   (with .lnk redirect)
 
 [INTERPRETATION: SmartNet user opened both St4g3$1.bat AND a .txt version
  of it. The .txt version means the file was opened in Notepad — i.e., the
@@ -723,12 +723,12 @@ Last Write Time\tHive\tKey\tName\tData
   "windows.dlllist-2424": `Volatility 3 Framework 2.28.1
 [Filtered to mspaint.exe (PID 2424)]
 
-Base\tName\tPath
-0xff8c0000\tmspaint.exe\tC:\\Windows\\System32\\mspaint.exe
-0x77b00000\tntdll.dll\tC:\\Windows\\System32\\ntdll.dll
-0x76e10000\tkernel32.dll\tC:\\Windows\\System32\\kernel32.dll
-0x7fefdce0000\tgdiplus.dll\tC:\\Windows\\winsxs\\amd64_microsoft.windows.gdiplus_...\\gdiplus.dll
-0x7feffe60000\tWindowsCodecs.dll\tC:\\Windows\\System32\\WindowsCodecs.dll
+Base           Name               Path
+0xff8c0000     mspaint.exe        C:\\Windows\\System32\\mspaint.exe
+0x77b00000     ntdll.dll          C:\\Windows\\System32\\ntdll.dll
+0x76e10000     kernel32.dll       C:\\Windows\\System32\\kernel32.dll
+0x7fefdce0000  gdiplus.dll        C:\\Windows\\winsxs\\amd64_microsoft.windows.gdiplus_...\\gdiplus.dll
+0x7feffe60000  WindowsCodecs.dll  C:\\Windows\\System32\\WindowsCodecs.dll
 [gdiplus.dll + WindowsCodecs.dll = image processing libraries loaded.
  Consistent with Paint having loaded a raster image (BMP/PNG/JPG) into
  memory at some point during the session.]`,
@@ -1058,7 +1058,7 @@ const STAGES = [
     title: "Stage 8 — Map your findings to ATT&CK",
     tactic: "TA0005 Stealth",
     technique: "T1036.005 Masquerading: Match Legitimate Name or Location",
-    whatsKnown: `You've earned 7 ATT&CK techniques across the previous stages — Discovery, Valid Accounts, Command Shell, Masquerading, Credential Access, Archive via Utility, and an exfil channel. This stage is the synthesis: do the mapping yourself, no reveal handing it to you.`,
+    whatsKnown: `You've earned 7 ATT&CK techniques across the previous stages — Discovery, Valid Accounts, Command Shell, Masquerading, Credential Access, Archive via Utility, and an exfil channel.`,
     briefing: `Take one specific finding — the <code>St4G3$1.bat</code> file placed in <code>C:\\Windows\\System32\\</code> — and name the ATT&CK sub-technique that captures the <i>placement</i>, not the execution. The terminal's <code>tactics</code> command shows the reference if you need it.`,
     question: `Which ATT&CK <b>sub-technique ID</b> covers placing a malicious file in <code>C:\\Windows\\System32\\</code> to blend with legitimate OS binaries? (format: T####.###)`,
     answer: "T1036.005",
