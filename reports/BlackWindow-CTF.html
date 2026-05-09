@@ -83,10 +83,11 @@
      always visible. After the analyst runs their first command, JS flips
      the DOM order and adds .cmd-entered, so the prompt drops to the
      bottom and history scrolls above it — like a real shell. */
-  .terminal { background: #000; border: 1px solid var(--border); border-radius: 0 0 6px 6px; border-top: none; max-height: 320px; overflow-y: auto; padding: 10px 14px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; }
-  /* Hide the terminal output box entirely when there's no output — avoids
-     an awkward empty box sitting between the prompt and the question. */
-  .terminal:empty { padding: 0; border: none; }
+  /* Terminal: min-height so it always has the presence of a real shell
+     window, max-height so long output scrolls instead of pushing the page.
+     justify-content: flex-end anchors output to the bottom of the box,
+     keeping short output close to the input prompt below. */
+  .terminal { background: #000; border: 1px solid var(--border); border-radius: 0 0 6px 6px; border-top: none; min-height: 220px; max-height: 320px; overflow-y: auto; padding: 10px 14px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; display: flex; flex-direction: column; justify-content: flex-end; }
   .terminal-wrapper.cmd-entered .terminal { border-radius: 6px 6px 0 0; border-top: 1px solid var(--border); border-bottom: none; }
   .terminal::-webkit-scrollbar { width: 8px; }
   .terminal::-webkit-scrollbar-track { background: #000; }
@@ -325,7 +326,7 @@
     .terminal-wrapper { padding: 10px 14px; }
     .question-area { padding: 12px 14px; }
 
-    .terminal { max-height: 240px; font-size: 0.75rem; padding: 8px 10px; }
+    .terminal { min-height: 160px; max-height: 240px; font-size: 0.75rem; padding: 8px 10px; }
 
     /* Bigger tap targets — Apple HIG / Material spec */
     .submit-btn { padding: 12px 18px; font-size: 0.95rem; min-height: 44px; }
@@ -346,7 +347,7 @@
 
   /* === Very small phones (≤380px) === */
   @media (max-width: 380px) {
-    .terminal { max-height: 200px; }
+    .terminal { min-height: 140px; max-height: 200px; }
     header h1 { display: none; }
   }
 </style>
