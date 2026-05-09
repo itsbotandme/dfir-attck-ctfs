@@ -18,9 +18,9 @@
 
 ## 1. Executive Summary
 
-A Windows 7 SP1 x64 workstation (hostname **SMARTNET-PC**, IP **10.0.2.15**) is the subject of this examination. Analysis of the 1 GB raw RAM image reveals **multi-stage hands-on-keyboard activity consistent with the "black window" the reporter described**, mapping to **seven distinct ATT&CK Enterprise tactics**.
+A Windows 7 SP1 x64 workstation (hostname **SMARTNET-PC**, IP **10.0.2.15**) is the subject of this examination. Analysis of the 1 GB raw RAM image reveals **multi-stage hands-on-keyboard activity consistent with the reported "black window" sighting**, mapping to **seven distinct ATT&CK Enterprise tactics**.
 
-**The story in one sentence:** A user account **`SmartNet`** opened an interactive `cmd.exe` (the "black window"), edited and executed a leet-named staging batch file (`St4G3$1.bat`) placed in `C:\Windows\System32\`, while a second user session (**`Alissa Simpson`**) was concurrently used to open a password-protected RAR archive in Alissa's Documents folder; a credential log file was dropped in the Windows debug directory, and SMB (TCP 445) was exposed as a viable but unconfirmed exfiltration channel.
+**Headline finding.** A user account **`SmartNet`** opened an interactive `cmd.exe` (the "black window") and executed a masqueraded staging batch file (`St4G3$1.bat`) placed in `C:\Windows\System32\`. A second user session (**`Alissa Simpson`**) was concurrently used to archive files from Alissa's Documents folder. A credential-log artefact was dropped in `C:\Windows\debug\`, and SMB (TCP 445) was exposed as a viable — but unconfirmed — exfiltration channel.
 
 | Tactic | Technique | Severity | Confidence |
 |--------|-----------|----------|-----------|
@@ -50,7 +50,7 @@ A Windows 7 SP1 x64 workstation (hostname **SMARTNET-PC**, IP **10.0.2.15**) is 
 | System Boot | 2019-12-11 13:41:25 UTC (~57 min uptime at capture) |
 | Active Users | `SmartNet` (Session 1, RID -1001), `Alissa Simpson` (Session 2, RID -1003) |
 
-**Key observations:** Windows 7 SP1 reached End-of-Life January 2020 — this image is from one month before EOL. WDigest authentication is enabled by default on this OS, meaning LSASS retains plaintext credentials in memory. This is a critical contextual factor for the credential-access stage.
+**Key observations:** Windows 7 SP1 reached End-of-Life January 2020 — this image is from one month before EOL. WDigest authentication is enabled by default on this OS, meaning LSASS retains plaintext credentials in memory.
 
 ---
 
@@ -250,28 +250,23 @@ The breadth of listening services on what should be a constrained workstation is
 
 ### Immediate (0–24 h)
 
-1. **Isolate SMARTNET-PC** from the network if still operational. No active C2 was observed but residual capability exists.
-2. **Hash and preserve** the RAM image, any disk image, and event logs. SHA-256 + chain of custody. Do not modify originals.
-3. **Force credential reset** for `SmartNet` and `Alissa Simpson` on this host AND any account these credentials may have been reused on (assume LSASS plaintext extraction succeeded).
-4. **Recover and analyse** `St4G3$1.bat` from disk (Sleuth Kit `icat` from MFT entry, or carve LNK/Prefetch artefacts).
-5. **Audit `Important.rar`** — pull from disk, hash, attempt password recovery, and characterise contents.
-6. **Review Windows Security log** Events 4624/4634/4648/4688 covering 14:30–14:40 UTC for the precise logon mechanism that created Session 2.
+1. **Isolate SMARTNET-PC.** No active C2 was observed but residual capability exists.
+2. **Force credential reset** for `SmartNet` and `Alissa Simpson` on this host and any account these credentials may have been reused on. Assume LSASS plaintext extraction succeeded.
+3. **Recover `St4G3$1.bat` from disk** (Sleuth Kit `icat` from MFT, or carve LNK/Prefetch artefacts). Read the actual script body.
+4. **Audit `Important.rar`** — pull from disk, attempt password recovery, characterise contents.
+5. **Review Windows Security log** Events 4624/4634/4648/4688 covering 14:30–14:40 UTC for the precise logon mechanism that created Session 2.
 
 ### Short-term (1–7 days)
 
-7. **Search for lateral movement** — has `SmartNet` or `Alissa Simpson` authenticated to any other host in the period 14:30–end-of-day? Domain controller logs and NetFlow are sources.
-8. **Determine `PASSWD.LOG` provenance** — check Netlogon DbFlag value and the file's MFT timestamps. If DbFlag was never enabled, the file is attacker-generated.
-9. **Disable Simple TCP/IP Services** (`TCPSVCS.EXE`) — listening on ports 7/9/13/17/19 is rarely needed and is well-known attack surface.
-10. **Apply application allowlisting** (AppLocker / WDAC) to block unsigned `.bat`/`.cmd`/`.ps1` execution from System32 and user profiles.
+6. **Search for lateral movement** — has `SmartNet` or `Alissa Simpson` authenticated to any other host in the period 14:30–end-of-day? Domain controller logs and NetFlow are sources.
+7. **Determine `PASSWD.LOG` provenance** — check Netlogon DbFlag value and the file's MFT timestamps. If DbFlag was never enabled, the file is attacker-generated.
+8. **Apply application allowlisting** (AppLocker / WDAC) to block unsigned `.bat`/`.cmd`/`.ps1` execution from System32 and user profiles.
 
 ### Long-term (1–4 weeks)
 
-11. **Migrate off Windows 7 SP1** — EOL January 2020. This OS receives no security updates.
-12. **Enable Credential Guard** where feasible (Win10/11 only) — prevents in-memory credential extraction from LSASS.
-13. **Disable WDigest** — even on Win7 SP1 you can clear `HKLM\SYSTEM\CCS\Control\SecurityProviders\WDigest\UseLogonCredential` to prevent plaintext caching.
-14. **Implement memory-acquisition / credential-dump tool monitoring** — detect `winpmem`, `procdump`, Mimikatz, and other LSASS-touching tools outside approved IR contexts (Sysmon EID 1 + EDR rules).
-15. **Establish RAM baselines** with Memory Baseliner so future investigations have a clean reference.
-16. **Detection engineering from this report:** Build SIEM rules for the 5 process-behavioural IOCs in §6.2.
+9. **Migrate off Windows 7 SP1** — EOL January 2020.
+10. **Disable WDigest** — clear `HKLM\SYSTEM\CCS\Control\SecurityProviders\WDigest\UseLogonCredential` to prevent plaintext caching. Enable Credential Guard where feasible on Win10/11.
+11. **Detection engineering from this report:** Build SIEM rules for the process-behavioural IOCs in §6.2 (interactive cmd.exe from explorer, WinRAR cross-account, mspaint with no args, two simultaneous interactive logons).
 
 ---
 
@@ -357,8 +352,4 @@ level: high
 | `windows.registry.printkey --key "...RecentDocs"` | inline |
 | `windows.clipboard` | `analysis/memory/clipboard.txt` |
 
-All outputs preserved without modification in `./analysis/memory/`.
-
----
-
-*Report prepared in accordance with strict read-only evidence handling. No artefacts were modified during analysis. All timestamps UTC.*
+All outputs preserved without modification in `./analysis/memory/`. All timestamps UTC.
