@@ -1,15 +1,16 @@
-# DFIR ATT&CK CTF Lab Pack
+# DFIR ATT&CK Investigation Labs
 
-Browser-playable, self-contained DFIR Capture-the-Flag challenges organised
-by **MITRE ATT&CK Enterprise tactics**. Each CTF ships as three deliverables:
-an interactive analyst terminal, a full DFIR investigation report, and a
-junior-analyst training guide.
+Browser-playable, self-contained DFIR investigation labs that walk
+the **MITRE ATT&CK** kill chain. One investigative question per
+stage; the technique is revealed after the finding. Each lab ships
+as three deliverables: an interactive analyst terminal, a full DFIR
+investigation report, and a junior-analyst walkthrough.
 
 ## Currently Included
 
 | Lab | Source | Format |
 |-----|--------|--------|
-| **The Black Window Case** | Memory image (1 GB raw) | 8-stage ATT&CK kill-chain CTF |
+| **The Black Window Case** | Memory image (1 GB raw) | 8-stage investigation |
 
 ---
 
@@ -34,14 +35,14 @@ open index.html             # macOS
 start index.html            # Windows
 ```
 
-That's it. **No installation, no Claude, no API keys, no internet** required at runtime. Each CTF is a self-contained HTML file with a JavaScript terminal emulator and all Volatility outputs embedded.
+That's it. **No installation, no Claude, no API keys, no internet** required at runtime. Each lab is a self-contained HTML file with a JavaScript terminal emulator and all Volatility outputs embedded.
 
 ### 📱 Play on Mobile (iOS / Android)
 
-The CTF is **fully mobile-friendly** — no app store install needed.
+Each lab is **fully mobile-friendly** — no app store install needed.
 
 1. Open **https://itsbotandme.github.io/dfir-attck-ctfs/** in Safari or Chrome on your phone
-2. Tap a CTF card → "Play Now"
+2. Tap a lab card → "Play Now"
 3. Type Volatility commands directly into the terminal — analysts learn the muscle memory of the syntax this way, not by tapping pre-baked pills
 4. Optional: **Add to Home Screen** (Safari → Share → Add to Home Screen / Chrome → Menu → Install app) for a fullscreen, native-feeling experience
 
@@ -52,7 +53,7 @@ Mobile features:
 
 ### Optional: `start <name>` shell launcher
 
-For convenience, run any CTF by name from the terminal:
+For convenience, run any lab by name from the terminal:
 
 ```bash
 # One-time setup (Linux/macOS)
@@ -60,20 +61,24 @@ source scripts/start.sh              # current shell only
 echo "source $(pwd)/scripts/start.sh" >> ~/.bashrc   # permanent
 
 # Then:
-start                                # list available CTFs
+start                                # list available labs
 start BlackWindow                    # exact match
 start black                          # case-insensitive partial match
 ```
 
 ---
 
-## How to Build Your Own CTFs
+## How to Build Your Own Labs
 
-The CTFs in this repo were built using a Claude Code skill called
+The labs in this repo were built using a Claude Code skill called
 **`ctf-builder`** that automates: forensic analysis → ATT&CK mapping →
-stage decomposition → HTML generation.
+stage decomposition → HTML generation. The directory name kept the
+"ctf-builder" stem from earlier iterations; the labs it builds now
+follow the same investigation-first pedagogy as The Black Window Case
+— ATT&CK revealed after each finding, not signposted upfront (see
+the SKILL.md for details).
 
-To build new CTFs from your own forensic artefacts:
+To build new labs from your own forensic artefacts:
 
 1. **Install [Claude Code](https://claude.com/claude-code)** (or use the Claude Agent SDK)
 2. **Copy the skill into your Claude config:**
@@ -81,14 +86,14 @@ To build new CTFs from your own forensic artefacts:
    cp -r skill/ctf-builder ~/.claude/skills/
    ```
 3. **Invoke the skill** with your case data:
-   > "Build a CTF from my memory image at `/cases/<name>/` using the ctf-builder skill"
+   > "Build an investigation lab from my memory image at `/cases/<name>/` using the ctf-builder skill"
 
 Claude will read the artefact, run the relevant forensic tools (Volatility,
 Sleuth Kit, Plaso, etc.), map findings to ATT&CK, and produce the three
-deliverables (report, CTF HTML, answer sheet).
+deliverables (report, lab HTML, walkthrough).
 
-> **Note:** Building new CTFs requires Claude Code or another LLM agent
-> capable of running shell commands. Once built, the CTF HTMLs themselves
+> **Note:** Building new labs requires Claude Code or another LLM agent
+> capable of running shell commands. Once built, the lab HTMLs themselves
 > are completely standalone and can be played without any AI.
 
 ---
@@ -110,7 +115,7 @@ mkdir -p cases/BlackWindow
 # → cases/BlackWindow/MemoryDump_Lab1.raw
 ```
 
-**You do NOT need the memory image to play the CTF.** The CTF HTML has
+**You do NOT need the memory image to play the lab.** The lab HTML has
 all Volatility outputs pre-baked. The image is only needed if you want
 to run your own commands against it on a real SIFT workstation, or to
 validate the canned outputs.
@@ -125,15 +130,20 @@ validate the canned outputs.
 ├── reports/
 │   ├── BlackWindow-CTF.html        # play this
 │   ├── BlackWindow-DFIR-Report.md  # full investigation write-up
-│   └── BlackWindow-AnswerSheet.md  # junior-analyst training guide
+│   └── BlackWindow-AnswerSheet.md  # junior-analyst walkthrough
 ├── skill/
-│   └── ctf-builder/                # Claude Code skill to build more CTFs
+│   └── ctf-builder/                # Claude Code skill to build more labs
 │       ├── SKILL.md
 │       └── templates/
 ├── scripts/
-│   └── start.sh                    # portable CTF launcher
+│   └── start.sh                    # portable lab launcher
 └── .gitignore
 ```
+
+> The `*-CTF.html` filename pattern is load-bearing — `scripts/start.sh`
+> discovers labs by that glob. The "CTF" in the filename is historical
+> (the project started as a CTF concept before the rebuild) and shouldn't
+> be renamed unless the launcher is updated to match.
 
 ---
 
@@ -149,22 +159,22 @@ validate the canned outputs.
 
 ## Attribution
 
-The CTF concept and ATT&CK kill-chain training methodology in this
-repository are derivative educational content. The underlying forensic
-challenges are owned by their original authors:
+The lab format and analyst-training methodology in this repository
+are derivative educational content. The underlying forensic challenges
+are owned by their original authors:
 
 | Lab | Original Author | Source |
 |-----|----------------|--------|
 | MemLabs Lab 1 | **stuxnet999** | [github.com/stuxnet999/MemLabs](https://github.com/stuxnet999/MemLabs) |
 
-If you create new CTFs from other publicly-available challenges, please
+If you create new labs from other publicly-available challenges, please
 credit the original author here.
 
 ---
 
 ## License
 
-The wrapper content (CTF HTML, DFIR report, answer sheet, ctf-builder skill,
+The wrapper content (lab HTML, DFIR report, walkthrough, ctf-builder skill,
 launcher scripts) is released under **MIT License** for educational use.
 Original challenge artefacts retain the licensing terms of their respective
 upstream projects — see *Attribution* above.
@@ -175,14 +185,14 @@ upstream projects — see *Attribution* above.
 
 PRs welcome — especially for:
 
-- New CTFs built with the `ctf-builder` skill (must include attribution)
+- New labs built with the `ctf-builder` skill (must include attribution)
 - Improvements to the terminal emulator (more commands, better grep)
 - Detection rule contributions (Sigma, YARA) tied to specific ATT&CK techniques
 - Translations of training material
 
-When adding a new CTF, please ensure:
+When adding a new lab, please ensure:
 
 - [ ] No personal/proprietary data (PII, internal hostnames, real org names)
 - [ ] Clear attribution if derived from a public challenge
-- [ ] All three deliverables (HTML, report, answer sheet) are present
+- [ ] All three deliverables (HTML, report, walkthrough) are present
 - [ ] Filename pattern `<name>-CTF.html` so the launcher finds it

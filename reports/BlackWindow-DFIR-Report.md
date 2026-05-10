@@ -3,7 +3,7 @@
 
 > **Attribution:** The memory image and case scenario in this report are taken from **MemLabs Lab 1** by **stuxnet999** ([github.com/stuxnet999/MemLabs/tree/master/Lab%201](https://github.com/stuxnet999/MemLabs/tree/master/Lab%201)). The analytical write-up, ATT&CK mapping, kill-chain narrative, and detection-engineering content in this report are original, produced for analyst training.
 
-> **Scenario (verbatim from the original):** *"My sister's computer crashed. We were very fortunate to recover this memory dump. Your job is to get all her important files from the system. From what we remember, we suddenly saw a black window pop up with something being executed. When the crash happened, she was trying to draw something. That's all we remember from the time of crash…"*
+> **Scenario (from the original):** *"My sister's computer crashed. We were very fortunate to recover this memory dump. Your job is to get all her important files from the system. From what we remember, we suddenly saw a black window pop up with something being executed. When the crash happened, she was trying to draw something. That's all we remember from the time of crash…"*
 
 | Field | Value |
 |-------|-------|
