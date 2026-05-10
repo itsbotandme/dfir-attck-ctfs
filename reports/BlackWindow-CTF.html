@@ -73,7 +73,8 @@
      full-briefing pattern was replaced by the always-visible whatsKnown +
      briefing structure.) */
 
-  .terminal-wrapper { padding: 14px 24px; flex-shrink: 0; }
+  .terminal-wrapper { padding: 14px 24px; flex-shrink: 0; filter: drop-shadow(0 0 6px rgba(74,246,38,0.18)) drop-shadow(0 0 14px rgba(74,246,38,0.12)); transition: filter 0.2s ease; }
+  .terminal-wrapper:focus-within { filter: drop-shadow(0 0 8px rgba(74,246,38,0.32)) drop-shadow(0 0 18px rgba(74,246,38,0.20)); }
   .terminal-label { font-size: 0.7rem; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.08em; display: flex; justify-content: space-between; }
   .terminal-label .hint-link { color: var(--yellow); cursor: pointer; text-transform: none; border: 1px solid var(--yellow); border-radius: 12px; padding: 3px 10px; background: rgba(210,153,34,0.05); font-weight: 500; }
   .terminal-label .hint-link:hover { background: rgba(210,153,34,0.15); }
@@ -89,13 +90,14 @@
      terminal's presence comes from the content it shows, not from a
      forced empty box. max-height triggers internal scroll for long
      output. :empty fully collapses the box when there's nothing to show.
-     Subtle green box-shadow on both .terminal and .term-input-row gives
-     the analyst-terminal block a CRT-screen-glow look against the dark
-     page background without being garish. */
-  .terminal { background: #000; border: 1px solid var(--border); border-radius: 0 0 6px 6px; border-top: none; max-height: 560px; overflow-y: auto; padding: 10px 14px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; box-shadow: 0 0 8px rgba(74,246,38,0.18), 0 0 24px rgba(74,246,38,0.12); transition: box-shadow 0.2s ease; }
-  .terminal:empty { padding: 0; border: none; box-shadow: none; }
+     Glow lives on .terminal-wrapper as a layered filter:drop-shadow so
+     the input row + terminal read as ONE outer halo. (Putting box-shadow
+     on each child draws a bright seam at the boundary between them where
+     each side's inner-edge glow stacks.) :focus-within brightens it. */
+  .terminal { background: #000; border: 1px solid var(--border); border-radius: 0 0 6px 6px; border-top: none; max-height: 560px; overflow-y: auto; padding: 10px 14px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; transition: border-color 0.2s ease; }
+  .terminal:empty { padding: 0; border: none; }
   /* Focus state — glow brightens when analyst is interacting with the terminal */
-  .terminal-wrapper:focus-within .terminal { box-shadow: 0 0 12px rgba(74,246,38,0.32), 0 0 36px rgba(74,246,38,0.20); border-color: rgba(74,246,38,0.40); }
+  .terminal-wrapper:focus-within .terminal { border-color: rgba(74,246,38,0.40); }
   .terminal-wrapper.cmd-entered .terminal { border-radius: 6px 6px 0 0; border-top: 1px solid var(--border); border-bottom: none; }
   .terminal::-webkit-scrollbar { width: 8px; }
   .terminal::-webkit-scrollbar-track { background: #000; }
@@ -112,8 +114,8 @@
      the prompt without scrolling. Bottom border removed so it joins the
      terminal cleanly. After the first command, .cmd-entered on the parent
      flips this so the prompt sits at the bottom (like a real shell). */
-  .term-input-row { display: flex; align-items: center; padding: 8px 14px; background: #000; border: 1px solid var(--border); border-bottom: none; border-radius: 6px 6px 0 0; box-shadow: 0 0 8px rgba(74,246,38,0.18), 0 0 24px rgba(74,246,38,0.12); transition: box-shadow 0.2s ease, border-color 0.2s ease; }
-  .terminal-wrapper:focus-within .term-input-row { box-shadow: 0 0 12px rgba(74,246,38,0.32), 0 0 36px rgba(74,246,38,0.20); border-color: rgba(74,246,38,0.40); }
+  .term-input-row { display: flex; align-items: center; padding: 8px 14px; background: #000; border: 1px solid var(--border); border-bottom: none; border-radius: 6px 6px 0 0; transition: border-color 0.2s ease; }
+  .terminal-wrapper:focus-within .term-input-row { border-color: rgba(74,246,38,0.40); }
   .terminal-wrapper.cmd-entered .term-input-row { border-radius: 0 0 6px 6px; border-top: none; border-bottom: 1px solid var(--border); }
   .term-input-row::before { content: 'analyst@dfir:/cases#'; color: var(--green); font-size: 0.78rem; margin-right: 8px; white-space: nowrap; }
   .term-input-field { flex: 1; background: transparent; border: none; outline: none; color: #fff; font-family: inherit; font-size: 0.78rem; caret-color: var(--term-green); }
