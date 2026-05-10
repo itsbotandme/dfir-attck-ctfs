@@ -1,0 +1,29 @@
+STRINGS(1)                GNU binutils                          STRINGS(1)
+
+NAME
+    strings — print printable character sequences from a file
+
+SYNOPSIS
+    strings [OPTION]... FILE...
+
+DESCRIPTION
+    Walks a binary file and prints sequences of printable characters
+    that are at least N (default 4) characters long. Useful for first-
+    pass triage of memory images, malware, and any binary blob.
+
+COMMON FLAGS
+    -n <N>          minimum string length (default 4)
+    -a              scan the entire file (not just data sections)
+    -t d|x|o        print offset (decimal / hex / octal) before each string
+    -e <encoding>   encoding: s (7-bit), S (8-bit), b (16-bit big-endian),
+                    l (16-bit little-endian), B (32-bit BE), L (32-bit LE)
+    -f              print filename before each string
+
+EXAMPLES
+    strings memory.dump | grep -i passwd
+    strings -n 8 -t x suspicious.bin > strings.txt
+    strings -e l unicode-blob.bin     UTF-16LE strings
+
+NOTES
+    For memory images, pipe through grep to scope. Raw `strings | less`
+    on a 1 GB image is a fast path to overwhelm.

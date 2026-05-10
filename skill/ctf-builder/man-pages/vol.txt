@@ -1,0 +1,38 @@
+VOL(1)                    Volatility 3 Framework                    VOL(1)
+
+NAME
+    vol — open-source memory forensics framework
+
+SYNOPSIS
+    vol -f <image> [--pid <PID>] [--key "<reg path>"] <plugin>
+    python3 vol.py -f <image> ... <plugin>          (canonical form)
+
+DESCRIPTION
+    Parses a raw memory image into structured artefacts (processes,
+    sockets, registry hives, command-line history, file objects).
+    Plugins are namespaced by OS family.
+
+COMMON WINDOWS PLUGINS
+    windows.info              OS, build, architecture, capture time
+    windows.pslist            running process list
+    windows.pstree            process parent/child hierarchy
+    windows.cmdline           per-process command line
+    windows.netscan           network sockets and connections
+    windows.filescan          file objects in memory
+    windows.handles           --pid <N>: open handles for a PID
+    windows.dlllist           --pid <N>: loaded DLLs for a PID
+    windows.registry.printkey --key "<path>": dump a registry key
+
+COMMON FLAGS
+    -f <image>     memory image path (REQUIRED)
+    --pid <N>      filter to a single PID
+    --key "..."    registry key path (printkey)
+
+EXAMPLE
+    vol -f MemoryDump_Lab1.raw windows.pslist
+    vol -f MemoryDump_Lab1.raw windows.handles --pid 1984
+
+NOTES
+    Volatility 3 needs a symbol table matching the kernel of the captured
+    RAM. WinUnknownKernelException → symbol table is missing.
+    Docs: https://volatility3.readthedocs.io/

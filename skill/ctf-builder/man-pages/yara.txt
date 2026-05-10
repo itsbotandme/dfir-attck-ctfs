@@ -1,0 +1,41 @@
+YARA(1)                       YARA                                  YARA(1)
+
+NAME
+    yara — pattern-matching tool for malware/IOC identification
+
+SYNOPSIS
+    yara [-r] [-s] [-w] <rule-file> <target>
+
+DESCRIPTION
+    Scans files or directories for matches against compiled YARA rules.
+    Rules describe textual or binary patterns plus boolean conditions.
+    Standard tool for IOC sweeps in DFIR.
+
+COMMON FLAGS
+    -r              recursive (when target is a directory)
+    -s              print matching strings
+    -w              suppress warnings
+    -p <N>          parallel threads
+    -f              fast match (stop after first match in a file)
+    -d <var=val>    define an external variable
+
+RULE STRUCTURE
+    rule RuleName {
+      meta:
+        author  = "you"
+        ref     = "https://..."
+      strings:
+        $a = "literal string"
+        $b = { 4D 5A 90 00 }       hex pattern
+        $c = /regex.*pattern/i
+      condition:
+        $a or ($b and $c)
+    }
+
+EXAMPLES
+    yara -r rules.yar /mnt/evidence
+    yara -s -r rules.yar suspicious.bin
+
+NOTES
+    Compile with `yarac` for repeated scans against the same ruleset.
+    Combine with Velociraptor for fleet-wide IOC sweeps.

@@ -1,0 +1,39 @@
+BULK_EXTRACTOR(1)                                       BULK_EXTRACTOR(1)
+
+NAME
+    bulk_extractor — multithreaded forensic feature extraction
+
+SYNOPSIS
+    bulk_extractor -o <out-dir> [-e <scanner>] <image>
+
+DESCRIPTION
+    Scans a forensic image (or any large blob) and extracts features:
+    email addresses, URLs, credit-card numbers, phone numbers, EXIF
+    metadata, JSON blobs, base64 strings, RFC822 messages, and more.
+    Independent of the file system — works on raw bytes.
+
+COMMON FLAGS
+    -o <out-dir>       output directory (REQUIRED)
+    -e <scanner>       enable a specific scanner
+    -x <scanner>       disable a scanner
+    -E <scanner>       enable ONLY this scanner (all others off)
+    -j <N>             threads (default: number of cores)
+    -G <N>             page size in MB
+
+OUTPUT (in <out-dir>)
+    email.txt          email addresses found
+    url.txt            URLs
+    domain.txt         domain names
+    json.txt           JSON blobs
+    ccn.txt            credit-card numbers
+    aes_keys.txt       likely AES keys
+    histogram files    `*.histogram` for ranking
+
+EXAMPLES
+    bulk_extractor -o ./bx_out memory.dump
+    bulk_extractor -o ./bx_out -E email disk.dd
+
+NOTES
+    Defaults to 4 threads on the SIFT instance. Histograms (top of each
+    extract file) tell you which strings appear most frequently — fast
+    triage path.

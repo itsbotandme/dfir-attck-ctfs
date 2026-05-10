@@ -1,0 +1,25 @@
+ICAT(1)                   The Sleuth Kit                           ICAT(1)
+
+NAME
+    icat — extract the contents of a file by inode
+
+SYNOPSIS
+    icat [-o <offset>] <image> <inode>
+
+DESCRIPTION
+    Streams the raw bytes of an inode from a forensic image to stdout.
+    Works for both allocated and deleted files, and for slack space if
+    you ask for the right attribute.
+
+COMMON FLAGS
+    -o <offset>     partition offset in sectors
+    -r              recover deleted file (best-effort)
+    -s              slack space only
+
+EXAMPLES
+    icat -o 2048 disk.E01 12345 > extracted.bin
+    icat -o 2048 -r disk.E01 67890 > deleted.docx
+
+NOTES
+    Pair with fls to find the inode of interest. Hash the extract
+    immediately for chain of custody.

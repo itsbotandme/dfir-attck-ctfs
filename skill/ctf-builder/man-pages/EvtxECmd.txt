@@ -1,0 +1,32 @@
+EvtxECmd(1)                  EZ Tools                          EvtxECmd(1)
+
+NAME
+    EvtxECmd — Windows Event Log (.evtx) parser by Eric Zimmerman
+
+SYNOPSIS
+    dotnet /opt/zimmermantools/EvtxeCmd/EvtxECmd.dll \
+        -d <directory> | -f <file> --csv <out-dir> [--csvf <name>]
+
+DESCRIPTION
+    Parses .evtx files into a normalised CSV with columns for record ID,
+    event ID, channel, source, computer, user, payload, etc. Faster and
+    more forensically sound than wevtutil for offline analysis.
+
+COMMON FLAGS
+    -d <dir>           directory of .evtx files (recursive)
+    -f <file>          single .evtx file
+    --csv <out-dir>    output directory for CSV
+    --csvf <name>      override the output filename
+    --maps <dir>       custom event-mapping directory
+    --inc <ids>        include only these event IDs (comma-sep)
+    --exc <ids>        exclude these event IDs
+
+EXAMPLES
+    dotnet /opt/zimmermantools/EvtxeCmd/EvtxECmd.dll \
+        -d /mnt/evidence/Windows/System32/winevt/Logs --csv ./out
+    dotnet /opt/zimmermantools/EvtxeCmd/EvtxECmd.dll \
+        -f Security.evtx --csv ./out --inc 4624,4625,4672
+
+NOTES
+    Pair with TimelineExplorer (Windows GUI) or load the CSV in Excel /
+    pandas for analysis.

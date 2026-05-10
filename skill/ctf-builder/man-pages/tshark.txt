@@ -1,0 +1,35 @@
+TSHARK(1)                  Wireshark CLI                         TSHARK(1)
+
+NAME
+    tshark — terminal-based network protocol analyser
+
+SYNOPSIS
+    tshark -r <pcap> [-Y <display-filter>] [-T fields -e <field>...]
+    tshark -i <interface> [-c <count>] [-w <out.pcap>]
+
+DESCRIPTION
+    Reads or captures network traffic and prints summarised packets,
+    optionally filtered by Wireshark display-filter syntax.
+
+COMMON FLAGS
+    -r <pcap>           read from file
+    -Y "<filter>"       Wireshark display filter
+    -T fields -e <fld>  emit specific fields (one per packet)
+    -E separator=,      field separator for -T fields output
+    -q -z <stat>        statistics (e.g. -z conv,tcp)
+    -2                  two-pass analysis (needed for some filters)
+
+DISPLAY FILTERS (examples)
+    "http.request"
+    "dns.qry.name contains 'evil.com'"
+    "tcp.port == 4444"
+    "ip.src == 10.0.2.15 and tcp.flags.syn == 1"
+
+EXAMPLES
+    tshark -r capture.pcap -Y "http.request" -T fields \
+           -e http.host -e http.request.uri
+    tshark -r capture.pcap -q -z conv,tcp
+
+NOTES
+    For stats, `-q -z` is your friend: io,stat / conv,tcp / endpoints,ip
+    / http,tree all give one-line summaries useful in IR.

@@ -1,0 +1,34 @@
+ZEEK(1)                       Zeek                                 ZEEK(1)
+
+NAME
+    zeek — network traffic analyser (formerly Bro)
+
+SYNOPSIS
+    zeek -r <pcap> [scripts...]
+
+DESCRIPTION
+    Reads a pcap and emits structured logs (conn.log, dns.log, http.log,
+    ssl.log, files.log, weird.log, &c.) one connection / event per line.
+    Default scripts cover most protocol decoding; extend with custom .zeek
+    scripts.
+
+COMMON USAGE
+    zeek -r capture.pcap                       parse with default scripts
+    zeek -r capture.pcap local                 + site/local.zeek
+    zeek -C -r capture.pcap                    skip checksum verification
+
+OUTPUT (in current directory)
+    conn.log         every flow (5-tuple, duration, bytes)
+    dns.log          DNS queries / responses
+    http.log         HTTP request/response metadata
+    ssl.log          TLS handshakes
+    files.log        files seen on the wire
+    weird.log        protocol anomalies
+
+EXAMPLES
+    zeek -r capture.pcap
+    cat conn.log | zeek-cut id.orig_h id.resp_h id.resp_p service
+
+NOTES
+    Use `zeek-cut` for column-aware field extraction. Logs are tab-
+    separated with a header block — most CSV tools need conversion.

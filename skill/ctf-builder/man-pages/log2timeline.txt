@@ -1,0 +1,29 @@
+LOG2TIMELINE.PY(1)              Plaso                  LOG2TIMELINE.PY(1)
+
+NAME
+    log2timeline.py — extract timestamps from forensic artefacts into
+                      a Plaso storage file
+
+SYNOPSIS
+    log2timeline.py [--parsers <list>] [--storage-file <out.plaso>] <source>
+
+DESCRIPTION
+    Walks a disk image, mounted volume, or directory tree and extracts
+    every timestamped artefact it can recognise (event logs, registry,
+    web history, Prefetch, USN journal, link files, &c.) into a single
+    `.plaso` storage file for downstream `psort.py`.
+
+COMMON FLAGS
+    --storage-file <out>   output Plaso file (REQUIRED)
+    --parsers "win7"       parser preset (e.g. win7, winxp, linux, macos)
+    --parsers "evtx,prefetch"  comma-separated parser names
+    --hashers "sha256"     hash collected files
+    --partitions all       parse every partition
+
+EXAMPLES
+    log2timeline.py --storage-file case.plaso disk.E01
+    log2timeline.py --parsers win7 --storage-file case.plaso /mnt/img
+
+NOTES
+    `pinfo.py case.plaso` shows what was parsed.
+    Then `psort.py -o l2tcsv case.plaso > timeline.csv` for analysis.

@@ -1,0 +1,26 @@
+MACTIME(1)                The Sleuth Kit                        MACTIME(1)
+
+NAME
+    mactime — render a body file as a chronological timeline
+
+SYNOPSIS
+    mactime [-d] [-z <TZ>] -b <body-file> [<date-range>]
+
+DESCRIPTION
+    Reads the pipe-delimited body-file format (produced by `fls -m` or
+    `tsk_recover`) and prints the events sorted by timestamp. Each row
+    shows MAC times (Modified / Accessed / Changed) plus optional Born.
+
+COMMON FLAGS
+    -b <file>       body file to read
+    -d              CSV output (default is fixed-width)
+    -z <TZ>         timezone (e.g. UTC, America/New_York)
+    -y              ISO-8601 date format
+
+EXAMPLES
+    mactime -d -z UTC -b body > timeline.csv
+    mactime -z UTC -b body 2019-12-11..2019-12-12
+
+NOTES
+    Output in UTC for forensic write-ups. Filter by date range to focus
+    on the window of interest.

@@ -1,0 +1,32 @@
+PSORT.PY(1)                   Plaso                          PSORT.PY(1)
+
+NAME
+    psort.py — post-process a Plaso storage file (filter, sort, export)
+
+SYNOPSIS
+    psort.py [-o <fmt>] [-w <out>] [<filter>] <plaso file>
+
+DESCRIPTION
+    Reads a `.plaso` storage file produced by log2timeline.py and emits
+    a chronological supertimeline in the requested format. Supports
+    Plaso filter expressions to scope by date range, artefact source,
+    or any field.
+
+COMMON FLAGS
+    -o <fmt>         output format: l2tcsv, json, json_line, kml, ...
+    -w <file>        write to file (default stdout)
+    -z <TZ>          timezone (use UTC for forensic write-ups)
+
+FILTERS
+    "date > '2019-12-11 00:00:00' AND date < '2019-12-12 00:00:00'"
+    "parser is 'winevtx'"
+    "filename contains 'Prefetch'"
+
+EXAMPLES
+    psort.py -o l2tcsv -w timeline.csv case.plaso
+    psort.py -o l2tcsv -z UTC -w focused.csv case.plaso \
+             "date > '2019-12-11 14:30:00' AND date < '2019-12-11 15:00:00'"
+
+NOTES
+    The l2tcsv format is the standard for analyst review. JSON / JSONL
+    are best for downstream scripted analysis.

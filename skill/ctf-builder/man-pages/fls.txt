@@ -1,0 +1,28 @@
+FLS(1)                    The Sleuth Kit                            FLS(1)
+
+NAME
+    fls — list file and directory names in a forensic image
+
+SYNOPSIS
+    fls [-rpl] [-o <offset>] <image> [<inode>]
+
+DESCRIPTION
+    Walks the file system inside an image and lists its entries,
+    including deleted files (marked with `*`). Reads from any image
+    The Sleuth Kit supports (raw, EWF, AFF, etc.).
+
+COMMON FLAGS
+    -r              recursive — descend into subdirectories
+    -p              full paths (instead of just basenames)
+    -l              long format (mtime, size, owner)
+    -o <offset>     partition offset (sectors); use mmls to find
+    -m <mountpt>    body-file output for mactime
+
+EXAMPLES
+    fls -rp -o 2048 disk.E01                  list all files
+    fls -m C: -rp -o 2048 disk.E01 > body     emit body file
+    fls -o 2048 disk.E01 12345                list the dir at inode 12345
+
+NOTES
+    Pair with `icat` to extract a specific inode and `mactime` to build
+    a timeline from the -m output.

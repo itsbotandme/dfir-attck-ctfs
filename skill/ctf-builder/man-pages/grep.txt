@@ -1,0 +1,35 @@
+GREP(1)                  GNU Coreutils                            GREP(1)
+
+NAME
+    grep — print lines matching a pattern
+
+SYNOPSIS
+    grep [OPTION]... PATTERN [FILE]...
+
+DESCRIPTION
+    Search input for lines matching a regular expression. Reads from
+    stdin if no FILE is given — the workhorse of any analyst's pipeline.
+
+COMMON FLAGS
+    -i              case-insensitive
+    -v              invert match (lines that DON'T match)
+    -c              count matches only
+    -l              filenames only
+    -n              prefix line with line number
+    -A <N>          print N lines after each match
+    -B <N>          print N lines before each match
+    -C <N>          print N lines around each match (context)
+    -E              extended regex (egrep)
+    -F              fixed strings (no regex)
+    -r              recurse into directories
+    -o              print only the matching part
+
+EXAMPLES
+    grep -i passwd PASSWD.LOG
+    vol -f mem.raw windows.cmdline | grep -i rar
+    grep -rn "TODO" .
+    cat conn.log | grep -v "^#"
+
+NOTES
+    Pipe-friendly. In this lab, most stages use a `<tool> | grep <pattern>`
+    pattern to scope plugin output.
