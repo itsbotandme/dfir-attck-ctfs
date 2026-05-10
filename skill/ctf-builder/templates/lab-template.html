@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none';">
+<!--
+  ============================================================================
+  LAB TEMPLATE — see ../SKILL.md for the spec, ./lab-build-guide.md for the
+  data shapes. Search this file for "TEMPLATE:" markers to find every place
+  you need to fill in. Keep CSS / JS / DOM structure as-is.
+  ============================================================================
+-->
+<title>TEMPLATE: Case Name — Artefact Type</title>
+<style>
+  :root {
+    --bg: #0a0e14;
+    --panel: #11161d;
+    --panel-2: #161c25;
+    --border: #232a36;
+    --accent: #58a6ff;
+    --accent-2: #79c0ff;
+    --green: #3fb950;
+    --yellow: #d29922;
+    --orange: #db6d28;
+    --red: #f85149;
+    --purple: #bc8cff;
+    --text: #c9d1d9;
+    --muted: #7d8590;
+    --code-bg: #0d1117;
+    --term-green: #4af626;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace; line-height: 1.55; font-size: 13px; }
+
+  header { border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; align-items: center; gap: 14px; background: var(--panel); }
+  header h1 { font-size: 0.95rem; color: var(--accent); font-weight: 600; }
+  .badge { background: var(--code-bg); border: 1px solid var(--border); border-radius: 3px; padding: 2px 8px; font-size: 0.7rem; color: var(--muted); }
+  .score-pill { background: var(--code-bg); border: 1px solid var(--border); padding: 4px 12px; border-radius: 16px; font-size: 0.75rem; }
+  .score-pill .v { color: var(--accent); font-weight: 600; }
+  .pro-toggle { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; background: var(--code-bg); border: 1px solid var(--border); padding: 4px 10px; border-radius: 16px; font-size: 0.72rem; color: var(--muted); cursor: pointer; user-select: none; }
+  .pro-toggle:hover { color: var(--text); border-color: var(--accent); }
+  .pro-toggle input { margin: 0; cursor: pointer; }
+
+  .container { display: grid; grid-template-columns: 290px 1fr; height: calc(100vh - 49px); }
+  .sidebar { border-right: 1px solid var(--border); padding: 8px 0; overflow-y: auto; background: var(--panel); }
+  .sb-h { padding: 10px 16px 4px; font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+
+  .stage-item { padding: 9px 16px; cursor: pointer; border-left: 3px solid transparent; transition: all 0.12s; }
+  .stage-item:hover { background: rgba(88,166,255,0.05); }
+  .stage-item.active { border-left-color: var(--accent); background: rgba(88,166,255,0.08); }
+  .stage-item.solved { border-left-color: var(--green); }
+  .si-tactic { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .stage-item.active .si-tactic { color: var(--accent); }
+  .stage-item.solved .si-tactic { color: var(--green); }
+  .si-name { font-size: 0.82rem; margin-top: 2px; color: var(--text); }
+  .si-meta { display: flex; justify-content: space-between; margin-top: 3px; font-size: 0.65rem; color: var(--muted); }
+  .si-check { color: var(--green); }
+
+  .main { display: flex; flex-direction: column; overflow: hidden; }
+  .stage-header { padding: 16px 24px; border-bottom: 1px solid var(--border); background: var(--panel-2); flex-shrink: 0; }
+  .stage-tactic-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+  .tactic-badge { font-size: 0.65rem; padding: 3px 8px; border-radius: 3px; background: rgba(188,140,255,0.1); color: var(--purple); border: 1px solid var(--purple); }
+  .technique-badge { font-size: 0.65rem; padding: 3px 8px; border-radius: 3px; background: rgba(88,166,255,0.1); color: var(--accent); border: 1px solid var(--accent); }
+  /* (Difficulty badge and diff-* classes removed — meta-spoiler inconsistent with the no-spoilers philosophy.) */
+  .stage-title { font-size: 1.15rem; color: var(--accent-2); font-weight: 600; }
+
+  /* Make the entire content column scroll as a single unit so briefing,
+     terminal, hint popup, and question area all flow naturally. */
+  .body-grid { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+
+  .briefing { padding: 14px 24px; border-bottom: 1px solid var(--border); background: var(--panel); flex-shrink: 0; }
+  .briefing h3 { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+  .briefing p { font-size: 0.85rem; line-height: 1.65; color: var(--text); }
+  .briefing code { background: var(--code-bg); padding: 1px 6px; border-radius: 3px; color: var(--accent-2); font-size: 0.78rem; }
+  .approach-list { margin-top: 8px; padding-left: 18px; }
+  .approach-list li { font-size: 0.78rem; line-height: 1.7; color: var(--text); }
+  .briefing-summary { font-size: 0.88rem; line-height: 1.6; color: var(--text); }
+  /* (.briefing-toggle / .briefing-details classes removed — the show/hide
+     full-briefing pattern was replaced by the always-visible whatsKnown +
+     briefing structure.) */
+
+  .terminal-wrapper { padding: 14px 24px; flex-shrink: 0; filter: drop-shadow(0 0 6px rgba(74,246,38,0.18)) drop-shadow(0 0 14px rgba(74,246,38,0.12)); transition: filter 0.2s ease; }
+  .terminal-wrapper:focus-within { filter: drop-shadow(0 0 8px rgba(74,246,38,0.32)) drop-shadow(0 0 18px rgba(74,246,38,0.20)); }
+  .terminal-label { font-size: 0.7rem; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.08em; display: flex; justify-content: space-between; }
+  .terminal-label .hint-link { color: var(--yellow); cursor: pointer; text-transform: none; border: 1px solid var(--yellow); border-radius: 12px; padding: 3px 10px; background: rgba(210,153,34,0.05); font-weight: 500; }
+  .terminal-label .hint-link:hover { background: rgba(210,153,34,0.15); }
+  /* Fixed terminal height — its own content scrolls inside; outer page
+     no longer fights for vertical space with the briefing.
+     Initial layout: input row sits ABOVE the output area so the prompt is
+     always visible. After the analyst runs their first command, JS flips
+     the DOM order and adds .cmd-entered, so the prompt drops to the
+     bottom and history scrolls above it — like a real shell. */
+  /* Terminal: auto-sizes to its content. NO min-height — a forced minimum
+     pushes the input prompt away from the latest output and feels like
+     the prompt 'jumps to the bottom of the page' on a short error. The
+     terminal's presence comes from the content it shows, not from a
+     forced empty box. max-height triggers internal scroll for long
+     output. :empty fully collapses the box when there's nothing to show.
+     Glow lives on .terminal-wrapper as a layered filter:drop-shadow so
+     the input row + terminal read as ONE outer halo. (Putting box-shadow
+     on each child draws a bright seam at the boundary between them where
+     each side's inner-edge glow stacks.) :focus-within brightens it. */
+  .terminal { background: #000; border: 1px solid var(--border); border-radius: 0 0 6px 6px; border-top: none; max-height: 560px; overflow-y: auto; padding: 10px 14px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; transition: border-color 0.2s ease; }
+  .terminal:empty { padding: 0; border: none; }
+  /* Focus state — glow brightens when analyst is interacting with the terminal */
+  .terminal-wrapper:focus-within .terminal { border-color: rgba(74,246,38,0.40); }
+  .terminal-wrapper.cmd-entered .terminal { border-radius: 6px 6px 0 0; border-top: 1px solid var(--border); border-bottom: none; }
+  .terminal::-webkit-scrollbar { width: 8px; }
+  .terminal::-webkit-scrollbar-track { background: #000; }
+  .terminal::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+  .term-line { color: var(--term-green); white-space: pre-wrap; word-break: break-all; }
+  .term-prompt { color: var(--green); }
+  .term-input { color: #fff; }
+  .term-output { color: #d4d4d4; white-space: pre; font-family: inherit; }
+  .term-error { color: var(--red); }
+  .term-info { color: var(--accent-2); }
+  .term-warn { color: var(--yellow); }
+
+  /* Input row sits at the TOP of the terminal block — analyst always sees
+     the prompt without scrolling. Bottom border removed so it joins the
+     terminal cleanly. After the first command, .cmd-entered on the parent
+     flips this so the prompt sits at the bottom (like a real shell). */
+  .term-input-row { display: flex; align-items: center; padding: 8px 14px; background: #000; border: 1px solid var(--border); border-bottom: none; border-radius: 6px 6px 0 0; transition: border-color 0.2s ease; }
+  .terminal-wrapper:focus-within .term-input-row { border-color: rgba(74,246,38,0.40); }
+  .terminal-wrapper.cmd-entered .term-input-row { border-radius: 0 0 6px 6px; border-top: none; border-bottom: 1px solid var(--border); }
+  .term-input-row::before { content: 'analyst@dfir:/cases#'; color: var(--green); font-size: 0.78rem; margin-right: 8px; white-space: nowrap; }
+  .term-input-field { flex: 1; background: transparent; border: none; outline: none; color: #fff; font-family: inherit; font-size: 0.78rem; caret-color: var(--term-green); }
+
+  /* Question sits ABOVE the terminal so it isn't missed at first glance. */
+  .question-area { padding: 16px 24px; background: var(--panel-2); border-bottom: 2px solid var(--accent); flex-shrink: 0; }
+  .question-text { font-size: 0.85rem; margin-bottom: 10px; }
+  .question-text b { color: var(--yellow); }
+  .answer-form { display: flex; gap: 10px; }
+  .answer-input { flex: 1; background: var(--code-bg); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 5px; font-family: inherit; font-size: 0.85rem; outline: none; transition: border-color 0.15s; }
+  .answer-input:focus { border-color: var(--accent); }
+  .answer-input.correct { border-color: var(--green); background: rgba(63,185,80,0.05); }
+  .answer-input.wrong { border-color: var(--red); animation: shake 0.3s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+  .submit-btn { background: var(--accent); color: #000; border: none; padding: 8px 16px; border-radius: 5px; font-family: inherit; font-size: 0.85rem; cursor: pointer; font-weight: 600; }
+  .submit-btn:hover { opacity: 0.85; }
+  .submit-btn:disabled { background: var(--border); cursor: not-allowed; opacity: 0.6; }
+
+  .feedback { margin-top: 10px; padding: 10px 14px; border-radius: 5px; font-size: 0.8rem; display: none; line-height: 1.6; }
+  .feedback.show { display: block; }
+  .feedback.ok { background: rgba(63,185,80,0.08); border: 1px solid var(--green); color: var(--green); }
+  .feedback.ok .reveal { color: var(--text); margin-top: 6px; display: block; }
+  .feedback.ok .att-map { color: var(--purple); margin-top: 4px; display: block; font-weight: 600; }
+  .feedback.err { background: rgba(248,81,73,0.08); border: 1px solid var(--red); color: var(--red); }
+
+  .hint-popup { background: rgba(210,153,34,0.08); border: 1px solid var(--yellow); border-radius: 5px; padding: 10px 14px; margin-top: 8px; font-size: 0.78rem; display: none; }
+  .hint-popup.show { display: block; }
+  .hint-popup .h-title { color: var(--yellow); font-weight: 600; margin-bottom: 4px; }
+
+  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; margin: 12px 16px 0; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--green)); transition: width 0.4s; }
+  .progress-text { font-size: 0.7rem; color: var(--muted); padding: 6px 16px 12px; }
+
+  .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 100; }
+  .modal-overlay.show { display: flex; }
+  .modal { background: var(--panel); border: 1px solid var(--accent); border-radius: 8px; padding: 32px 40px; max-width: 600px; }
+  .modal h2 { color: var(--green); font-size: 1.4rem; margin-bottom: 12px; }
+  .modal p { font-size: 0.85rem; line-height: 1.7; margin-bottom: 12px; }
+  .modal .close-btn { background: var(--accent); color: #000; border: none; padding: 8px 18px; border-radius: 5px; font-family: inherit; cursor: pointer; font-weight: 600; }
+
+  .att-flow { margin-top: 8px; padding: 8px 12px; background: var(--code-bg); border-radius: 5px; border: 1px solid var(--border); font-size: 0.72rem; color: var(--muted); }
+  .att-flow .step { display: inline-block; padding: 2px 6px; margin: 1px; background: rgba(88,166,255,0.1); border: 1px solid var(--border); border-radius: 3px; }
+  .att-flow .step.done { background: rgba(63,185,80,0.1); border-color: var(--green); color: var(--green); }
+  .att-flow .step.current { background: rgba(88,166,255,0.2); border-color: var(--accent); color: var(--accent); }
+
+  /* (Tap-to-run suggestions and the type/tap mode toggle were removed —
+     analysts type their own commands.) */
+
+  /* === Stage 1 only — first-touch terminal hint (orientation for true beginners) ===
+     No box (the question above already has its accent border). White body text
+     reads as instruction; blue inline code distinguishes the example command
+     from both the body text and the green prompt below. */
+  .terminal-first-touch { display: none; padding: 4px 0; margin-bottom: 8px; font-size: 0.78rem; color: var(--text); line-height: 1.5; }
+  .terminal-first-touch.show { display: block; }
+  .terminal-first-touch b { color: var(--text); }
+  .terminal-first-touch code { background: rgba(188,140,255,0.18); padding: 2px 8px; border-radius: 3px; color: var(--purple); font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 600; }
+
+  /* === Plugin picker === */
+  .plugin-picker { margin: 14px 0 8px; padding: 14px 16px; background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; }
+  .picker-nudge { margin-bottom: 10px; padding: 8px 12px; background: rgba(210,153,34,0.08); border: 1px solid var(--yellow); border-radius: 4px; font-size: 0.78rem; color: var(--text); line-height: 1.5; }
+  .plugin-picker .pp-title { font-size: 0.85rem; color: var(--accent-2); font-weight: 600; margin-bottom: 4px; }
+  .plugin-picker .pp-prompt { font-size: 0.78rem; color: var(--muted); margin-bottom: 10px; line-height: 1.55; }
+  .plugin-picker select { width: 100%; max-width: 380px; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 4px; padding: 8px 10px; font-family: inherit; font-size: 0.82rem; outline: none; cursor: pointer; }
+  .plugin-picker select:focus { border-color: var(--accent); }
+  .picker-feedback { margin-top: 10px; padding: 10px 14px; border-radius: 5px; font-size: 0.78rem; line-height: 1.6; display: none; }
+  .picker-feedback.show { display: block; }
+  .picker-feedback .pf-title { font-weight: 600; margin-bottom: 4px; }
+  .picker-feedback.best { background: rgba(63,185,80,0.08); border: 1px solid var(--green); color: var(--green); }
+  .picker-feedback.best .pf-title::before { content: '✓ '; }
+  .picker-feedback.best .pf-reason { color: var(--text); display: block; margin-top: 4px; }
+  .picker-feedback.plausible { background: rgba(210,153,34,0.08); border: 1px solid var(--yellow); color: var(--yellow); }
+  .picker-feedback.plausible .pf-title::before { content: '≈ '; }
+  .picker-feedback.plausible .pf-reason { color: var(--text); display: block; margin-top: 4px; }
+  .picker-feedback.off-base { background: rgba(248,81,73,0.08); border: 1px solid var(--red); color: var(--red); }
+  .picker-feedback.off-base .pf-title::before { content: '✗ '; }
+  .picker-feedback.off-base .pf-reason { color: var(--text); display: block; margin-top: 4px; }
+  .picker-summary { margin: 12px 0 8px; padding: 8px 12px; background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; font-size: 0.75rem; color: var(--muted); }
+  .picker-summary .ps-grade { font-weight: 600; margin-left: 6px; }
+  .picker-summary .ps-grade.best { color: var(--green); }
+  .picker-summary .ps-grade.plausible { color: var(--yellow); }
+  .picker-summary .ps-grade.off-base { color: var(--red); }
+
+  /* === Kill Chain Earned panel (sidebar) === */
+  .kc-row { padding: 4px 16px; font-size: 0.72rem; line-height: 1.5; color: var(--muted); }
+  .kc-row.earned { color: var(--green); }
+  .kc-row.earned .kc-id { font-weight: 600; }
+  .kc-placeholder { padding: 6px 16px 0; font-size: 0.72rem; color: var(--muted); letter-spacing: 0.15em; }
+  .kc-counter { padding: 8px 16px 14px; font-size: 0.7rem; color: var(--muted); border-top: 1px dashed var(--border); margin-top: 6px; }
+
+  /* === Soft-locked carry-forward context (peek-ahead spoiler guard) === */
+  .briefing-summary.locked-context { background: rgba(210,153,34,0.06); border: 1px solid var(--yellow); border-radius: 5px; padding: 10px 14px; margin-bottom: 10px; color: var(--muted); line-height: 1.6; }
+  .briefing-summary.locked-context b { color: var(--yellow); }
+
+  /* === Continue-to-next-stage button (post-answer) === */
+  .continue-btn { display: inline-block; margin-top: 14px; padding: 10px 18px; background: var(--accent); color: #000; border: none; border-radius: 6px; font-family: inherit; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: opacity 0.15s; min-height: 40px; }
+  .continue-btn:hover { opacity: 0.85; }
+
+  /* === ATT&CK reveal card (post-answer) === */
+  .att-reveal-card { margin-top: 12px; padding: 14px 16px; background: rgba(188,140,255,0.06); border: 1px solid var(--purple); border-radius: 6px; }
+  .att-reveal-card .arc-label { font-size: 0.7rem; color: var(--purple); font-weight: 600; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .att-reveal-card .arc-technique { font-size: 0.95rem; color: var(--accent-2); font-weight: 600; margin-bottom: 8px; }
+  .att-reveal-card .arc-fits-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+  .att-reveal-card .arc-fits { font-size: 0.82rem; color: var(--text); line-height: 1.6; }
+
+  /* === Stage 0 briefing — magazine-style readability ===
+     Scoped to .intro-pane only; the rest of the lab keeps monospace. */
+  .intro-pane {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Helvetica, Arial, sans-serif;
+    display: flex; flex-direction: column; gap: 22px;
+    max-width: 740px;
+  }
+  .intro-pane code, .intro-pane pre {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  }
+  .intro-section {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+  }
+  .intro-section h3 {
+    font-size: 1.05rem; font-weight: 600;
+    color: var(--accent-2);
+    margin: 0 0 12px 0;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .intro-section p {
+    font-size: 0.97rem; line-height: 1.75;
+    color: var(--text);
+    margin: 0 0 12px 0;
+  }
+  .intro-section p:last-child { margin-bottom: 0; }
+  .intro-section ul {
+    font-size: 0.95rem; line-height: 1.8;
+    color: var(--text);
+    padding-left: 22px; margin: 0 0 12px 0;
+  }
+  .intro-section li { margin-bottom: 4px; }
+  .intro-section .muted { color: var(--muted); font-size: 0.88rem; }
+  .intro-section code {
+    background: var(--code-bg);
+    padding: 1px 6px; border-radius: 3px;
+    color: var(--accent-2); font-size: 0.88rem;
+  }
+  .intro-quote {
+    font-style: italic;
+    font-size: 1.02rem; line-height: 1.75;
+    border-left: 3px solid var(--accent);
+    padding: 12px 18px;
+    background: rgba(88,166,255,0.06);
+    margin: 0 0 14px 0;
+    color: var(--text);
+  }
+  .intro-codeblock {
+    background: #000;
+    color: var(--term-green);
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    margin: 8px 0 14px;
+    overflow-x: auto;
+  }
+  .intro-cta {
+    text-align: center;
+    font-size: 0.92rem;
+    color: var(--muted);
+    padding-top: 4px;
+  }
+  @media (max-width: 768px) {
+    .intro-pane { gap: 16px; max-width: 100%; }
+    .intro-section { padding: 16px 18px; }
+    .intro-section h3 { font-size: 1rem; }
+    .intro-section p, .intro-section ul { font-size: 0.95rem; }
+    .intro-quote { font-size: 1rem; padding: 10px 14px; }
+  }
+
+  /* === Hamburger button (mobile only) === */
+  .hamburger { display: none; cursor: pointer; padding: 6px 10px; background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; color: var(--text); font-size: 1.1rem; font-family: inherit; line-height: 1; }
+  .hamburger:hover { background: rgba(88,166,255,0.06); }
+  .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 49; }
+  .sidebar-overlay.show { display: block; }
+
+  /* === Tablet breakpoint (≤1024px) === */
+  @media (max-width: 1024px) {
+    .container { grid-template-columns: 240px 1fr; }
+    header h1 { font-size: 0.85rem; }
+    .badge { font-size: 0.65rem; padding: 1px 6px; }
+  }
+
+  /* === Phone breakpoint (≤768px) === */
+  @media (max-width: 768px) {
+    body { font-size: 14px; }
+    header { padding: 10px 14px; gap: 8px; flex-wrap: wrap; }
+    header h1 { font-size: 0.8rem; }
+    header .badge { display: none; }
+    header .badge:nth-of-type(1) { display: inline-block; }
+    .score-pill { font-size: 0.7rem; padding: 3px 8px; }
+    .hamburger { display: inline-block; }
+
+    .container { grid-template-columns: 1fr; height: calc(100vh - 49px); }
+
+    /* Sidebar becomes a slide-in drawer */
+    .sidebar {
+      position: fixed; top: 49px; left: 0;
+      width: 280px; height: calc(100vh - 49px);
+      transform: translateX(-100%);
+      transition: transform 0.25s ease;
+      z-index: 50;
+      box-shadow: 4px 0 16px rgba(0,0,0,0.5);
+    }
+    .sidebar.open { transform: translateX(0); }
+
+    .stage-header { padding: 12px 14px; }
+    .stage-title { font-size: 1rem; }
+    .stage-tactic-row { gap: 6px; }
+    .briefing { padding: 12px 14px; }
+    .briefing-summary { font-size: 0.95rem; }
+    .terminal-wrapper { padding: 10px 14px; }
+    .question-area { padding: 12px 14px; }
+
+    .terminal { max-height: 440px; font-size: 0.75rem; padding: 8px 10px; }
+
+    /* Bigger tap targets — Apple HIG / Material spec */
+    .submit-btn { padding: 12px 18px; font-size: 0.95rem; min-height: 44px; }
+    .answer-input { padding: 12px 12px; font-size: 1rem; min-height: 44px; }
+
+    /* Compact terminal prompt on mobile — the long path eats input space */
+    .term-input-row { padding: 10px 12px; min-height: 44px; overflow: hidden; }
+    .term-input-row::before {
+      content: '$';
+      font-size: 1rem;
+      margin-right: 10px;
+    }
+    .term-input-field { font-size: 1rem; min-width: 0; }
+    .term-input-field::placeholder { font-size: 0.85rem; }
+
+    .hint-link { padding: 8px 14px; min-height: 36px; display: inline-flex; align-items: center; }
+  }
+
+  /* === Very small phones (≤380px) === */
+  @media (max-width: 380px) {
+    .terminal { max-height: 360px; }
+    header h1 { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="Toggle stages menu">☰</button>
+  <span style="color:var(--purple);font-size:1.1rem">⬡</span>
+  <h1>TEMPLATE: Case Name — DFIR ATT&CK Investigation</h1>
+  <span class="badge">TEMPLATE: Tool + version</span>
+  <span class="badge">TEMPLATE: OS / artefact descriptor</span>
+  <span class="badge">TEMPLATE: image filename</span>
+  <label class="pro-toggle" title="Hide the plugin picker on each stage. For analysts already familiar with Volatility 3.">
+    <input type="checkbox" id="pro-mode-toggle-header" onchange="togglePromodeHeader()">
+    <span>Pro mode</span>
+  </label>
+  <span class="score-pill">Stage <span class="v" id="solved-count">0</span> / N</span><!-- denominator overwritten at boot from STAGES.length -->
+</header>
+
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+<div class="container">
+
+  <div class="sidebar">
+    <div class="sb-h">⚔️ Investigation</div>
+    <div id="stages-list"></div>
+
+    <div class="sb-h" style="margin-top:14px">🔗 Kill Chain Earned</div>
+    <div id="kill-chain-panel"></div>
+
+    <div class="sb-h" style="margin-top:14px">📚 Quick Reference</div>
+    <div style="padding: 4px 16px 14px; font-size: 0.72rem; line-height: 1.7; color: var(--muted);">
+      <div><code style="background:var(--code-bg);padding:1px 4px;border-radius:2px">help</code> — list commands</div>
+      <div><code style="background:var(--code-bg);padding:1px 4px;border-radius:2px">tactics</code> — ATT&CK tactics</div>
+      <div><code style="background:var(--code-bg);padding:1px 4px;border-radius:2px">clear</code> — clear screen</div>
+      <div><code style="background:var(--code-bg);padding:1px 4px;border-radius:2px">↑/↓</code> — command history</div>
+    </div>
+
+    <div class="sb-h" style="margin-top:14px">🙏 Attribution</div>
+    <div style="padding: 4px 16px 18px; font-size: 0.68rem; line-height: 1.7; color: var(--muted);">
+      TEMPLATE: Attribution sentence — credit the artefact source if derivative. Mark interactive terminal, ATT&amp;CK mapping, stage decomposition, and training narration as original. See SKILL.md §18.
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="stage-header">
+      <div class="stage-tactic-row" id="stage-badges">
+        <span class="tactic-badge" id="cur-tactic" style="display:none">TA0007 Discovery</span>
+        <span class="technique-badge" id="cur-technique" style="display:none">T1082 System Information Discovery</span>
+      </div>
+      <div class="stage-title" id="cur-title">Stage 1 — Initial System Triage</div>
+    </div>
+
+    <div class="body-grid">
+      <div class="briefing" id="briefing"></div>
+
+      <div class="question-area" id="question-area">
+        <div class="question-text" id="question-text"></div>
+        <div class="answer-form">
+          <input type="text" class="answer-input" id="answer-input" placeholder="Your answer...">
+          <button class="submit-btn" id="submit-btn">Submit</button>
+        </div>
+        <div class="feedback" id="feedback"></div>
+      </div>
+
+      <div class="terminal-wrapper">
+        <div class="terminal-first-touch" id="terminal-first-touch"></div>
+        <div class="terminal-label">
+          <span>🖥️ ANALYST TERMINAL</span>
+          <span class="hint-link" onclick="showHint()">💡 Need a hint?</span>
+        </div>
+
+        <div class="hint-popup" id="hint-popup"></div>
+        <div class="term-input-row" id="term-input-row">
+          <input type="text" class="term-input-field" id="term-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Type a command or 'help'">
+        </div>
+        <div class="terminal" id="terminal"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="completion-modal">
+  <div class="modal">
+    <h2>🎯 Investigation Complete</h2>
+    <p>You've reconstructed what happened on the sister's machine across all eight ATT&CK tactics — hypothesis by hypothesis.</p>
+    <p>The story you can now defend:</p>
+    <p style="padding-left: 20px;">
+      • <b>Who:</b> <span style="color:var(--accent-2)">TEMPLATE: actor / account(s) involved</span><br>
+      • <b>What:</b> <span style="color:var(--accent-2)">TEMPLATE: the headline behaviour</span><br>
+      • <b>When:</b> <span style="color:var(--accent-2)">TEMPLATE: time window of activity</span><br>
+      • <b>Where:</b> <span style="color:var(--accent-2)">TEMPLATE: host / artefact descriptor</span><br>
+      • <b>How:</b> <span style="color:var(--accent-2)">TEMPLATE: mechanism / kill-chain summary</span>
+    </p>
+    <p style="margin-top: 16px;">A real DFIR analyst would now pivot to disk forensics, write Sigma/YARA detection rules from the ATT&CK techniques used, and brief the IR team with this kill chain.</p>
+    <p style="margin-top:14px;font-size:0.72rem;color:var(--muted);border-top:1px solid var(--border);padding-top:10px">TEMPLATE: Attribution — credit the artefact source if derivative. Mark interactive terminal, ATT&amp;CK mapping, stage decomposition, and training narration as original. See SKILL.md §18 for the canonical wording.</p>
+    <button class="close-btn" onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<canvas id="fireworks-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:99;display:none"></canvas>
+
+<script>
+// ============================================================
+// LAB CONFIGURATION — set these once; the rest of the JS reads them.
+// ============================================================
+const IMAGE_FILENAME = "TEMPLATE_image_filename.raw";  // e.g. "MemoryDump_Lab1.raw"
+const IMAGE_SIZE_BYTES = 0;                            // for the `ls` / `file` mocks
+const TOOL_NAME = "vol";                               // command verb the analyst types
+const OUTPUT_TABLE_NAME = "VOL_OUTPUTS";               // matches the const below
+
+// ============================================================
+// CANNED PLUGIN OUTPUT
+// ============================================================
+const VOL_OUTPUTS = {
+  // TEMPLATE: Replace this object with one entry per plugin your lab references.
+  // Keys are the plugin invocations the analyst would type after `<tool> -f <image>`.
+  // Values are template-literal strings of the canned plugin output.
+  // See lab-build-guide.md §2 for naming conventions and PID/--key suffixes.
+  // Example (delete and replace with real entries):
+
+  "windows.info": `<tool> Framework <version>
+Variable                        Value
+
+Kernel Base                     <hex>
+DTB                             <hex>
+Symbols                         <symbol-table-name>
+Is64Bit                         True
+IsPAE                           False
+NTBuildLab                      <build>.<revision>.<arch>.<branch>.<date>
+NtMajorVersion                  6
+NtMinorVersion                  1
+SystemTime                      <YYYY-MM-DD HH:MM:SS UTC>
+NtSystemRoot                    C:\\Windows
+NtProductType                   NtProductWinNt`,
+
+  // Add more plugins here. Use the suffix `-<PID>` for PID-specific plugins
+  // (e.g. "windows.handles-1512"), `-<key>` for --key-specific plugins.
+  // Run scripts/format_all_tables.py over your raw outputs before pasting —
+  // monospace alignment matters and manually-pasted output drifts.
+};
+
+const STRINGS_HITS = {
+  // TEMPLATE: Pre-greppable corpus. Optional — only needed if a stage uses
+  //   strings <image> | grep <pattern>
+  // Keys are exact patterns the analyst would grep for. Values are the
+  // matching lines (multiple matches as separate lines inside the string).
+  // Delete this block entirely if no stage uses `strings`.
+
+  "TEMPLATE_PATTERN": `C:\\Path\\To\\Match.ext
+C:\\Another\\Match.ext`,
+};
+
+// File listings
+const FILES = {
+  "/cases": [
+    { name: IMAGE_FILENAME, size: IMAGE_SIZE_BYTES, type: "file" },
+  ],
+};
+
+// ============================================================
+// STAGES — organized by ATT&CK Enterprise tactic kill chain order
+// (Stage 0 is a non-interactive briefing, marked with intro:true)
+// ============================================================
+const STAGES = [
+  // TEMPLATE: One entry per stage. See lab-build-guide.md §1 for the schema.
+  // Pedagogy: first stage = "what am I looking at" (system/artefact orientation),
+  // last stage = synthesis (the analyst MAPS to ATT&CK themselves; noPicker:true).
+  // 6–9 stages is the right band. More than 10 turns into a slog; fewer than 6
+  // doesn't earn the kill chain.
+
+  // ============================================================
+  // STAGE 0 — Briefing & How This Works (intro pane, no terminal)
+  // ============================================================
+  {
+    id: 0,
+    intro: true,
+    title: "Briefing & How This Works",
+    tactic: "INTRO",
+    briefing: `<div class="intro-pane">
+      <section class="intro-section">
+        <h3>The Case</h3>
+        <blockquote class="intro-quote">
+          TEMPLATE: Verbatim source-of-truth scenario quote, if one exists.
+          Cite the source. If no original quote, write 2–3 sentences in plain
+          English describing what's known and the analyst's job.
+        </blockquote>
+        <p>Each stage opens with what's known so far and asks one investigative
+           question. Pick a plugin, run commands, submit what you find. The
+           ATT&amp;CK technique is revealed after you answer.</p>
+      </section>
+
+      <section class="intro-section">
+        <h3>How this game works</h3>
+        <p>Static HTML. The terminal looks up your command in a table of
+           pre-recorded outputs — it does not run the real tool. Commands not
+           in the table say <i>"no canned output"</i>. This is rails, not a
+           sandbox.</p>
+        <p>If you get stuck, the 💡 Need a hint? button gives progressive
+           nudges (three escalating tiers per stage).</p>
+      </section>
+
+      <section class="intro-section">
+        <h3>About TEMPLATE: Tool Name</h3>
+        <p>TEMPLATE: One paragraph — what the tool is, which version, the
+           canonical command shape. If shorthand and full forms differ
+           (<code>vol -f &lt;image&gt; &lt;plugin&gt;</code> vs
+           <code>python3 vol.py -f &lt;image&gt; &lt;plugin&gt;</code>),
+           note both — the lab terminal accepts either.</p>
+        <pre class="intro-codeblock"><tool> -f <image> <plugin></pre>
+      </section>
+    </div>`,
+    hints: []
+  },
+
+  // ============================================================
+  // STAGE 1 — example investigative stage (REPLACE)
+  // Copy this block N times for stages 1 … N-1, adjusting per the schema.
+  // ============================================================
+  {
+    id: 1,
+    title: "Stage 1 — TEMPLATE: one-line investigative question",
+    tactic: "TA#### TEMPLATE Tactic Name",          // hidden until solved
+    technique: "T####.### TEMPLATE Technique Name", // hidden until solved
+    whatsKnown: `TEMPLATE: One to two sentences carrying forward what's been established. Stage 1's whatsKnown is the briefing-pane state of "you have just opened the artefact". Stages 2..N's whatsKnown is the natural conclusion of the prior stage's answerNote.`,
+    briefing: `TEMPLATE: One to two sentences framing the question and pointing at why a particular CLASS of plugin is the right move. Never name the plugin — the picker handles that.`,
+    pluginGrades: {
+      "<tool>.<plugin-a>": { grade: "best",      reason: "TEMPLATE: Why this is the strongest first move. Don't name the answer in the reason — the analyst hasn't picked yet." },
+      "<tool>.<plugin-b>": { grade: "plausible", reason: "TEMPLATE: Close cousin — useful but not the most direct." },
+      "<tool>.<plugin-c>": { grade: "off-base",  reason: "TEMPLATE: Wrong layer — explain briefly." },
+      "<tool>.<plugin-d>": { grade: "off-base",  reason: "TEMPLATE: ..." },
+      "<tool>.<plugin-e>": { grade: "off-base",  reason: "TEMPLATE: ..." },
+      "<tool>.<plugin-f>": { grade: "off-base",  reason: "TEMPLATE: ..." },
+      "<tool>.<plugin-g>": { grade: "off-base",  reason: "TEMPLATE: ..." }
+    },
+    question: `TEMPLATE: HTML question text. <b>Bold</b> the answer-shaped noun. Give the format spec parenthetically — e.g. (Format: NNNN.NNNNN — first two number groups only).`,
+    answer: "TEMPLATE_CANONICAL_ANSWER",
+    altAnswers: [
+      "TEMPLATE_case_variant",
+      "TEMPLATE_path_with_slashes",
+      "TEMPLATE_short_form"
+    ],
+    answerNote: `TEMPLATE: HTML reveal text — 2-3 sentences. State the finding, what it implies, what to carry forward. NO ATT&CK reference here — that's the attReveal card's job.`,
+    attReveal: {
+      technique: "T####.### — TEMPLATE Technique Name",
+      fits: "TEMPLATE: One sentence linking the behavioural fingerprint just observed to the technique. Two sentences max if the link needs context."
+    },
+    hints: [
+      // H1 — syntax shape only. Names the command form, not the plugin.
+      "<tool> commands take the shape <code>&lt;tool&gt; -f &lt;image&gt; &lt;plugin&gt;</code>. There's a plugin that does X — think about what it would be called.",
+      // H2 — narrows by property. Names a category or constraint without
+      // naming the plugin or answer.
+      "TEMPLATE: A property of the plugin name, or the kind of pattern to grep for.",
+      // H3 — literal command + where to read the answer in the output.
+      // No "is your answer" / "is the answer" filler.
+      "Run <code><tool> -f <image> <plugin></code>. Read the &lt;field&gt; column."
+    ]
+  },
+
+  // ============================================================
+  // STAGE N — synthesis (REPLACE — this is the LAST stage)
+  // The analyst maps their findings to ATT&CK themselves. No picker.
+  // ============================================================
+  {
+    id: 2,
+    title: "Stage N — Map your findings to ATT&CK",
+    tactic: "TA#### TEMPLATE Tactic Name",
+    technique: "T####.### TEMPLATE Technique Name",
+    noPicker: true,
+    whatsKnown: `You've earned N-1 ATT&CK techniques across the previous stages. This stage is the synthesis — do the mapping yourself, no reveal handing it to you.`,
+    briefing: `TEMPLATE: Re-state the synthesis question. Frame it as "if you were briefing detection engineering, what technique would you name for &lt;observed behaviour&gt;?"`,
+    question: `TEMPLATE: The synthesis question — usually asks for a specific technique ID + name.`,
+    answer: "TEMPLATE_TECHNIQUE_ID",
+    altAnswers: [
+      "TEMPLATE_with_subtechnique",
+      "TEMPLATE_name_only"
+    ],
+    answerNote: `TEMPLATE: 2-3 sentences confirming the mapping and reinforcing why naming behaviour in shared vocabulary is the analyst's writing-up muscle.`,
+    attReveal: {
+      technique: "T####.### — TEMPLATE Technique Name",
+      fits: "You earned this technique back at Stage X. Re-stating it here in formal ATT&CK is the writing-up muscle that turns an investigation into a defensible report."
+    },
+    hints: [
+      "TEMPLATE: H1 — reasoning-shaped, not plugin-shaped. Point at the property of the finding that matters for the mapping.",
+      "TEMPLATE: H2 — narrow to a tactic family.",
+      "TEMPLATE: H3 — name the technique tree (e.g. Masquerading) without giving the sub-technique."
+    ]
+  }
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let state = {
+  current: 0,
+  solved: new Set(),
+  hintIdx: {},
+  cmdHistory: [],
+  cmdHistoryIdx: -1,
+  proMode: false,
+  picks: {},             // stageId -> { plugin, grade }
+  pickerSkipped: {},     // stageId -> true if user submitted without picking
+  promptAtTop: true      // true = empty/cleared terminal, prompt above output
+};
+
+// ============================================================
+// TERMINAL EMULATOR
+// ============================================================
+function termWrite(html, cls = "") {
+  const t = document.getElementById('terminal');
+  const div = document.createElement('div');
+  div.className = "term-line " + cls;
+  div.innerHTML = html;
+  t.appendChild(div);
+  t.scrollTop = t.scrollHeight;
+}
+
+function termWritePrompt(input) {
+  termWrite(`<span class="term-prompt">analyst@dfir:/cases#</span> <span class="term-input">${escapeHtml(input)}</span>`);
+}
+
+function termWriteOutput(output, cls = "term-output") {
+  termWrite(escapeHtml(output), cls);
+}
+
+function escapeHtml(s) {
+  if (s === null || s === undefined) return "";
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function tokenize(line) {
+  // Simple tokenizer — handles quoted strings
+  const tokens = [];
+  const re = /"([^"]*)"|'([^']*)'|(\S+)/g;
+  let m;
+  while ((m = re.exec(line)) !== null) {
+    tokens.push(m[1] !== undefined ? m[1] : m[2] !== undefined ? m[2] : m[3]);
+  }
+  return tokens;
+}
+
+function executeLine(rawLine) {
+  const line = rawLine.trim();
+  if (!line) return;
+
+  // First command after empty/cleared terminal: drop the prompt to the bottom
+  // of the terminal block so history scrolls above it like a real shell.
+  // Resets after `clear` so the next command moves the prompt down again.
+  if (state.promptAtTop) {
+    const wrap = document.querySelector('.terminal-wrapper');
+    const inputRow = document.getElementById('term-input-row');
+    const term = document.getElementById('terminal');
+    if (wrap && inputRow && term && term.previousElementSibling === inputRow) {
+      wrap.insertBefore(term, inputRow);
+    }
+    if (wrap) wrap.classList.add('cmd-entered');
+    state.promptAtTop = false;
+  }
+
+  // Capture where the new command's prompt+output will start in the scroll
+  // buffer, so we can scroll to it once all output is written. Without this,
+  // termWrite's scroll-to-bottom default hides the prompt+command at the top
+  // of long output (e.g. windows.pslist) — the analyst would have to scroll
+  // up within the terminal to see what they typed.
+  const t = document.getElementById('terminal');
+  const promptStartOffset = t.scrollHeight;
+
+  termWritePrompt(line);
+
+  // Add to history
+  state.cmdHistory.push(line);
+  state.cmdHistoryIdx = state.cmdHistory.length;
+
+  // Pipe handling
+  const pipeline = line.split('|').map(s => s.trim());
+  let stdin = null;
+  for (let i = 0; i < pipeline.length; i++) {
+    stdin = runCommand(pipeline[i], stdin);
+    if (stdin && stdin.error) {
+      termWriteOutput(stdin.error, "term-error");
+      scrollTerminalToPrompt(t, promptStartOffset);
+      return;
+    }
+  }
+  if (stdin && stdin.text) {
+    termWriteOutput(stdin.text, stdin.cls || "term-output");
+  }
+  scrollTerminalToPrompt(t, promptStartOffset);
+}
+
+// Scroll the terminal so the latest command's prompt sits at the top of the
+// visible area (overrides termWrite's scroll-to-bottom). Wrapped in rAF so
+// it runs after the browser has computed the new layout.
+function scrollTerminalToPrompt(t, offset) {
+  requestAnimationFrame(() => {
+    t.scrollTop = offset;
+  });
+}
+
+function runCommand(cmd, stdin) {
+  const tokens = tokenize(cmd);
+  if (tokens.length === 0) return { text: "" };
+  const program = tokens[0];
+
+  switch (program) {
+    case 'vol': case 'vol.py': case 'volatility':
+      return cmdVol(tokens.slice(1));
+    case 'strings':
+      return cmdStrings(tokens.slice(1), stdin);
+    case 'grep':
+      return cmdGrep(tokens.slice(1), stdin);
+    case 'cat':
+      return cmdCat(tokens.slice(1));
+    case 'ls':
+      return cmdLs(tokens.slice(1));
+    case 'pwd':
+      return { text: "/cases" };
+    case 'file':
+      return cmdFile(tokens.slice(1));
+    case 'head':
+      return cmdHead(tokens.slice(1), stdin);
+    case 'tail':
+      return cmdTail(tokens.slice(1), stdin);
+    case 'wc':
+      return cmdWc(tokens.slice(1), stdin);
+    case 'sort':
+      return cmdSort(tokens.slice(1), stdin);
+    case 'uniq':
+      return cmdUniq(tokens.slice(1), stdin);
+    case 'help': case '?':
+      return { text: HELP_TEXT, cls: "term-info" };
+    case 'clear': {
+      // Empty the output AND reset the prompt to the top — like a real shell
+      // after `clear`, the next command will start fresh from the top.
+      document.getElementById('terminal').innerHTML = '';
+      const wrap = document.querySelector('.terminal-wrapper');
+      const inputRow = document.getElementById('term-input-row');
+      const term = document.getElementById('terminal');
+      if (wrap && inputRow && term && wrap.classList.contains('cmd-entered')) {
+        wrap.classList.remove('cmd-entered');
+        wrap.insertBefore(inputRow, term);
+      }
+      state.promptAtTop = true;
+      return { text: "" };
+    }
+    case 'tactics':
+      return { text: TACTICS_TEXT, cls: "term-info" };
+    case 'progress':
+      return { text: progressText(), cls: "term-info" };
+    case 'echo':
+      return { text: tokens.slice(1).join(' ') };
+    case 'man':
+      return cmdMan(tokens.slice(1));
+    default:
+      return { error: `${program}: command not found. Type 'help' for available commands.` };
+  }
+}
+
+function cmdVol(args) {
+  // Parse: -f <file> [<plugin>] [--pid N] [--key "..."]
+  let i = 0;
+  let imgFile = null;
+  let plugin = null;
+  let pid = null;
+  let key = null;
+
+  while (i < args.length) {
+    if (args[i] === '-f' || args[i] === '--file') {
+      imgFile = args[i+1]; i += 2;
+    } else if (args[i] === '--pid') {
+      pid = args[i+1]; i += 2;
+    } else if (args[i] === '--key') {
+      key = args[i+1]; i += 2;
+    } else if (args[i].startsWith('-')) {
+      i++; // skip unknown flags
+    } else {
+      if (!plugin) plugin = args[i];
+      i++;
+    }
+  }
+
+  if (!imgFile) {
+    return { error: `vol: missing -f <image_file>. Try: vol -f ${IMAGE_FILENAME} windows.info` };
+  }
+  if (!imgFile.match(new RegExp(IMAGE_FILENAME.replace(/\./g, "\\.") + "$", "i")) && imgFile !== IMAGE_FILENAME) {
+    return { error: `vol: image file '${imgFile}' not found. The image is '${IMAGE_FILENAME}'.` };
+  }
+  if (!plugin) {
+    return { error: "vol: missing plugin name. Examples: windows.info, windows.pslist, windows.cmdline, windows.filescan" };
+  }
+
+  // Look up plugin output
+  let key_lookup = plugin.toLowerCase();
+  if (key_lookup === 'windows.envars' && pid) key_lookup = `windows.envars-${pid}`;
+  if (key_lookup === 'windows.handles' && pid) key_lookup = `windows.handles-${pid}`;
+  if (key_lookup === 'windows.dlllist' && pid) key_lookup = `windows.dlllist-${pid}`;
+  if (key_lookup === 'windows.registry.printkey' && key) {
+    if (key.toLowerCase().includes('run')) key_lookup = 'windows.registry.run';
+    else if (key.toLowerCase().includes('recentdocs')) key_lookup = 'windows.registry.recentdocs';
+    else key_lookup = 'windows.registry.printkey';
+  }
+
+  // Resolve case-insensitively
+  let output = null;
+  for (const k of Object.keys(VOL_OUTPUTS)) {
+    if (k.toLowerCase() === key_lookup) { output = VOL_OUTPUTS[k]; break; }
+  }
+
+  if (output === null) {
+    // Useful guidance for unrecognised plugins
+    return {
+      error: `vol: plugin '${plugin}' not pre-loaded in this lab.\n\nAvailable plugins:\n  windows.info, windows.pslist, windows.psscan, windows.pstree,\n  windows.cmdline, windows.netscan, windows.filescan, windows.malfind,\n  windows.svcscan, windows.handles --pid <PID>, windows.envars --pid <PID>,\n  windows.dlllist --pid <PID>, windows.clipboard,\n  windows.registry.printkey --key "<key>"`
+    };
+  }
+
+  return { text: output };
+}
+
+function cmdStrings(args, stdin) {
+  // strings [-a] [-el] [-n N] <file>
+  // We support strings <file> and return key-string hits from the canned dataset
+  let file = null;
+  for (const a of args) {
+    if (!a.startsWith('-')) { file = a; break; }
+  }
+  if (!file) {
+    return { error: `strings: missing file argument. Try: strings ${IMAGE_FILENAME} | grep <pattern>` };
+  }
+  if (!file.match(new RegExp(IMAGE_FILENAME.replace(/\./g, '\\.') + '$', 'i'))) {
+    return { error: `strings: ${file}: No such file. Did you mean ${IMAGE_FILENAME}?` };
+  }
+  // Return a placeholder note — strings on a 1GB file outputs tens of millions of lines.
+  // The actual content is searchable via piping to grep.
+  return {
+    text: `[strings: dumped ASCII strings from ${IMAGE_FILENAME}]\n[Pipe through grep to filter, e.g.:  strings ${IMAGE_FILENAME} | grep -i <pattern>]`,
+    raw: STRINGS_HITS
+  };
+}
+
+function cmdGrep(args, stdin) {
+  // grep [-i] [-v] <pattern> [<file>]
+  let caseInsensitive = false;
+  let pattern = null;
+  let file = null;
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '-i' || args[i] === '--ignore-case') caseInsensitive = true;
+    else if (args[i] === '-v') { /* invert, not used in canned data */ }
+    else if (args[i].startsWith('-')) { /* skip */ }
+    else if (pattern === null) pattern = args[i];
+    else if (file === null) file = args[i];
+  }
+  if (pattern === null) return { error: "grep: missing pattern" };
+
+  // If no file, read from stdin
+  let content = "";
+  if (file) {
+    return { error: `grep: ${file}: No such file or directory` };
+  } else if (stdin && stdin.text) {
+    content = stdin.text;
+    // If stdin had raw data (strings hits), use that
+    if (stdin.raw) {
+      // Search across all pre-computed string hits
+      let allHits = "";
+      for (const k of Object.keys(stdin.raw)) {
+        if (caseInsensitive ? k.toLowerCase().includes(pattern.toLowerCase()) : k.includes(pattern)) {
+          allHits += stdin.raw[k] + "\n";
+        }
+      }
+      // Also try direct pattern match across all string values
+      for (const k of Object.keys(stdin.raw)) {
+        const val = stdin.raw[k];
+        const lines = val.split('\n');
+        for (const line of lines) {
+          const test = caseInsensitive ? line.toLowerCase() : line;
+          const pat = caseInsensitive ? pattern.toLowerCase() : pattern;
+          if (test.includes(pat) && !allHits.includes(line)) allHits += line + "\n";
+        }
+      }
+      if (allHits.trim()) return { text: allHits.trim() };
+      return { text: `[grep: pattern '${pattern}' not found in strings output]` };
+    }
+  } else {
+    return { error: `grep: no input. Pipe a command's output, e.g.:  vol -f ${IMAGE_FILENAME} windows.cmdline | grep <pattern>` };
+  }
+
+  const lines = content.split('\n');
+  const filtered = lines.filter(line => {
+    const t = caseInsensitive ? line.toLowerCase() : line;
+    const p = caseInsensitive ? pattern.toLowerCase() : pattern;
+    return t.includes(p);
+  });
+  if (filtered.length === 0) return { text: `[grep: no matches for '${pattern}']` };
+  return { text: filtered.join('\n') };
+}
+
+function cmdLs(args) {
+  return { text: `${IMAGE_FILENAME}\n\n[1 file]` };
+}
+
+function cmdCat(args) {
+  if (args.length === 0) return { error: "cat: missing file argument" };
+  return { error: `cat: ${args[0]}: Operation not permitted on raw memory image (would output 1GB binary). Use 'strings' instead.` };
+}
+
+function cmdFile(args) {
+  if (args.length === 0) return { error: "file: missing argument" };
+  if (args[0].match(new RegExp(IMAGE_FILENAME.replace(/\./g, '\\.') + '$', 'i'))) {
+    return { text: `${IMAGE_FILENAME}: data\n[Identified as raw artefact — adjust this description for the artefact type]` };
+  }
+  return { error: `file: ${args[0]}: No such file or directory` };
+}
+
+function cmdHead(args, stdin) {
+  let n = 10;
+  if (args.includes('-n')) n = parseInt(args[args.indexOf('-n')+1]) || 10;
+  if (!stdin || !stdin.text) return { error: "head: no input" };
+  return { text: stdin.text.split('\n').slice(0, n).join('\n') };
+}
+
+function cmdTail(args, stdin) {
+  let n = 10;
+  if (args.includes('-n')) n = parseInt(args[args.indexOf('-n')+1]) || 10;
+  if (!stdin || !stdin.text) return { error: "tail: no input" };
+  const lines = stdin.text.split('\n');
+  return { text: lines.slice(Math.max(0, lines.length - n)).join('\n') };
+}
+
+function cmdWc(args, stdin) {
+  if (!stdin || !stdin.text) return { error: "wc: no input" };
+  const lines = stdin.text.split('\n').length;
+  const words = stdin.text.split(/\s+/).filter(Boolean).length;
+  const chars = stdin.text.length;
+  return { text: `${lines}\t${words}\t${chars}` };
+}
+
+function cmdSort(args, stdin) {
+  if (!stdin || !stdin.text) return { error: "sort: no input" };
+  return { text: stdin.text.split('\n').sort().join('\n') };
+}
+
+function cmdUniq(args, stdin) {
+  if (!stdin || !stdin.text) return { error: "uniq: no input" };
+  const seen = new Set();
+  const out = [];
+  for (const line of stdin.text.split('\n')) {
+    if (!seen.has(line)) { seen.add(line); out.push(line); }
+  }
+  return { text: out.join('\n') };
+}
+
+function cmdMan(args) {
+  if (args.length === 0) return { error: "What manual page do you want? Try 'man vol' or 'man grep'." };
+  const tool = args[0];
+  const pages = {
+    'vol': "VOL(1) — Volatility 3 Framework\n\n  vol -f <image> <plugin> [options]\n\nCommon plugins:\n  windows.info        — OS info\n  windows.pslist      — process list (linked)\n  windows.psscan      — process pool scan (finds hidden)\n  windows.pstree      — parent-child hierarchy\n  windows.cmdline     — process command lines\n  windows.netscan     — network connections\n  windows.filescan    — files in memory\n  windows.malfind     — code injection scan\n  windows.handles --pid N    — open handles for PID\n  windows.envars --pid N     — environment variables\n  windows.registry.printkey --key '...'   — read registry key",
+    'grep': "GREP(1) — search text\n\n  grep [-i] <pattern> [file]\n  ... | grep <pattern>\n\nFlags:\n  -i  case-insensitive\n  -v  invert match",
+    'strings': "STRINGS(1) — extract printable strings from binary\n\n  strings <file>\n  strings <file> | grep <pattern>",
+  };
+  return { text: pages[tool] || `No manual entry for ${tool}` };
+}
+
+const HELP_TEXT = `╔══════════════════════════════════════════════════════════════════╗
+║              ANALYST TERMINAL — Available Commands              ║
+╚══════════════════════════════════════════════════════════════════╝
+
+VOLATILITY 3:
+  vol -f <image> <plugin> [args]
+  Plugins: windows.info, windows.pslist, windows.psscan, windows.pstree,
+           windows.cmdline, windows.netscan, windows.filescan,
+           windows.malfind, windows.svcscan, windows.clipboard,
+           windows.handles --pid <PID>, windows.envars --pid <PID>,
+           windows.dlllist --pid <PID>,
+           windows.registry.printkey --key "<keypath>"
+
+UNIX UTILITIES:
+  ls                     — list files in the case directory
+  pwd                    — print working directory
+  file <name>            — identify file type
+  cat <file>             — display file (blocked for binary)
+  strings <file>         — extract ASCII strings
+  grep [-i] <pat> [file] — filter lines (also works in pipes)
+  head [-n N], tail [-n N], wc, sort, uniq
+
+LAB HELPERS:
+  tactics    — show ATT&CK tactic reference
+  progress   — show your progress
+  clear      — clear terminal
+  help, ?    — this help
+  man <cmd>  — show manual page
+
+KEYBOARD:
+  ↑ / ↓      — command history
+  Enter      — execute
+
+EXAMPLES:
+  vol -f ${IMAGE_FILENAME} windows.info
+  vol -f ${IMAGE_FILENAME} windows.cmdline | grep -i <pattern>
+  vol -f ${IMAGE_FILENAME} windows.filescan | grep <pattern>
+  vol -f ${IMAGE_FILENAME} windows.handles --pid <PID>`;
+
+const TACTICS_TEXT = `MITRE ATT&CK Enterprise Tactics — Kill Chain Order
+
+  TA0043  Reconnaissance
+  TA0042  Resource Development
+  TA0001  Initial Access
+  TA0002  Execution                ← T1059.003 Windows Command Shell
+  TA0003  Persistence
+  TA0004  Privilege Escalation
+  TA0005  Stealth                  ← T1036.005 Masquerading  (was Defense Evasion pre-v19)
+  TA00??  Impair Defenses          (new in ATT&CK v19 — split from TA0005; not used in this lab)
+  TA0006  Credential Access        ← T1003.001 LSASS Memory
+  TA0007  Discovery                ← T1082 System Information
+  TA0008  Lateral Movement
+  TA0009  Collection               ← T1560.001 Archive via Utility
+  TA0011  Command and Control
+  TA0010  Exfiltration             ← T1041 Exfil over C2 Channel
+  TA0040  Impact
+
+v19 note: TA0005 was renamed Defense Evasion → Stealth. Active disabling /
+degrading of security controls (formerly T1562) is now its own tactic,
+"Impair Defenses." See https://attack.mitre.org/tactics/enterprise/
+
+For full details: https://attack.mitre.org/`;
+
+function progressText() {
+  let txt = "INVESTIGATION PROGRESS:\n\n";
+  const solvable = STAGES.filter(s => !s.intro);
+  for (const stage of solvable) {
+    const mark = state.solved.has(stage.id) ? '✓' : ' ';
+    txt += `  [${mark}] ${stage.title}\n`;
+    txt += `       ${stage.tactic} → ${stage.technique}\n`;
+  }
+  txt += `\nStages solved: ${state.solved.size} / ${solvable.length}`;
+  return txt;
+}
+
+// ============================================================
+// UI / STAGE RENDERING
+// ============================================================
+function renderStagesList() {
+  const list = document.getElementById('stages-list');
+  list.innerHTML = STAGES.map((s, idx) => {
+    const cls = state.solved.has(s.id) ? 'solved' : (idx === state.current ? 'active' : '');
+    const check = state.solved.has(s.id) ? '<span class="si-check">✓</span>' : '';
+    let label;
+    if (s.intro) {
+      label = 'INTRO';
+    } else if (state.solved.has(s.id)) {
+      const techId = (s.attReveal && s.attReveal.technique) ? s.attReveal.technique.split(' ')[0] : '';
+      label = `✓ STAGE ${s.id}${techId ? ' · ' + techId : ''}`;
+    } else {
+      label = `STAGE ${s.id}`;
+    }
+    return `<div class="stage-item ${cls}" onclick="selectStage(${idx})">
+      <div class="si-tactic">${label}</div>
+      <div class="si-name">${s.title.replace(/^Stage \d+ — /, '')}</div>
+      ${check ? `<div class="si-meta">${check}</div>` : ''}
+    </div>`;
+  }).join('');
+  renderKillChain();
+}
+
+function renderKillChain() {
+  const wrap = document.getElementById('kill-chain-panel');
+  if (!wrap) return;
+  const solvable = STAGES.filter(s => !s.intro);
+  const solved = solvable.filter(s => state.solved.has(s.id));
+  const earnedRows = solved.map(s => {
+    const tech = (s.attReveal && s.attReveal.technique) || s.technique || '';
+    return `<div class="kc-row earned"><span class="kc-id">✓ ${tech.split(' — ')[0]}</span> · ${tech.split(' — ').slice(1).join(' — ') || ''}</div>`;
+  }).join('');
+  const remaining = solvable.length - solved.length;
+  const placeholder = remaining > 0
+    ? `<div class="kc-placeholder">${'·  '.repeat(Math.max(remaining, 1))}</div><div class="kc-row" style="padding-top:2px;font-style:italic">more to discover</div>`
+    : '';
+  wrap.innerHTML = `${earnedRows}${placeholder}<div class="kc-counter">${solved.length} / ${solvable.length} mapped</div>`;
+}
+
+function selectStage(idx) {
+  state.current = idx;
+  renderStagesList();
+  renderCurrentStage();
+  closeSidebar();  // close drawer on mobile after selection
+  // Scroll the new stage's content to the top — important when navigating via
+  // the post-answer Continue button or sidebar click mid-page.
+  const grid = document.querySelector('.body-grid');
+  if (grid) grid.scrollTop = 0;
+}
+
+function renderCurrentStage() {
+  const s = STAGES[state.current];
+  document.getElementById('cur-title').textContent = s.title;
+
+  const qa = document.getElementById('question-area');
+  const tw = document.querySelector('.terminal-wrapper');
+  const tacticBadge = document.getElementById('cur-tactic');
+  const techniqueBadge = document.getElementById('cur-technique');
+
+  // Intro stage: render the briefing as full HTML, hide the question + terminal blocks.
+  if (s.intro) {
+    document.getElementById('briefing').innerHTML = s.briefing;
+    qa.style.display = 'none';
+    tw.style.display = 'none';
+    tacticBadge.style.display = 'none';
+    techniqueBadge.style.display = 'none';
+    document.getElementById('hint-popup').classList.remove('show');
+    return;
+  }
+  qa.style.display = '';
+  tw.style.display = '';
+
+  // ATT&CK badges — hidden until solved, then revealed.
+  const isSolved = state.solved.has(s.id);
+  if (isSolved) {
+    tacticBadge.textContent = s.tactic;
+    techniqueBadge.textContent = s.technique;
+    tacticBadge.style.display = '';
+    techniqueBadge.style.display = '';
+  } else {
+    tacticBadge.style.display = 'none';
+    techniqueBadge.style.display = 'none';
+  }
+
+  // Stage 1 only — first-touch terminal orientation hint. Hidden on stages 2+.
+  const ft = document.getElementById('terminal-first-touch');
+  if (s.id === 1) {
+    ft.innerHTML = `👇 <b>Type your Volatility command in the terminal below</b> — e.g. <code>vol -f ${IMAGE_FILENAME} windows.info</code>. Press Enter to run. Then submit the answer above.`;
+    ft.classList.add('show');
+  } else {
+    ft.classList.remove('show');
+    ft.innerHTML = '';
+  }
+
+  // Build briefing content: whatsKnown (carried-forward context) + briefing (the question framing) + picker.
+  // Carry-forward is locked if the previous stage isn't solved yet — prevents accidental
+  // spoilers from peeking ahead. Stage 1 has no prereq, so always unlocked.
+  const prevStage = STAGES.find(x => !x.intro && x.id === s.id - 1);
+  const carryLocked = !!prevStage && !state.solved.has(prevStage.id) && !isSolved;
+  const whatsKnownHTML = carryLocked
+    ? `<div class="briefing-summary locked-context"><b>🔒 Carry-forward context unlocks once you solve Stage ${prevStage.id}.</b> You can still attempt this stage's question — but the recap of prior findings is hidden so peeking ahead doesn't spoil earlier stages for you.</div>`
+    : `<div class="briefing-summary" style="margin-bottom:10px"><b>What's known so far.</b> ${s.whatsKnown || ''}</div>`;
+  const pickerHTML = renderPickerHTML(s);
+  document.getElementById('briefing').innerHTML = `
+    ${whatsKnownHTML}
+    <div class="briefing-summary">${s.briefing || ''}</div>
+    ${pickerHTML}
+  `;
+  document.getElementById('question-text').innerHTML = `<b>QUESTION:</b> ${s.question}`;
+
+  const ai = document.getElementById('answer-input');
+  const fb = document.getElementById('feedback');
+  if (isSolved) {
+    ai.value = s.answer;
+    ai.disabled = true;
+    ai.classList.add('correct');
+    document.getElementById('submit-btn').disabled = true;
+    renderSolvedFeedback(s);
+  } else {
+    ai.value = '';
+    ai.disabled = false;
+    ai.classList.remove('correct','wrong');
+    document.getElementById('submit-btn').disabled = false;
+    fb.className = 'feedback';
+    fb.innerHTML = '';
+  }
+
+  document.getElementById('hint-popup').classList.remove('show');
+  state.hintIdx[s.id] = state.hintIdx[s.id] || 0;
+
+  // Don't auto-focus on mobile — pulls up keyboard unnecessarily
+  if (window.innerWidth > 768) ai.focus();
+}
+
+// Build the plugin picker HTML for a stage. Returns either the full picker
+// (with dropdown + any current feedback or summary), or empty string when
+// hidden (Pro mode, noPicker stage, or intro).
+function renderPickerHTML(s) {
+  if (state.proMode || s.noPicker || !s.pluginGrades) return '';
+  const pick = state.picks[s.id];
+  // After the stage is solved, collapse to the summary line.
+  if (state.solved.has(s.id) && pick) {
+    const gradeLabel = pick.grade === 'best' ? '✓ Strongest first move'
+                     : pick.grade === 'plausible' ? '≈ Plausible'
+                     : '✗ Off-base';
+    return `<div class="picker-summary">🔍 Plugin picked: <code>${pick.plugin}</code><span class="ps-grade ${pick.grade}">${gradeLabel}</span></div>`;
+  }
+  const opts = Object.keys(s.pluginGrades).map(p => {
+    const sel = (pick && pick.plugin === p) ? ' selected' : '';
+    return `<option value="${p}"${sel}>${p}</option>`;
+  }).join('');
+  let feedbackHTML = '';
+  if (pick) {
+    const g = s.pluginGrades[pick.plugin];
+    const titleText = pick.grade === 'best' ? 'Strongest first move'
+                    : pick.grade === 'plausible' ? 'Plausible, but not the most direct'
+                    : 'Unlikely to help here';
+    feedbackHTML = `<div class="picker-feedback show ${pick.grade}">
+      <div class="pf-title">${titleText}</div>
+      <span class="pf-reason">${g.reason}</span>
+    </div>`;
+  }
+  // Soft-gate nudge: if the analyst submitted without picking, show a
+  // one-line educational nudge above the dropdown until they pick.
+  const skippedNudge = (state.pickerSkipped[s.id] && !pick) ? `
+    <div class="picker-nudge">💡 Try picking a plugin first — the system grades your first-move thinking. You can still submit either way.</div>` : '';
+  return `<div class="plugin-picker">
+    <div class="pp-title">🔍 Pick your plugin</div>
+    <div class="pp-prompt">Before you run anything, commit to a first move. Which Volatility 3 plugin would best answer this stage's question?</div>
+    ${skippedNudge}
+    <select onchange="pickPlugin(this.value)">
+      <option value="">— Select a plugin —</option>
+      ${opts}
+    </select>
+    ${feedbackHTML}
+  </div>`;
+}
+
+// Plugin pick handler — stores the pick and re-renders the briefing.
+function pickPlugin(plugin) {
+  if (!plugin) return;
+  const s = STAGES[state.current];
+  if (!s.pluginGrades || !s.pluginGrades[plugin]) return;
+  state.picks[s.id] = { plugin, grade: s.pluginGrades[plugin].grade };
+  // Re-render only the briefing (cheap and keeps focus state simple).
+  renderCurrentStage();
+}
+
+// Render the post-correct-answer feedback: finding card + ATT&CK reveal card.
+function renderSolvedFeedback(s) {
+  const fb = document.getElementById('feedback');
+  const reveal = s.attReveal || {};
+  const attCard = (reveal.technique || reveal.fits) ? `
+    <div class="att-reveal-card">
+      <div class="arc-label">🎯 ATT&CK MAPPING</div>
+      <div class="arc-technique">${reveal.technique || ''}</div>
+      ${reveal.fits ? `<div class="arc-fits-label">Why this label fits</div><div class="arc-fits">${reveal.fits}</div>` : ''}
+    </div>` : '';
+  // Continue-to-next-stage button — only if there's a next solvable stage.
+  const idx = STAGES.findIndex(x => x.id === s.id);
+  const next = STAGES[idx + 1];
+  const continueBtn = (next && !next.intro) ? `
+    <button class="continue-btn" onclick="selectStage(${idx + 1})">Continue → ${next.title.replace(/^Stage \d+ — /, 'Stage ' + next.id + ': ')} →</button>` : '';
+  fb.className = 'feedback show ok';
+  fb.innerHTML = `✓ <b>Correct!</b><span class="reveal">${s.answerNote || ''}</span>${attCard}${continueBtn}`;
+}
+
+// Stage 0 Pro-mode toggle handler.
+function togglePromodeHeader() {
+  const cb = document.getElementById('pro-mode-toggle-header');
+  state.proMode = !!(cb && cb.checked);
+  // Re-render the current stage so the picker is hidden/shown immediately.
+  renderCurrentStage();
+}
+
+function checkAnswer() {
+  const s = STAGES[state.current];
+  const ai = document.getElementById('answer-input');
+  const fb = document.getElementById('feedback');
+  const val = ai.value.trim();
+  if (!val) return;
+
+  // Soft-gate: if the picker is shown for this stage but no pick was made,
+  // flag it AND inject a one-line nudge directly above the picker dropdown.
+  // Direct DOM injection (vs full re-render) avoids wiping the analyst's
+  // typed answer on the wrong-answer path.
+  const pickerActive = !state.proMode && !s.noPicker && s.pluginGrades;
+  if (pickerActive && !state.picks[s.id]) {
+    state.pickerSkipped[s.id] = true;
+    const picker = document.querySelector('.plugin-picker');
+    if (picker && !picker.querySelector('.picker-nudge')) {
+      const nudge = document.createElement('div');
+      nudge.className = 'picker-nudge';
+      nudge.innerHTML = '💡 Try picking a plugin first — the system grades your first-move thinking. You can still submit either way.';
+      const sel = picker.querySelector('select');
+      if (sel) sel.insertAdjacentElement('beforebegin', nudge);
+    }
+  }
+
+  const all = [s.answer, ...(s.altAnswers || [])];
+  const correct = all.some(a => normalise(a) === normalise(val));
+
+  if (correct) {
+    ai.classList.remove('wrong');
+    ai.classList.add('correct');
+    ai.disabled = true;
+    document.getElementById('submit-btn').disabled = true;
+    if (!state.solved.has(s.id)) {
+      state.solved.add(s.id);
+    }
+    // Re-render the briefing so the picker collapses to its summary,
+    // and reveal the ATT&CK badges in the stage header.
+    renderCurrentStage();
+    renderStagesList();
+    updateScoreboard();
+    const solvableCount = STAGES.filter(x => !x.intro).length;
+    if (state.solved.size === solvableCount) {
+      const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduced) {
+        setTimeout(() => document.getElementById('completion-modal').classList.add('show'), 600);
+      } else {
+        setTimeout(() => {
+          runFireworks(3800);
+          setTimeout(() => document.getElementById('completion-modal').classList.add('show'), 1200);
+        }, 600);
+      }
+    }
+  } else {
+    ai.classList.remove('correct');
+    ai.classList.add('wrong');
+    fb.className = 'feedback show err';
+    fb.innerHTML = `✗ <b>Not quite.</b> Review the evidence in the terminal. Try a different command, or click "💡 Need a hint?" above.`;
+    setTimeout(() => ai.classList.remove('wrong'), 400);
+  }
+}
+
+function normalise(s) {
+  return String(s).toLowerCase().replace(/\s+/g, '').replace(/\\\\/g, '\\');
+}
+
+function showHint() {
+  const s = STAGES[state.current];
+  const idx = state.hintIdx[s.id] || 0;
+  if (idx >= s.hints.length) {
+    document.getElementById('hint-popup').className = 'hint-popup show';
+    document.getElementById('hint-popup').innerHTML = `<div class="h-title">No more hints</div>You've used all ${s.hints.length} hints for this stage. Re-examine the terminal output carefully.`;
+    return;
+  }
+  document.getElementById('hint-popup').className = 'hint-popup show';
+  document.getElementById('hint-popup').innerHTML = `<div class="h-title">💡 Hint ${idx+1}/${s.hints.length}</div>${s.hints[idx]}`;
+  state.hintIdx[s.id] = idx + 1;
+}
+
+function updateScoreboard() {
+  document.getElementById('solved-count').textContent = state.solved.size;
+}
+
+// === Fireworks finale ===
+function runFireworks(durationMs) {
+  const cv = document.getElementById('fireworks-canvas');
+  cv.style.display = 'block';
+  cv.width = window.innerWidth;
+  cv.height = window.innerHeight;
+  const ctx = cv.getContext('2d');
+  const particles = [];
+  const colors = ['#3fb950','#58a6ff','#bc8cff','#d29922','#f85149','#79c0ff','#4af626'];
+
+  function burst(x, y) {
+    const n = 50 + Math.floor(Math.random() * 30);
+    const c = colors[Math.floor(Math.random() * colors.length)];
+    for (let i = 0; i < n; i++) {
+      const angle = (Math.PI * 2 * i) / n + Math.random() * 0.3;
+      const speed = 2 + Math.random() * 4;
+      particles.push({
+        x, y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        life: 1,
+        color: c,
+        size: 2 + Math.random() * 2
+      });
+    }
+  }
+
+  let last = performance.now();
+  let burstTimer = 0;
+  const start = last;
+
+  function frame(now) {
+    const dt = (now - last) / 16.67;
+    last = now;
+    const elapsed = now - start;
+
+    ctx.fillStyle = 'rgba(10,14,20,0.18)';
+    ctx.fillRect(0, 0, cv.width, cv.height);
+
+    burstTimer -= dt;
+    if (burstTimer <= 0 && elapsed < durationMs - 800) {
+      burst(
+        cv.width * (0.15 + Math.random() * 0.7),
+        cv.height * (0.15 + Math.random() * 0.45)
+      );
+      burstTimer = 12 + Math.random() * 18;
+    }
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      p.vy += 0.08 * dt;
+      p.vx *= 0.99;
+      p.life -= 0.012 * dt;
+      if (p.life <= 0) {
+        particles.splice(i, 1);
+        continue;
+      }
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    if (elapsed < durationMs || particles.length > 0) {
+      requestAnimationFrame(frame);
+    } else {
+      cv.style.display = 'none';
+      ctx.clearRect(0, 0, cv.width, cv.height);
+    }
+  }
+  requestAnimationFrame(frame);
+}
+
+function closeModal() { document.getElementById('completion-modal').classList.remove('show'); }
+
+
+// === Mobile sidebar drawer ===
+function toggleSidebar() {
+  const sb = document.querySelector('.sidebar');
+  const ov = document.getElementById('sidebar-overlay');
+  sb.classList.toggle('open');
+  ov.classList.toggle('show');
+}
+function closeSidebar() {
+  document.querySelector('.sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('show');
+}
+
+// ============================================================
+// EVENT WIRING
+// ============================================================
+document.getElementById('term-input').addEventListener('keydown', (e) => {
+  const inp = e.target;
+  if (e.key === 'Enter') {
+    executeLine(inp.value);
+    inp.value = '';
+  } else if (e.key === 'ArrowUp') {
+    if (state.cmdHistoryIdx > 0) {
+      state.cmdHistoryIdx--;
+      inp.value = state.cmdHistory[state.cmdHistoryIdx] || '';
+    }
+    e.preventDefault();
+  } else if (e.key === 'ArrowDown') {
+    if (state.cmdHistoryIdx < state.cmdHistory.length - 1) {
+      state.cmdHistoryIdx++;
+      inp.value = state.cmdHistory[state.cmdHistoryIdx] || '';
+    } else {
+      state.cmdHistoryIdx = state.cmdHistory.length;
+      inp.value = '';
+    }
+    e.preventDefault();
+  }
+});
+
+document.getElementById('submit-btn').addEventListener('click', checkAnswer);
+document.getElementById('answer-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') checkAnswer();
+});
+
+// Init
+// Stage denominator in the header pill derives from STAGES.length so the
+// author doesn't have to hand-edit "Stage X / N" when adding/removing stages.
+(() => {
+  const totalSolvable = STAGES.filter(s => !s.intro).length;
+  const pill = document.querySelector('.score-pill');
+  if (pill) pill.innerHTML = `Stage <span class="v" id="solved-count">0</span> / ${totalSolvable}`;
+})();
+renderStagesList();
+renderCurrentStage();
+updateScoreboard();
+</script>
+</body>
+</html>
