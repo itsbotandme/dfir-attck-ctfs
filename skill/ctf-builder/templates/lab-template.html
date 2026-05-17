@@ -369,9 +369,24 @@
     header h1 { display: none; }
   }
 
-  /* Picker dropdown — added to handle long tshark display filters */
-  .picker-select { width: 100%; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; padding: 6px 8px; background: var(--code-bg); color: var(--text); border: 1px solid var(--border); border-radius: 4px; }
-  .picker-select option { white-space: normal; padding: 4px 0; }
+  /* Picker click-cards — replaces the native <select> so long plugin
+     keys (e.g. tshark display filters with quoted args) are fully
+     visible on the page instead of clipped in an OS-native dropdown. */
+  .picker-options { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+  .picker-option {
+    width: 100%; text-align: left;
+    padding: 8px 12px;
+    background: var(--code-bg); color: var(--text);
+    border: 1px solid var(--border); border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; line-height: 1.45;
+    cursor: pointer;
+    word-break: break-word; overflow-wrap: anywhere;
+    transition: border-color 0.12s ease, background 0.12s ease;
+  }
+  .picker-option:hover { background: var(--panel-2); border-color: var(--accent-2); }
+  .picker-option:focus { outline: none; border-color: var(--accent); }
+  .picker-option.selected { border-color: var(--accent); background: rgba(88,166,255,0.10); }
+  @media (max-width: 768px) { .picker-option { padding: 10px 12px; font-size: 0.75rem; } }
 </style>
 </head>
 <body>
@@ -1282,15 +1297,16 @@ function renderPickerHTML(s) {
                      : '✗ Off-base';
     return `<div class="picker-summary">🔍 Plugin picked: <code>${pick.plugin}</code><span class="ps-grade ${pick.grade}">${gradeLabel}</span></div>`;
   }
-  // Dispatch by INDEX, not by key — plugin keys may contain literal
-  // double-quotes (e.g. tshark display filters), which would break the
-  // <option value="..."> attribute and cause silent option de-duping.
-  // Display text is HTML-escaped for the same reason.
+  // Render the picker as full-width click-cards (NOT a <select>): the
+  // native OS dropdown clips long entries (e.g. tshark display filters
+  // with quoted args) and ignores option-level CSS. Cards always show
+  // the full key text and respond reliably to clicks regardless of
+  // special characters.
   const keys = Object.keys(s.pluginGrades);
   const htmlEscape = str => str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   const opts = keys.map((p, i) => {
-    const sel = (pick && pick.plugin === p) ? ' selected' : '';
-    return `<option value="${i}"${sel}>${htmlEscape(p)}</option>`;
+    const isSel = pick && pick.plugin === p;
+    return `<button type="button" class="picker-option${isSel ? ' selected' : ''}" data-idx="${i}" onclick="pickPlugin(${i})">${htmlEscape(p)}</button>`;
   }).join('');
   let feedbackHTML = '';
   if (pick) {
@@ -1311,10 +1327,9 @@ function renderPickerHTML(s) {
     <div class="pp-title">🔍 Pick your plugin</div>
     <div class="pp-prompt">Before you run anything, commit to a first move. Which ${TOOL_CONFIG.name} ${TOOL_CONFIG.pluginNoun} would best answer this stage's question?</div>
     ${skippedNudge}
-    <select onchange="pickPlugin(this.value)" class="picker-select">
-      <option value="">— Select a plugin —</option>
+    <div class="picker-options" role="radiogroup">
       ${opts}
-    </select>
+    </div>
     ${feedbackHTML}
   </div>`;
 }
