@@ -815,6 +815,29 @@ const FILES = {
 };
 
 // ============================================================
+// ============================================================
+// Tool & terminal-skin configuration (per SKILL.md §10)
+// These constants must be declared BEFORE any function that references
+// them runs — picker prompt + boot IIFE both read from here.
+// ============================================================
+const TOOL_CONFIG = {
+  name:        "Volatility 3",
+  cmd:         "vol",
+  invocation:  "vol -f <memory image> <plugin>",
+  pluginNoun:  "plugin",
+  exampleHelp: "vol -f MemoryDump_Lab1.raw windows.info"
+};
+
+const TERMINAL_SKINS = {
+  "bash-dfir":      { prompt: "analyst@dfir:/cases#",   promptColor: "var(--term-green)" },
+  "bash-ubuntu":    { prompt: "analyst@host:~$",         promptColor: "var(--term-green)" },
+  "powershell-win": { prompt: "PS C:\\Users\\analyst>", promptColor: "var(--accent)" },
+  "cmd-windows":    { prompt: "C:\\Users\\analyst>",    promptColor: "#fff" },
+  "zsh-macos":      { prompt: "analyst@MacBook ~ %",     promptColor: "#d4d4d4" }
+};
+const TERMINAL_SKIN = "bash-dfir";
+
+// ============================================================
 // STAGES — organized by ATT&CK Enterprise tactic kill chain order
 // (Stage 0 is a non-interactive briefing, marked with intro:true)
 // ============================================================

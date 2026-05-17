@@ -233,6 +233,16 @@ def check_lab(lab_path: Path) -> list[str]:
     if re.search(r"[A-Za-z0-9._-]+@(gmail|outlook|yahoo|icloud|protonmail)\.com", src):
         fail(errors, "Personal email address detected — likely leaked from local config")
 
+    # --- Undefined-const reference check -------------------------------
+    # Catches the class of bug where a template literal or boot script
+    # references a `const X` that's never declared in the same <script>
+    # block — JS throws ReferenceError at runtime. Specifically guards
+    # the constants this skill introduces; extend the tuple when adding
+    # new top-level consts.
+    for ident in ("TOOL_CONFIG", "TERMINAL_SKINS", "TERMINAL_SKIN", "IMAGE_FILENAME"):
+        if re.search(rf"\${{{ident}\b|\b{ident}\[|\b{ident}\s*\.", src) and f"const {ident}" not in src:
+            fail(errors, f"References '{ident}' but `const {ident}` is not declared — JS will throw ReferenceError at runtime")
+
     # --- TA0112 Defense Impairment must appear in TACTICS_TEXT ----------
     # ATT&CK v19 (Apr 2026) added TA0112 as a new tactic. Every lab's
     # TACTICS_TEXT reference must include it so analysts see the v19 layout
