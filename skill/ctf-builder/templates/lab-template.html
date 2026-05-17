@@ -124,7 +124,7 @@
   .term-input-row { display: flex; align-items: center; padding: 8px 14px; background: #000; border: 1px solid var(--border); border-bottom: none; border-radius: 6px 6px 0 0; transition: border-color 0.2s ease; }
   .terminal-wrapper:focus-within .term-input-row { border-color: rgba(74,246,38,0.40); }
   .terminal-wrapper.cmd-entered .term-input-row { border-radius: 0 0 6px 6px; border-top: none; border-bottom: 1px solid var(--border); }
-  .term-input-row::before { content: 'analyst@dfir:/cases#'; color: var(--green); font-size: 0.78rem; margin-right: 8px; white-space: nowrap; }
+  .term-input-row::before { content: var(--term-prompt-text, 'analyst@dfir:/cases#'); color: var(--green); font-size: 0.78rem; margin-right: 8px; white-space: nowrap; }
   .term-input-field { flex: 1; background: transparent; border: none; outline: none; color: #fff; font-family: inherit; font-size: 0.78rem; caret-color: var(--term-green); }
 
   /* Question sits ABOVE the terminal so it isn't missed at first glance. */
@@ -379,7 +379,7 @@
   <span class="badge">TEMPLATE: Tool + version</span>
   <span class="badge">TEMPLATE: OS / artefact descriptor</span>
   <span class="badge">TEMPLATE: image filename</span>
-  <label class="pro-toggle" title="Hide the plugin picker on each stage. For analysts already familiar with Volatility 3.">
+  <label class="pro-toggle" title="Hide the plugin picker on each stage. For analysts already familiar with this tool.">
     <input type="checkbox" id="pro-mode-toggle-header" onchange="togglePromodeHeader()">
     <span>Pro mode</span>
   </label>
@@ -476,7 +476,27 @@
 const IMAGE_FILENAME = "TEMPLATE_image_filename.raw";  // e.g. "MemoryDump_Lab1.raw"
 const IMAGE_SIZE_BYTES = 0;                            // for the `ls` / `file` mocks
 const TOOL_NAME = "vol";                               // command verb the analyst types
-const OUTPUT_TABLE_NAME = "VOL_OUTPUTS";               // matches the const below
+const OUTPUT_TABLE_NAME = "VOL_OUTPUTS";
+// ----- Tool & terminal skin (added in v2 — see SKILL.md §3 v19 note + §10) -----
+// Authors set these once per lab. Every Vol-specific user-facing string
+// across the lab now interpolates from TOOL_CONFIG.
+const TOOL_CONFIG = {
+  name:        'TEMPLATE: Tool Name',                          // displayed in picker prompt + pro-mode tooltip
+  cmd:         'TEMPLATE_cmd',                           // command verb the analyst types
+  invocation:  'TEMPLATE_cmd -f <image> <plugin>',  // canonical example for Stage 1 first-touch hint
+  pluginNoun:  'plugin',                    // 'plugin' (Volatility) or 'command' (tshark)
+  exampleHelp: 'TEMPLATE_cmd -f case.raw <plugin>'     // example shown in grep no-input + help
+};
+
+const TERMINAL_SKINS = {
+  "bash-dfir":      { prompt: "analyst@dfir:/cases#",   promptColor: "var(--term-green)" },
+  "bash-ubuntu":    { prompt: "analyst@host:~$",         promptColor: "var(--term-green)" },
+  "powershell-win": { prompt: "PS C:\\Users\\analyst>", promptColor: "var(--accent)" },
+  "cmd-windows":    { prompt: "C:\\Users\\analyst>",    promptColor: "#fff" },
+  "zsh-macos":      { prompt: "analyst@MacBook ~ %",     promptColor: "#d4d4d4" }
+};
+const TERMINAL_SKIN = 'bash-dfir';  // pick from TERMINAL_SKINS keys above
+               // matches the const below
 
 // ============================================================
 // CANNED PLUGIN OUTPUT
@@ -949,7 +969,7 @@ function cmdGrep(args, stdin) {
       return { text: `[grep: pattern '${pattern}' not found in strings output]` };
     }
   } else {
-    return { error: `grep: no input. Pipe a command's output, e.g.:  vol -f ${IMAGE_FILENAME} windows.cmdline | grep <pattern>` };
+    return { error: `grep: no input. Pipe a command's output, e.g.:  ${TOOL_CONFIG.exampleHelp} | grep <pattern>` };
   }
 
   const lines = content.split('\n');
@@ -1198,7 +1218,7 @@ function renderCurrentStage() {
   // Stage 1 only — first-touch terminal orientation hint. Hidden on stages 2+.
   const ft = document.getElementById('terminal-first-touch');
   if (s.id === 1) {
-    ft.innerHTML = `👇 <b>Type your Volatility command in the terminal below</b> — e.g. <code>vol -f ${IMAGE_FILENAME} windows.info</code>. Press Enter to run. Then submit the answer above.`;
+    ft.innerHTML = `👇 <b>Type your ${TOOL_CONFIG.cmd} command in the terminal below</b> — e.g. <code>${TOOL_CONFIG.exampleHelp}</code>. Press Enter to run. Then submit the answer above.`;
     ft.classList.add('show');
   } else {
     ft.classList.remove('show');
@@ -1279,7 +1299,7 @@ function renderPickerHTML(s) {
     <div class="picker-nudge">💡 Try picking a plugin first — the system grades your first-move thinking. You can still submit either way.</div>` : '';
   return `<div class="plugin-picker">
     <div class="pp-title">🔍 Pick your plugin</div>
-    <div class="pp-prompt">Before you run anything, commit to a first move. Which Volatility 3 plugin would best answer this stage's question?</div>
+    <div class="pp-prompt">Before you run anything, commit to a first move. Which ${TOOL_CONFIG.name} ${TOOL_CONFIG.pluginNoun} would best answer this stage's question?</div>
     ${skippedNudge}
     <select onchange="pickPlugin(this.value)">
       <option value="">— Select a plugin —</option>
@@ -1532,6 +1552,12 @@ document.getElementById('answer-input').addEventListener('keydown', (e) => {
 });
 
 // Init
+// Apply terminal skin at boot — set --term-prompt-text and --term-prompt-color
+(() => {
+  const skin = TERMINAL_SKINS[TERMINAL_SKIN] || TERMINAL_SKINS["bash-dfir"];
+  document.documentElement.style.setProperty('--term-prompt-text', `'${skin.prompt}'`);
+  document.documentElement.style.setProperty('--term-prompt-color', skin.promptColor);
+})();
 // Stage denominator in the header pill derives from STAGES.length so the
 // author doesn't have to hand-edit "Stage X / N" when adding/removing stages.
 (() => {

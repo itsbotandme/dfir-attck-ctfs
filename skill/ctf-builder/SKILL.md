@@ -344,24 +344,51 @@ Each colour carries one meaning. Don't reuse the green for non-correct/non-termi
 
 ---
 
-## 10. OS-specific terminal skins
+## 10. Tool configuration & terminal skins (IMPLEMENTED)
 
-The terminal's prompt and accent colour can be skinned per the artefact's OS context. Default is `bash-ubuntu` (current Black Window Case lab).
+Every lab declares two constants at the top of its `<script>` block. The author sets these once during scaffold; the rest of the lab interpolates from them.
 
-| `terminalSkin` | Prompt | Prompt colour | Use when |
+### 10.1 `TOOL_CONFIG`
+
+Drives every user-facing string that names the analysis tool. Without this, Vol-specific copy (picker prompt, Stage 1 first-touch hint, pro-mode tooltip, grep help) leaks into non-Vol labs.
+
+```js
+const TOOL_CONFIG = {
+  name:        "Volatility 3",                       // displayed in picker prompt + pro-mode tooltip
+  cmd:         "vol",                                // command verb the analyst types
+  invocation:  "vol -f <memory image> <plugin>",     // canonical example for Stage 1 first-touch hint
+  pluginNoun:  "plugin",                             // 'plugin' (Volatility) or 'command' (tshark) or 'parser' (Plaso)
+  exampleHelp: "vol -f MemoryDump_Lab1.raw windows.info"  // example shown in grep no-input + help
+};
+```
+
+Examples per artefact class:
+
+| Artefact | `TOOL_CONFIG` |
+|---|---|
+| Memory image | `{ name:"Volatility 3", cmd:"vol", invocation:"vol -f <image> <plugin>", pluginNoun:"plugin", exampleHelp:"vol -f mem.raw windows.info" }` |
+| pcap | `{ name:"tshark/Wireshark", cmd:"tshark", invocation:'tshark -r <pcap> [-Y "<filter>"] [-q -z <stat>]', pluginNoun:"command", exampleHelp:"tshark -r case.pcap -q -z io,phs" }` |
+| Disk image (NTFS) | `{ name:"Sleuth Kit / Plaso", cmd:"fls", invocation:"fls -rp -o <offset> <image>", pluginNoun:"command", exampleHelp:"fls -rp -o 2048 disk.E01" }` |
+| EVTX corpus | `{ name:"EvtxECmd", cmd:"EvtxECmd", invocation:"dotnet EvtxECmd.dll -d <dir> --csv <out>", pluginNoun:"flag", exampleHelp:"dotnet EvtxECmd.dll -d Logs --csv ./out" }` |
+| Generic logs | `{ name:"Unix utilities", cmd:"grep", invocation:"grep [-i] <pattern> <files>", pluginNoun:"command", exampleHelp:"grep -i error *.log | wc -l" }` |
+
+The skill ships a default of Volatility values for backward compatibility with the Black Window Case lab. Pcap and other non-Vol labs must override.
+
+### 10.2 `TERMINAL_SKIN` + `TERMINAL_SKINS`
+
+Skins the terminal prompt (text + colour) per the artefact's OS context. Implementation: the boot script reads `TERMINAL_SKINS[TERMINAL_SKIN]` and sets two CSS variables on `:root` — `--term-prompt-text` and `--term-prompt-color`. Both `.term-input-row::before` (the live prompt) and `termWritePrompt` (output-rendered prompts) read from those vars.
+
+| `TERMINAL_SKIN` | Prompt | Prompt colour | Use when |
 |---|---|---|---|
-| `bash-ubuntu` | `analyst@host:~$` | `--term-green` (#4af626) | Linux memory/disk image, generic |
-| `bash-dfir` | `analyst@dfir:/cases#` | `--term-green` | Memory image being analysed in a forensic workflow (current default) |
-| `powershell-win` | `PS C:\Users\analyst>` | `--accent` (#58a6ff) | Windows memory/disk image — modern Windows context |
-| `cmd-windows` | `C:\Users\analyst>` | `#fff` (white) | Windows artefact — older `cmd.exe` style |
-| `zsh-macos` | `analyst@MacBook ~ %` | `#d4d4d4` (light grey) | macOS memory/disk image |
+| `bash-dfir` | `analyst@dfir:/cases#` | `--term-green` | Memory image in a forensic workflow (Black Window default) |
+| `bash-ubuntu` | `analyst@host:~$` | `--term-green` | Linux memory/disk image OR Linux analyst console for a pcap |
+| `powershell-win` | `PS C:\Users\analyst>` | `--accent` (blue) | Windows memory/disk image — modern Windows context |
+| `cmd-windows` | `C:\Users\analyst>` | white | Windows artefact — older `cmd.exe` style |
+| `zsh-macos` | `analyst@MacBook ~ %` | light grey | macOS memory/disk image |
 
-Implementation: `terminalSkin` field on the lab template. Maps to:
-- A prompt-template-string (used in CSS `.term-input-row::before { content: ... }` and JS `termWritePrompt`).
-- A prompt-colour CSS variable.
-- The CRT-glow colour also adjusts to match — green for bash, blue for PowerShell, etc.
+The skin choice matters: a tshark/pcap lab on `bash-ubuntu` primes the analyst to think "I'm at a Linux box" — which is where they'd run tshark in real life. A memory image from a Windows host with `powershell-win` does the same.
 
-If you build a lab for a Windows artefact, prefer `powershell-win` or `cmd-windows` so the visual matches what an analyst would see in the captured environment.
+Pick the skin from the **analyst's environment**, not the artefact's. A Windows memory image analysed on a SANS SIFT workstation uses `bash-dfir` (where Vol runs), not `powershell-win`.
 
 ---
 
@@ -639,6 +666,8 @@ These are deliberate design choices made and re-made through the BlackWindow reb
 | Use `min-height` on the terminal | Creates the "prompt shoots to the bottom of the page" feel on short error responses. |
 | Use marketing buzzwords | "Hypothesis-driven", "the why behind every finding", "real X, real Y, real Z". The design speaks; copy stays out. |
 | Fabricate artefacts the source doesn't contain | Forensic accuracy is non-negotiable. Don't invent attacker narratives the artefact can't support. |
+| Hardcode Volatility / Vol-specific strings in a non-Vol lab | The template's user-facing copy (picker prompt, Stage 1 hint, pro-mode tooltip, grep help) MUST interpolate from `TOOL_CONFIG` (see §10). The SzechuanSauce pcap rebuild surfaced five distinct Vol-leakage sites that bled into a tshark lab — every one of them is now config-driven. |
+| Ship `TA00??` or any other tactic-ID placeholder in `TACTICS_TEXT` | The TACTICS_TEXT reference is what the analyst sees when they type `tactics`. Placeholders signal "this is a draft". Every tactic ID must be real — including the v19 additions (TA0112 Defense Impairment). |
 | Add LLM-graded hypothesis text input | Without an LLM the grading is theatre; with an LLM the lab loses offline-capable + zero-dependency status. The picker grades intentionality without LLM. |
 | Ship with localhost paths or PII | Pre-flight sweep is mandatory. Lab is publicly readable. |
 | Add a hard-mode that hides ATT&CK | Pro-mode toggle hides the picker (real opt-out). Hiding ATT&CK defeats the lab's pedagogy. |

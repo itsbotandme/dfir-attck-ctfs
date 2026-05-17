@@ -42,6 +42,28 @@ const state = {
 
 ---
 
+## 0.5 `TOOL_CONFIG` and `TERMINAL_SKIN` (set first, before STAGES)
+
+Every user-facing tool reference in the lab — the plugin picker prompt, the Stage 1 first-touch hint above the terminal, the pro-mode tooltip, the `grep` no-input help — interpolates from `TOOL_CONFIG`. Without this, Vol-specific copy leaks into pcap / disk / EVTX / log labs.
+
+```js
+const TOOL_CONFIG = {
+  name:        "tshark/Wireshark",                              // shown in picker prompt + tooltip
+  cmd:         "tshark",                                        // command verb the analyst types
+  invocation:  'tshark -r <pcap> [-Y "<filter>"] [-q -z <stat>]',
+  pluginNoun:  "command",                                       // 'plugin' (Vol) / 'command' (tshark) / 'parser' (Plaso)
+  exampleHelp: "tshark -r case.pcap -q -z io,phs"               // example shown in grep / help
+};
+
+const TERMINAL_SKIN = "bash-ubuntu";  // skin keys: bash-dfir | bash-ubuntu | powershell-win | cmd-windows | zsh-macos
+```
+
+See SKILL.md §10 for the per-artefact-class TOOL_CONFIG matrix and the TERMINAL_SKINS table. **Pick the skin from the analyst's environment, not the artefact's** — a Windows memory image analysed on a SANS SIFT box uses `bash-dfir`, not `powershell-win`.
+
+The validator (`validate-lab.py`) rejects labs where `TOOL_CONFIG.cmd != 'vol'` but the user-facing Vol strings (picker prompt, first-touch hint, pro-mode tooltip) still appear — catches the leakage you'd otherwise miss in code review.
+
+---
+
 ## 1. `STAGES` array
 
 The single most important data structure. One entry per stage, including the Stage 0 intro. Schema below; per-field rules in §7 of SKILL.md.

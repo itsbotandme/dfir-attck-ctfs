@@ -233,6 +233,36 @@ def check_lab(lab_path: Path) -> list[str]:
     if re.search(r"[A-Za-z0-9._-]+@(gmail|outlook|yahoo|icloud|protonmail)\.com", src):
         fail(errors, "Personal email address detected — likely leaked from local config")
 
+    # --- TA0112 Defense Impairment must appear in TACTICS_TEXT ----------
+    # ATT&CK v19 (Apr 2026) added TA0112 as a new tactic. Every lab's
+    # TACTICS_TEXT reference must include it so analysts see the v19 layout
+    # when they type `tactics`. Reject any lab with a placeholder
+    # (TA00??, TA0???, etc.) for what should be TA0112.
+    m_tactics = re.search(r"const TACTICS_TEXT = `.*?`;", src, flags=re.DOTALL)
+    if m_tactics:
+        tactics = m_tactics.group(0)
+        if "TA0112" not in tactics:
+            fail(errors, "TACTICS_TEXT missing TA0112 Defense Impairment (added in ATT&CK v19 — see SKILL.md §3)")
+        if re.search(r"TA00\?\?|TA0\?\?\?|TA00 \?", tactics):
+            fail(errors, "TACTICS_TEXT contains a tactic-ID placeholder (e.g. TA00??) — every ID must be real")
+
+    # --- Vol-leakage in non-Vol labs ------------------------------------
+    # If TOOL_CONFIG.cmd is not 'vol', the lab must not contain Vol-specific
+    # user-facing strings in the picker prompt / first-touch hint / pro-mode
+    # tooltip / grep help. (The dispatcher case for 'vol' may remain — that's
+    # harmless when no one types it.)
+    m_cmd = re.search(r"const TOOL_CONFIG\s*=\s*\{[^}]*?cmd:\s*[\"']([^\"']+)[\"']", src, flags=re.DOTALL)
+    if m_cmd and m_cmd.group(1) != "vol":
+        # Only check the user-facing slots, not the dispatcher / cmdVol body
+        leakage_sites = [
+            (r"already familiar with Volatility", "pro-mode tooltip still says 'familiar with Volatility'"),
+            (r"Type your Volatility command", "Stage 1 first-touch hint still says 'Type your Volatility command'"),
+            (r"Which Volatility 3 plugin", "Picker prompt still says 'Which Volatility 3 plugin'"),
+        ]
+        for pattern, msg in leakage_sites:
+            if re.search(pattern, src):
+                fail(errors, f"TOOL_CONFIG.cmd is '{m_cmd.group(1)}' but {msg} — interpolate from TOOL_CONFIG")
+
     # --- Tabs in canned-output blocks (must be space-padded) ------------
     # Lookbehind: only flag \t that's NOT preceded by another backslash, so
     # legitimate Windows paths like \\tcpsvcs.exe don't trigger.

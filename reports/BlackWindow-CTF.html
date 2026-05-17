@@ -117,7 +117,7 @@
   .term-input-row { display: flex; align-items: center; padding: 8px 14px; background: #000; border: 1px solid var(--border); border-bottom: none; border-radius: 6px 6px 0 0; transition: border-color 0.2s ease; }
   .terminal-wrapper:focus-within .term-input-row { border-color: rgba(74,246,38,0.40); }
   .terminal-wrapper.cmd-entered .term-input-row { border-radius: 0 0 6px 6px; border-top: none; border-bottom: 1px solid var(--border); }
-  .term-input-row::before { content: 'analyst@dfir:/cases#'; color: var(--green); font-size: 0.78rem; margin-right: 8px; white-space: nowrap; }
+  .term-input-row::before { content: var(--term-prompt-text, 'analyst@dfir:/cases#'); color: var(--green); font-size: 0.78rem; margin-right: 8px; white-space: nowrap; }
   .term-input-field { flex: 1; background: transparent; border: none; outline: none; color: #fff; font-family: inherit; font-size: 0.78rem; caret-color: var(--term-green); }
 
   /* Question sits ABOVE the terminal so it isn't missed at first glance. */
@@ -372,7 +372,7 @@
   <span class="badge">Volatility 3</span>
   <span class="badge">Win7 SP1 x64</span>
   <span class="badge">MemoryDump_Lab1.raw</span>
-  <label class="pro-toggle" title="Hide the plugin picker on each stage. For analysts already familiar with Volatility 3.">
+  <label class="pro-toggle" title="Hide the plugin picker on each stage. For analysts already familiar with this tool.">
     <input type="checkbox" id="pro-mode-toggle-header" onchange="togglePromodeHeader()">
     <span>Pro mode</span>
   </label>
@@ -1725,7 +1725,7 @@ function renderPickerHTML(s) {
     <div class="picker-nudge">💡 Try picking a plugin first — the system grades your first-move thinking. You can still submit either way.</div>` : '';
   return `<div class="plugin-picker">
     <div class="pp-title">🔍 Pick your plugin</div>
-    <div class="pp-prompt">Before you run anything, commit to a first move. Which Volatility 3 plugin would best answer this stage's question?</div>
+    <div class="pp-prompt">Before you run anything, commit to a first move. Which ${TOOL_CONFIG.name} ${TOOL_CONFIG.pluginNoun} would best answer this stage's question?</div>
     ${skippedNudge}
     <select onchange="pickPlugin(this.value)">
       <option value="">— Select a plugin —</option>
@@ -1978,6 +1978,12 @@ document.getElementById('answer-input').addEventListener('keydown', (e) => {
 });
 
 // Init
+// Apply terminal skin at boot — set --term-prompt-text and --term-prompt-color
+(() => {
+  const skin = TERMINAL_SKINS[TERMINAL_SKIN] || TERMINAL_SKINS["bash-dfir"];
+  document.documentElement.style.setProperty('--term-prompt-text', `'${skin.prompt}'`);
+  document.documentElement.style.setProperty('--term-prompt-color', skin.promptColor);
+})();
 renderStagesList();
 renderCurrentStage();
 updateScoreboard();
