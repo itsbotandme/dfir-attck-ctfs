@@ -55,7 +55,9 @@ def parse_stages_array(src: str) -> list[dict]:
         return []
     # Strip JS line comments — they confuse the string/bracket trackers
     # below (a stray quote inside a comment would open a fake string mode).
-    block = re.sub(r"//[^\n]*", "", block)
+    # Require // to be at start-of-line (optional indent) so URL paths like
+    # http://example.com inside string literals stay intact.
+    block = re.sub(r"^\s*//[^\n]*", "", block, flags=re.MULTILINE)
     body = block.strip()[1:-1]  # strip [ ... ]
 
     stages = []
@@ -200,7 +202,7 @@ def check_lab(lab_path: Path) -> list[str]:
     # Scope to STAGES content only, so the validator's own anti-pattern docs
     # in JS comments don't trigger. Strip JS // line comments before matching.
     stages_block = extract_block(src, "STAGES") or ""
-    stages_no_comments = re.sub(r"//[^\n]*", "", stages_block)
+    stages_no_comments = re.sub(r"^\s*//[^\n]*", "", stages_block, flags=re.MULTILINE)
     spoilers = [
         "is your answer",
         "is the answer",

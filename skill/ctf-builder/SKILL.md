@@ -35,6 +35,8 @@ These principles are non-negotiable. Every design decision below derives from th
 ### ATT&CK as reveal, not signpost
 Real DFIR investigates first, then maps findings to ATT&CK as the common vocabulary. Stages **do not** announce their ATT&CK technique upfront. The technique is shown only after the analyst answers correctly, in a dedicated reveal card that says "what you just identified maps to T1059.003 — Windows Command Shell". Trains analytical reasoning, not label-matching.
 
+> **MITRE ATT&CK v19 (Apr 2026) — required reading for tactic IDs.** TA0005 was renamed *Defense Evasion → Stealth* (covers camouflage / blending-in techniques like T1036 Masquerading). The T1562 *Impair Defenses* family (actively disabling or degrading security controls) was promoted to its own tactic: **TA0112 Defense Impairment**. T1562 still exists as a technique — it now lives under TA0112. Every lab's `TACTICS_TEXT` block must include BOTH TA0005 and TA0112 rows so the analyst sees the v19 layout when they type `tactics`. Sub-techniques follow `Tnnnn.nnn`; always write the full ID (`T1078.002`, not `T1078`) where the lab maps to a sub-technique.
+
 ### Picker grades intentionality, not the final answer
 Each stage shows the analyst a curated list of plugin options BEFORE they run anything. The picker grades the choice: ✓ best / ≈ plausible / ✗ off-base, with a one-line reason. The picker does NOT block submission — it grades the *thinking* (which tool fits the question), separately from the *finding* (what the artefact says). This is the cognitive core of the lab.
 

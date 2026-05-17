@@ -59,8 +59,17 @@
 
 ### 3.3 TA0005 Stealth — `T####.### <Technique>`
 <!-- v19 rename: TA0005 is "Stealth" (was "Defense Evasion" pre-v19).
-     For active disabling/degrading of controls, use the "Impair
-     Defenses" technique tree. -->
+     Covers camouflage / blending in with legitimate activity (e.g.
+     T1036 Masquerading). For ACTIVE disabling/degrading of security
+     controls (the T1562 family), use the new tactic:
+     TA0112 Defense Impairment. T1562 still exists as a technique;
+     it now lives under TA0112. -->
+...
+
+### 3.X TA0112 Defense Impairment — `T1562.### <Technique>` *(new in v19)*
+<!-- For any technique where the attacker actively breaks, degrades, or
+     bypasses a security control (kills EDR, clears logs, disables
+     AMSI, modifies firewall rules, etc.). -->
 ...
 
 ---

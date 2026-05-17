@@ -1075,19 +1075,24 @@ const TACTICS_TEXT = `MITRE ATT&CK Enterprise Tactics — Kill Chain Order
   TA0002  Execution                ← T1059.003 Windows Command Shell
   TA0003  Persistence
   TA0004  Privilege Escalation
-  TA0005  Stealth                  ← T1036.005 Masquerading  (was Defense Evasion pre-v19)
-  TA00??  Impair Defenses          (new in ATT&CK v19 — split from TA0005; not used in this lab)
-  TA0006  Credential Access        ← T1003.001 LSASS Memory
-  TA0007  Discovery                ← T1082 System Information
+  TA0005  Stealth                  (was Defense Evasion pre-v19)
+  TA0112  Defense Impairment       (new in ATT&CK v19 — covers the T1562 family)
+  TA0006  Credential Access
+  TA0007  Discovery
   TA0008  Lateral Movement
-  TA0009  Collection               ← T1560.001 Archive via Utility
+  TA0009  Collection
   TA0011  Command and Control
-  TA0010  Exfiltration             ← T1041 Exfil over C2 Channel
+  TA0010  Exfiltration
   TA0040  Impact
 
-v19 note: TA0005 was renamed Defense Evasion → Stealth. Active disabling /
-degrading of security controls (formerly T1562) is now its own tactic,
-"Impair Defenses." See https://attack.mitre.org/tactics/enterprise/
+  (Mark each row with ← T#### <Technique Name> for techniques your lab earns,
+   so the analyst can see at a glance which tactics this case touches.)
+
+v19 note: TA0005 was renamed Defense Evasion → Stealth (camouflage / blending in).
+The T1562 Impair Defenses family (actively disabling or degrading security
+controls) was promoted to its own tactic: TA0112 Defense Impairment. T1562 still
+exists as a technique — it now lives under TA0112. See
+https://attack.mitre.org/tactics/enterprise/
 
 For full details: https://attack.mitre.org/`;
 

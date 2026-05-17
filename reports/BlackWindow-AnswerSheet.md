@@ -99,7 +99,7 @@ Found cmd.exe?
 
 ## Stage 4 — A file where it doesn't belong?
 
-> **ATT&CK v19 note (Apr 2026):** TA0005 was renamed *Defense Evasion → Stealth*. The "actively disable / degrade controls" half (T1562) is now its own tactic, **Impair Defenses**. T1036.005 Masquerading is a stealth behaviour (blending in, not breaking controls), so it stays under TA0005.
+> **ATT&CK v19 note (Apr 2026):** TA0005 was renamed *Defense Evasion → Stealth*. The T1562 *Impair Defenses* family (actively disabling or degrading security controls) was promoted to its own tactic, **TA0112 Defense Impairment**. T1562 still exists as a technique — it now lives under TA0112. T1036.005 Masquerading is a stealth behaviour (blending in, not breaking controls), so it stays under TA0005.
 
 **Hypothesis.** *Is the attacker hiding tools in plain sight by using legitimate directory locations?*
 
