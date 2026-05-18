@@ -420,6 +420,32 @@ Both render paths use the same `pickPlugin(idxOrKey)` handler — the JS dispatc
 - BlackWindow: max key length ≈ 25 chars (all stages render as dropdown automatically).
 - SzechuanSauce: Stage 1 ≈ 30 chars (dropdown), Stages 2–7 = 56–168 chars (cards). Mixed-mode by design — auto-detect handles each stage independently.
 
+### 10.4 Exploration outputs — extending the rails (optional but recommended)
+
+The per-stage `pluginGrades` keys are the minimum the lab MUST canned-output for the analyst to complete each stage. But the rails feel narrow: when the analyst sees `ldap` in a protocol-hierarchy output and naturally types `tshark -r case001.pcap -Y ldap` to drill in, hitting "no canned output" trains them that going off-script is punished.
+
+**The pattern:** pre-record 5–10 follow-up commands per lab that an analyst would naturally try based on what earlier stages reveal. Add them to `VOL_OUTPUTS` / `TSHARK_OUTPUTS` / etc. as additional keys. They're not part of any stage's `pluginGrades` — they're free-form exploration the analyst can reach for whenever curiosity strikes.
+
+**Heuristic — what to anticipate:**
+- For each protocol / artefact type that appears in a per-stage output, add 1–2 "drill-in" filters that scope to it. (Pcap example: if `tshark -q -z io,phs` shows `ldap` traffic, add `tshark -Y ldap -T fields -e frame.time -e ip.src -e ip.dst` as an exploration output.)
+- For each "category summary" command (`-q -z hosts`, `-q -z conv,udp`, `-q -z http,tree`), add the corresponding filter form so the analyst can see the individual events behind the count.
+- For each named indicator the lab surfaces (an IP, a filename, a user account), consider a `-Y "frame contains <indicator>"` or equivalent — the analyst will think of it; meet them there.
+
+**Don't try to be exhaustive.** This is "extend the rails", not "go off-rails". The standard "no canned output" error stays; this just makes hitting it less frequent. 5–10 exploration outputs per lab is the right band — fewer and the analyst hits the wall fast; more and you're trying to ship a tool emulator.
+
+**Examples — what SzechuanSauce ships (tshark/pcap):**
+- `-Y ldap -T fields -e frame.time -e ip.src -e ip.dst` — drill into LDAP traffic
+- `-Y kerberos -T fields -e frame.time -e ip.src -e ip.dst -e kerberos.msg_type` — drill into Kerberos
+- `-Y dns.qry.name -T fields -e frame.time -e dns.qry.name` — DNS queries
+- `-Y "smb2 or smb" -T fields -e frame.time -e ip.src -e smb2.filename` — SMB activity
+- `-q -z http,tree` — HTTP statistics
+- `-q -z conv,udp` — UDP conversation summary
+- `-q -z hosts` — host inventory
+
+**Anti-pattern:** don't try to replicate full tshark functionality. Anyone-typeable display filter is unbounded. Aim for the obvious follow-up moves your per-stage findings would prompt, generate the outputs against the real artefact at build time, paste them in. Stop when you've covered the ones an analyst would think of within the first minute of curiosity.
+
+**File hygiene:** stash exploration outputs alongside the per-stage outputs in `analysis/<CaseName>/canned/exploration/<short-name>.txt` (gitignored), then splice via the same Python that builds the main canned-output object.
+
 ---
 
 ## 11. Man-page mandate
