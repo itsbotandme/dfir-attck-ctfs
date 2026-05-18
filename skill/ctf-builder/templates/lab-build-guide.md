@@ -93,8 +93,7 @@ The single most important data structure. One entry per stage, including the Sta
       <h3>How this game works</h3>
       <p>Static HTML. The terminal looks up your command in a table
          of pre-recorded outputs — it does not run the real tool.
-         Commands not in the table say "no canned output". This is
-         rails, not a sandbox.</p>
+         Commands not in the table return "no canned output".</p>
       <p>If you get stuck, the 💡 Need a hint? button gives
          progressive nudges.</p>
     </section>
