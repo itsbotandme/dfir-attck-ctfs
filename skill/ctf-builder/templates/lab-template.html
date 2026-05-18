@@ -1645,6 +1645,25 @@ document.getElementById('term-input').addEventListener('keydown', (e) => {
       inp.value = '';
     }
     e.preventDefault();
+  } else if (e.key === 'Tab') {
+    // Tab-complete IMAGE_FILENAME. Only fires when the word at the
+    // caret is a non-empty prefix of the filename. Otherwise Tab
+    // moves focus normally (default browser behaviour kept).
+    const value = inp.value;
+    const caret = inp.selectionStart;
+    const before = value.slice(0, caret);
+    const after = value.slice(caret);
+    const wordStart = Math.max(before.lastIndexOf(' '), before.lastIndexOf('\t')) + 1;
+    const word = before.slice(wordStart);
+    if (word.length > 0 && IMAGE_FILENAME.toLowerCase().startsWith(word.toLowerCase())) {
+      const completion = IMAGE_FILENAME.slice(word.length);
+      const newValue = before + completion + after;
+      inp.value = newValue;
+      const newCaret = caret + completion.length;
+      inp.setSelectionRange(newCaret, newCaret);
+      e.preventDefault();
+    }
+    // If no prefix match, let Tab default to focus shift.
   }
 });
 
