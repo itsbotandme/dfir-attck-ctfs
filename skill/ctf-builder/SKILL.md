@@ -161,15 +161,16 @@ Required fields per stage: `id`, `title`, `tactic`, `technique`, `whatsKnown`, `
 
 ### 7.1 Stage 0 (Briefing) structure
 
-Stage 0 is the special case. It has `intro: true` and renders a magazine-style pane (scoped CSS class `.intro-pane`) instead of the normal stage layout. No question, no terminal, no picker. Three sections:
+Stage 0 is the special case. It has `intro: true` and renders a magazine-style pane (scoped CSS class `.intro-pane`, max-width 1000px) instead of the normal stage layout. No question, no terminal, no picker. Four required sections:
 
-1. **The Case.** Verbatim scenario from the source (in `<blockquote class="intro-quote">`). One sentence reframing the analyst's job — but no buzzwords (see §17).
-2. **How this game works.** Plain-English explanation: single static HTML file, terminal looks up commands in an embedded table, no real Volatility runs. One-line note about the 💡 hint button.
-3. **About [tool].** What the primary tool is (e.g. Volatility 3), version used, plugin syntax example, link to official docs (e.g. volatility3.readthedocs.io). A brief note on tool invocation conventions for the artefact class (e.g. `vol -f <image> <plugin>` shorthand vs `python3 vol.py -f ...` canonical).
+1. **The Case.** Scenario quote (in `<blockquote class="intro-quote">`). Use the verbatim upstream text if it exists and is short enough; otherwise write a 2–4 sentence summary in the briefing's own voice. Label as `Scenario:` (no parenthetical claim about provenance — keep it clean). One sentence reframing the analyst's job — no buzzwords (see §17).
+2. **How this game works.** Plain-English: single static HTML file, terminal looks up commands in an embedded table, no real tool runs. One-line note about the 💡 hint button. **REQUIRED muted-text paragraph** advertising useful terminal commands: `help`, `man <tool>`, `clear`, `tactics`, AND that `Tab` autocompletes the artefact filename. Without this, analysts type the filename every command and the tab-completion feature is invisible.
+3. **Pro mode (optional).** Short section explaining the header toggle: "If you're already comfortable with this toolset and want to skip the plugin picker, toggle Pro mode in the top-right." Plus a muted line: "You can toggle on/off at any stage — it's not a one-way door." Without this, analysts never discover Pro mode exists (the header toggle is tooltip-only).
+4. **About [tool].** What the primary tool is (e.g. Volatility 3), version used, plugin syntax example, link to official docs (e.g. volatility3.readthedocs.io). A brief note on tool invocation conventions for the artefact class (e.g. `vol -f <image> <plugin>` shorthand vs `python3 vol.py -f ...` canonical).
 
-CSS for `.intro-pane`, `.intro-section`, `.intro-quote`, `.intro-codeblock`, `.intro-cta` is scoped only to Stage 0 — uses sans-serif font (`-apple-system, "Segoe UI", "Inter", …`) for readability. Code samples remain monospace.
+CSS for `.intro-pane`, `.intro-section`, `.intro-quote`, `.intro-codeblock` is scoped only to Stage 0 — uses sans-serif font (`-apple-system, "Segoe UI", "Inter", …`) for readability. Code samples remain monospace. The pane's `max-width: 1000px` keeps section cards readable on wide monitors without an internal whitespace gap.
 
-The Pro-mode toggle does NOT live in Stage 0 (header instead — see §9).
+The Pro-mode toggle itself lives in the header (right side); Stage 0 just describes that it exists.
 
 ### 7.2 Per-stage authoring (Stages 1 through N)
 

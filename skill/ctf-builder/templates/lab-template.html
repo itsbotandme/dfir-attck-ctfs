@@ -232,7 +232,7 @@
   .intro-pane {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Helvetica, Arial, sans-serif;
     display: flex; flex-direction: column; gap: 22px;
-    max-width: 740px;
+    max-width: 1000px;  /* bumped from 740px so cards hug prose without internal whitespace gap */
   }
   .intro-pane code, .intro-pane pre {
     font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
@@ -619,6 +619,23 @@ const STAGES = [
            sandbox.</p>
         <p>If you get stuck, the 💡 Need a hint? button gives progressive
            nudges (three escalating tiers per stage).</p>
+        <p class="muted">Useful terminal commands: <code>help</code> (full
+           command list), <code>man &lt;tool&gt;</code> (reference for a
+           specific tool), <code>clear</code> (empty the terminal),
+           <code>tactics</code> (ATT&amp;CK tactic reference). Press
+           <code>Tab</code> in the terminal to autocomplete the artefact
+           filename so you don't have to retype it every command.</p>
+      </section>
+
+      <section class="intro-section">
+        <h3>Pro mode (optional)</h3>
+        <p>If you're already comfortable with this toolset and want to skip the
+           plugin picker, toggle <b>Pro mode</b> in the top-right of the page.
+           The picker is the scaffolding for analysts learning what tool fits
+           what question; experienced analysts usually know already and want to
+           go straight to the question + terminal.</p>
+        <p class="muted">You can toggle Pro mode on or off at any stage — it's
+           not a one-way door.</p>
       </section>
 
       <section class="intro-section">

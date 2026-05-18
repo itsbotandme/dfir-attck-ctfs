@@ -225,7 +225,7 @@
   .intro-pane {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Helvetica, Arial, sans-serif;
     display: flex; flex-direction: column; gap: 22px;
-    max-width: 740px;
+    max-width: 1000px;  /* bumped from 740px so cards hug prose without internal whitespace gap */
   }
   .intro-pane code, .intro-pane pre {
     font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
@@ -894,7 +894,20 @@ const STAGES = [
     If you get stuck, the <b>💡 Need a hint?</b> button gives progressive nudges.
   </p>
   <p class="muted">
+    Useful terminal commands: <code>help</code> (full command list), <code>man &lt;tool&gt;</code> (reference for a specific tool), <code>clear</code> (empty the terminal), <code>tactics</code> (ATT&amp;CK tactic reference). Press <code>Tab</code> in the terminal to autocomplete the image filename so you don't have to retype <code>MemoryDump_Lab1.raw</code> every command.
+  </p>
+  <p class="muted">
     Why this design: the lab runs on a phone with no install, no network, and no risk to evidence. The trade-off is that you can't go off-script. For real analysis, you'd run Volatility yourself on a workstation with the actual <code>MemoryDump_Lab1.raw</code> file.
+  </p>
+</section>
+
+<section class="intro-section">
+  <h3>⚡ Pro mode (optional)</h3>
+  <p>
+    If you're already comfortable with Volatility and want to skip the plugin picker, toggle <b>Pro mode</b> in the top-right of the page. The picker is the scaffolding for analysts learning what plugin fits what question; experienced analysts usually know already and want to go straight to the question + terminal.
+  </p>
+  <p class="muted">
+    You can toggle Pro mode on or off at any stage — it's not a one-way door.
   </p>
 </section>
 
