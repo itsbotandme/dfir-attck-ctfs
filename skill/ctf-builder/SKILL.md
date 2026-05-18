@@ -368,10 +368,12 @@ Examples per artefact class:
 | Artefact | `TOOL_CONFIG` |
 |---|---|
 | Memory image | `{ name:"Volatility 3", cmd:"vol", invocation:"vol -f <image> <plugin>", pluginNoun:"plugin", exampleHelp:"vol -f mem.raw windows.info" }` |
-| pcap | `{ name:"tshark/Wireshark", cmd:"tshark", invocation:'tshark -r <pcap> [-Y "<filter>"] [-q -z <stat>]', pluginNoun:"command", exampleHelp:"tshark -r case.pcap -q -z io,phs" }` |
+| pcap | `{ name:"tshark/Wireshark", cmd:"tshark", invocation:'tshark -r <pcap> [-Y "<filter>"] [-q -z <stat>]', pluginNoun:"tool", exampleHelp:"tshark -r case.pcap -q -z io,phs" }` |
 | Disk image (NTFS) | `{ name:"Sleuth Kit / Plaso", cmd:"fls", invocation:"fls -rp -o <offset> <image>", pluginNoun:"command", exampleHelp:"fls -rp -o 2048 disk.E01" }` |
 | EVTX corpus | `{ name:"EvtxECmd", cmd:"EvtxECmd", invocation:"dotnet EvtxECmd.dll -d <dir> --csv <out>", pluginNoun:"flag", exampleHelp:"dotnet EvtxECmd.dll -d Logs --csv ./out" }` |
 | Generic logs | `{ name:"Unix utilities", cmd:"grep", invocation:"grep [-i] <pattern> <files>", pluginNoun:"command", exampleHelp:"grep -i error *.log | wc -l" }` |
+
+> **Choosing `pluginNoun`.** Match the BROADEST category in your picker pool, not the specific tool. If a stage's picker offers `capinfos` alongside `tshark` variants, use `"tool"` — both are Wireshark tools, but capinfos isn't a tshark *command*. If a stage's picker is homogeneous (all Volatility plugins, or all Sleuth Kit commands), the specific noun fits. The picker prompt renders as `Which ${name} ${pluginNoun} would best answer...`, so the noun must comfortably apply to every option in the pool. The pcap row above was corrected from `"command"` to `"tool"` for this reason.
 
 The skill ships a default of Volatility values for backward compatibility with the Black Window Case lab. Pcap and other non-Vol labs must override.
 
@@ -728,7 +730,17 @@ Run via `python3 skill/ctf-builder/validate-lab.py reports/<CaseName>-lab.html`.
 
 14. **Update `index.html`** landing-page card with the new lab's title, description, ATT&CK pills, and link.
 
-15. **Commit with conventional-commit prefix** — `feat(labs): add <CaseName> lab — <one-line description>`.
+15. **Wording review (read everything out loud).** Before committing, open every stage's `briefing`, `whatsKnown`, `question`, `answerNote`, and each `hints[*]` string. Read each one out loud. Flag anything that reads as colloquial, jargony, or imprecise. Tighten before validation. Examples of past tightenings:
+    - `"smoking gun"` → `"confirms successful authentication"`
+    - `"the suspect's vehicle"` → `"the account the operator is now using"`
+    - `"shoot to the bottom"` → drop entirely; describe the actual UI behaviour neutrally
+    - `"the sister's machine"` (when the lab isn't about a sister) → describe the actual host/domain
+
+    Also audit the Stage 0 briefing for the same.
+
+16. **Tool-handler hardening (lab-specific).** For pcap/tshark-style labs whose `cmdTshark` (or equivalent) accepts a long display-filter argument: validate quote balance before dispatching the canned-output lookup. Count `"` (and `'`) characters in the post-`-r <pcap>` arg string; if odd, return `{ error: 'tshark: unmatched quote in display filter — check your -Y argument.' }`. Without this, the fuzzy normaliser silently strips/ignores mismatched quotes and returns a result even when the analyst's command was syntactically wrong, which trains them to be sloppy. Volatility-style commands don't need this guard (vol's syntax doesn't include long quoted display filters).
+
+17. **Commit with conventional-commit prefix** — `feat(labs): add <CaseName> lab — <one-line description>`.
 
 16. **Push.** Pages rebuilds automatically.
 
@@ -771,6 +783,8 @@ These are deliberate design choices made and re-made through the BlackWindow reb
 | Hardcode Volatility / Vol-specific strings in a non-Vol lab | The template's user-facing copy (picker prompt, Stage 1 hint, pro-mode tooltip, grep help) MUST interpolate from `TOOL_CONFIG` (see §10). The SzechuanSauce pcap rebuild surfaced five distinct Vol-leakage sites that bled into a tshark lab — every one of them is now config-driven. |
 | Ship `TA00??` or any other tactic-ID placeholder in `TACTICS_TEXT` | The TACTICS_TEXT reference is what the analyst sees when they type `tactics`. Placeholders signal "this is a draft". Every tactic ID must be real — including the v19 additions (TA0112 Defense Impairment). |
 | Manually set `pickerStyle: "cards"` on a stage with all short keys | Wastes vertical real estate (~250px vs ~40px for a dropdown). Rely on auto-detect (see §10.3) — it picks the right render based on max key length + special chars. Use `pickerStyle` only when auto-detect picks wrong for a pedagogical reason. |
+| Ship colloquial idioms in analyst-facing prose | The lab trains analysts to write defensible reports; colloquial briefings normalise colloquial reporting. "Smoking gun", "vehicle", "shoot to the bottom", "the suspect's vehicle" etc. — all flagged in past reviews and tightened. See §15 step 15 ("Wording review") — read every stage's prose out loud before committing. |
+| Claim "(from the original)" attribution for a scenario you actually wrote | If you have the verbatim upstream scenario quote, use it. If you don't, write a 2–4 sentence summary labelled just `Scenario:` (no parenthetical claim about provenance). Don't invent provenance that doesn't exist — the lab loses credibility once an analyst checks the source. |
 | Add LLM-graded hypothesis text input | Without an LLM the grading is theatre; with an LLM the lab loses offline-capable + zero-dependency status. The picker grades intentionality without LLM. |
 | Ship with localhost paths or PII | Pre-flight sweep is mandatory. Lab is publicly readable. |
 | Add a hard-mode that hides ATT&CK | Pro-mode toggle hides the picker (real opt-out). Hiding ATT&CK defeats the lab's pedagogy. |
