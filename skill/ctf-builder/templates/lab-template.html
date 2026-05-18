@@ -1069,15 +1069,31 @@ function cmdUniq(args, stdin) {
   return { text: out.join('\n') };
 }
 
+// ============================================================
+// MAN_PAGES — populate per lab from skill/ctf-builder/man-pages/<tool>.txt
+// Pick the tools your lab uses + standard utilities (grep, strings).
+// Copy each file's contents VERBATIM as a JS template literal.
+// See SKILL.md §11 for the wiring spec.
+// ============================================================
+const MAN_PAGES = {
+  // "vol":      `<paste contents of man-pages/vol.txt here>`,
+  // "tshark":   `<paste contents of man-pages/tshark.txt here>`,
+  // "capinfos": `<paste contents of man-pages/capinfos.txt here>`,
+  // "grep":     `<paste contents of man-pages/grep.txt here>`,
+  // "strings":  `<paste contents of man-pages/strings.txt here>`,
+};
+
 function cmdMan(args) {
-  if (args.length === 0) return { error: "What manual page do you want? Try 'man vol' or 'man grep'." };
-  const tool = args[0];
-  const pages = {
-    'vol': "VOL(1) — Volatility 3 Framework\n\n  vol -f <image> <plugin> [options]\n\nCommon plugins:\n  windows.info        — OS info\n  windows.pslist      — process list (linked)\n  windows.psscan      — process pool scan (finds hidden)\n  windows.pstree      — parent-child hierarchy\n  windows.cmdline     — process command lines\n  windows.netscan     — network connections\n  windows.filescan    — files in memory\n  windows.malfind     — code injection scan\n  windows.handles --pid N    — open handles for PID\n  windows.envars --pid N     — environment variables\n  windows.registry.printkey --key '...'   — read registry key",
-    'grep': "GREP(1) — search text\n\n  grep [-i] <pattern> [file]\n  ... | grep <pattern>\n\nFlags:\n  -i  case-insensitive\n  -v  invert match",
-    'strings': "STRINGS(1) — extract printable strings from binary\n\n  strings <file>\n  strings <file> | grep <pattern>",
-  };
-  return { text: pages[tool] || `No manual entry for ${tool}` };
+  if (!args.length) return { error: "man: usage: man <tool>" };
+  const tool = args[0].toLowerCase();
+  if (Object.prototype.hasOwnProperty.call(MAN_PAGES, tool)) {
+    return { text: MAN_PAGES[tool], cls: "term-info" };
+  }
+  const available = Object.keys(MAN_PAGES).sort().join(', ');
+  const suggestion = available
+    ? `Available: ${available}`
+    : "(no manual pages loaded — author did not populate MAN_PAGES)";
+  return { error: `man: no manual entry for '${tool}'.\n${suggestion}` };
 }
 
 const HELP_TEXT = `╔══════════════════════════════════════════════════════════════════╗

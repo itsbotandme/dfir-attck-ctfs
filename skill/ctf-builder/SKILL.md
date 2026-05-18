@@ -437,15 +437,60 @@ skill/ctf-builder/man-pages/
   EvtxECmd.txt         # EZ Tools — EVTX parsing
   zeek.txt             # Zeek — pcap analysis
   tshark.txt           # Wireshark CLI — pcap analysis
+  capinfos.txt         # Wireshark — pcap metadata summary
   yara.txt             # YARA — IOC scanning
   bulk_extractor.txt   # bulk_extractor — string/feature extraction
   grep.txt             # grep — pattern matching
   strings.txt          # strings — printable string extraction
 ```
 
-Each snippet is concise (10–25 lines) — purpose, common usage, key flags, one example. Not a full man page; just enough that an analyst stuck in the lab can `man vol` and remember how plugins work.
+Each snippet is concise (25–40 lines) — NAME, SYNOPSIS, DESCRIPTION, COMMON FLAGS, EXAMPLES, NOTES. Not a full man page; just enough that an analyst stuck in the lab can `man tshark` and remember how the tool's flags work.
 
 When you build a lab for a tool not in the list above, ADD a man-page snippet for that tool to the skill's `man-pages/` directory in the same commit. This grows the skill's coverage over time.
+
+### 11.1 Wiring man-pages into a lab — the `MAN_PAGES` const
+
+The man-pages don't load themselves. Each lab inlines the relevant subset as a top-level JS constant near the other config (TOOL_CONFIG / TERMINAL_SKINS). The `cmdMan` handler reads from it.
+
+**Template `MAN_PAGES` placeholder** (lab-template.html ships with this commented-out scaffold):
+
+```js
+const MAN_PAGES = {
+  // "vol":      `<paste contents of man-pages/vol.txt here>`,
+  // "tshark":   `<paste contents of man-pages/tshark.txt here>`,
+  // "capinfos": `<paste contents of man-pages/capinfos.txt here>`,
+  // "grep":     `<paste contents of man-pages/grep.txt here>`,
+  // "strings":  `<paste contents of man-pages/strings.txt here>`,
+};
+```
+
+**Author's build step:** uncomment the tools your lab uses (per `TOOL_CONFIG.cmd` + standard pipe utilities `grep` / `strings`), then paste the verbatim contents of each `<tool>.txt` between the backticks. Keep the snippets verbatim — that's the canonical reference the analyst sees, and editing per-lab would create drift.
+
+Examples:
+
+| Lab | Populate MAN_PAGES with |
+|---|---|
+| Memory forensics (Volatility 3) | `vol`, `grep`, `strings` |
+| Pcap (tshark) | `tshark`, `capinfos`, `grep`, `strings` |
+| Disk image (Sleuth Kit + Plaso) | `fls`, `icat`, `mactime`, `log2timeline`, `psort.py`, `grep` |
+| EVTX corpus | `EvtxECmd`, `grep`, `strings` |
+| Threat hunt (YARA) | `yara`, `grep` |
+
+**Escape rule.** Man-page contents go inside JS template literals — if any snippet contains a literal backtick or a literal `${...}`, escape them: `\`` and `\${`. The shipped man-pages don't contain either; this is a forward-compatible note.
+
+**HELP_TEXT advertisement.** Update the `man <cmd>` line in HELP_TEXT to list the available tools:
+
+```
+  man <cmd>  — show manual page (available: tshark, capinfos, grep, strings)
+```
+
+Otherwise the analyst doesn't know which tools have man-pages.
+
+**`cmdMan` behaviour.** The handler does case-insensitive lookup. On unknown tool, prints `man: no manual entry for '<tool>'.\nAvailable: <comma-sep list>` so the analyst sees their options.
+
+### 11.2 Validator check
+
+`validate-lab.py` does NOT currently check MAN_PAGES population (the const can legitimately be empty for a lab still in draft). If a future lab ships with MAN_PAGES empty AND HELP_TEXT advertising `man <cmd>`, the analyst would type `man tshark` and get the "(no manual pages loaded — author did not populate MAN_PAGES)" message — visible failure rather than silent miss. That's acceptable.
 
 ---
 

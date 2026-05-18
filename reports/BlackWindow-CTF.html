@@ -1521,15 +1521,127 @@ function cmdUniq(args, stdin) {
   return { text: out.join('\n') };
 }
 
+// ============================================================
+// MAN_PAGES — verbatim contents of skill/ctf-builder/man-pages/<tool>.txt
+// Lab uses Volatility 3 + standard pipe utilities.
+// Update SKILL.md §11 spec when adding a new tool.
+// ============================================================
+const MAN_PAGES = {
+  "vol": `VOL(1)                    Volatility 3 Framework                    VOL(1)
+
+NAME
+    vol — open-source memory forensics framework
+
+SYNOPSIS
+    vol -f <image> [--pid <PID>] [--key "<reg path>"] <plugin>
+    python3 vol.py -f <image> ... <plugin>          (canonical form)
+
+DESCRIPTION
+    Parses a raw memory image into structured artefacts (processes,
+    sockets, registry hives, command-line history, file objects).
+    Plugins are namespaced by OS family.
+
+COMMON WINDOWS PLUGINS
+    windows.info              OS, build, architecture, capture time
+    windows.pslist            running process list
+    windows.pstree            process parent/child hierarchy
+    windows.cmdline           per-process command line
+    windows.netscan           network sockets and connections
+    windows.filescan          file objects in memory
+    windows.handles           --pid <N>: open handles for a PID
+    windows.dlllist           --pid <N>: loaded DLLs for a PID
+    windows.registry.printkey --key "<path>": dump a registry key
+
+COMMON FLAGS
+    -f <image>     memory image path (REQUIRED)
+    --pid <N>      filter to a single PID
+    --key "..."    registry key path (printkey)
+
+EXAMPLE
+    vol -f MemoryDump_Lab1.raw windows.pslist
+    vol -f MemoryDump_Lab1.raw windows.handles --pid 1984
+
+NOTES
+    Volatility 3 needs a symbol table matching the kernel of the captured
+    RAM. WinUnknownKernelException → symbol table is missing.
+    Docs: https://volatility3.readthedocs.io/`,
+  "grep": `GREP(1)                  GNU Coreutils                            GREP(1)
+
+NAME
+    grep — print lines matching a pattern
+
+SYNOPSIS
+    grep [OPTION]... PATTERN [FILE]...
+
+DESCRIPTION
+    Search input for lines matching a regular expression. Reads from
+    stdin if no FILE is given — the workhorse of any analyst's pipeline.
+
+COMMON FLAGS
+    -i              case-insensitive
+    -v              invert match (lines that DON'T match)
+    -c              count matches only
+    -l              filenames only
+    -n              prefix line with line number
+    -A <N>          print N lines after each match
+    -B <N>          print N lines before each match
+    -C <N>          print N lines around each match (context)
+    -E              extended regex (egrep)
+    -F              fixed strings (no regex)
+    -r              recurse into directories
+    -o              print only the matching part
+
+EXAMPLES
+    grep -i passwd PASSWD.LOG
+    vol -f mem.raw windows.cmdline | grep -i rar
+    grep -rn "TODO" .
+    cat conn.log | grep -v "^#"
+
+NOTES
+    Pipe-friendly. In this lab, most stages use a \`<tool> | grep <pattern>\`
+    pattern to scope plugin output.`,
+  "strings": `STRINGS(1)                GNU binutils                          STRINGS(1)
+
+NAME
+    strings — print printable character sequences from a file
+
+SYNOPSIS
+    strings [OPTION]... FILE...
+
+DESCRIPTION
+    Walks a binary file and prints sequences of printable characters
+    that are at least N (default 4) characters long. Useful for first-
+    pass triage of memory images, malware, and any binary blob.
+
+COMMON FLAGS
+    -n <N>          minimum string length (default 4)
+    -a              scan the entire file (not just data sections)
+    -t d|x|o        print offset (decimal / hex / octal) before each string
+    -e <encoding>   encoding: s (7-bit), S (8-bit), b (16-bit big-endian),
+                    l (16-bit little-endian), B (32-bit BE), L (32-bit LE)
+    -f              print filename before each string
+
+EXAMPLES
+    strings memory.dump | grep -i passwd
+    strings -n 8 -t x suspicious.bin > strings.txt
+    strings -e l unicode-blob.bin     UTF-16LE strings
+
+NOTES
+    For memory images, pipe through grep to scope. Raw \`strings | less\`
+    on a 1 GB image is a fast path to overwhelm.`,
+};
+
 function cmdMan(args) {
-  if (args.length === 0) return { error: "What manual page do you want? Try 'man vol' or 'man grep'." };
-  const tool = args[0];
-  const pages = {
-    'vol': "VOL(1) — Volatility 3 Framework\n\n  vol -f <image> <plugin> [options]\n\nCommon plugins:\n  windows.info        — OS info\n  windows.pslist      — process list (linked)\n  windows.psscan      — process pool scan (finds hidden)\n  windows.pstree      — parent-child hierarchy\n  windows.cmdline     — process command lines\n  windows.netscan     — network connections\n  windows.filescan    — files in memory\n  windows.malfind     — code injection scan\n  windows.handles --pid N    — open handles for PID\n  windows.envars --pid N     — environment variables\n  windows.registry.printkey --key '...'   — read registry key",
-    'grep': "GREP(1) — search text\n\n  grep [-i] <pattern> [file]\n  ... | grep <pattern>\n\nFlags:\n  -i  case-insensitive\n  -v  invert match",
-    'strings': "STRINGS(1) — extract printable strings from binary\n\n  strings <file>\n  strings <file> | grep <pattern>",
-  };
-  return { text: pages[tool] || `No manual entry for ${tool}` };
+  if (!args.length) return { error: "man: usage: man <tool>" };
+  const tool = args[0].toLowerCase();
+  if (Object.prototype.hasOwnProperty.call(MAN_PAGES, tool)) {
+    return { text: MAN_PAGES[tool], cls: "term-info" };
+  }
+  const available = Object.keys(MAN_PAGES).sort().join(', ');
+  const suggestion = available
+    ? `Available: ${available}`
+    : "(no manual pages loaded — author did not populate MAN_PAGES)";
+  return { error: `man: no manual entry for '${tool}'.\n${suggestion}` };
 }
 
 const HELP_TEXT = `╔══════════════════════════════════════════════════════════════════╗
@@ -1559,7 +1671,7 @@ LAB HELPERS:
   progress   — show your progress
   clear      — clear terminal
   help, ?    — this help
-  man <cmd>  — show manual page
+  man <cmd>  — show manual page (available: vol, grep, strings)
 
 KEYBOARD:
   ↑ / ↓      — command history

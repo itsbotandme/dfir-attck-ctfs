@@ -1,0 +1,41 @@
+CAPINFOS(1)                Wireshark Utilities                CAPINFOS(1)
+
+NAME
+    capinfos — print summary statistics for capture (pcap / pcapng) files
+
+SYNOPSIS
+    capinfos [options] <capture-file>
+
+DESCRIPTION
+    Reads a packet capture file and prints metadata: number of packets,
+    data byte count, capture duration, file timestamps, average packet
+    size + rate, file format, encapsulation type, and SHA-256 / SHA-1
+    hashes. Does NOT dissect packets — fast even on large files.
+    Always run capinfos before any analysis: it anchors every later
+    finding in absolute UTC time and tells you whether the capture is
+    truncated.
+
+COMMON FLAGS
+    -a              start time
+    -e              end time
+    -u              capture duration
+    -c              packet count
+    -s              file size
+    -z              file format
+    -d              data size (excluding pcap header overhead)
+    -H              SHA-256, SHA-1, RIPEMD-160 hashes
+    -T              tabular output (one row per file; useful for many files)
+    -M              machine-readable output (no human-friendly formatting)
+
+    With no flags, capinfos prints the FULL standard summary.
+
+EXAMPLES
+    capinfos case001.pcap                     full summary
+    capinfos -aeuc *.pcap                     start/end/duration/count for all
+    capinfos -H suspicious.pcapng             print hashes for chain of custody
+    capinfos -TM *.pcap > pcap-inventory.txt  tabular machine-readable
+
+NOTES
+    Hash the capture immediately on receipt and again at end of analysis
+    to prove the file wasn't modified during your work. capinfos -H gives
+    you all three common hashes in one call.
