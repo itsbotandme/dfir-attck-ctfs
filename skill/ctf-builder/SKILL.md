@@ -390,6 +390,36 @@ The skin choice matters: a tshark/pcap lab on `bash-ubuntu` primes the analyst t
 
 Pick the skin from the **analyst's environment**, not the artefact's. A Windows memory image analysed on a SANS SIFT workstation uses `bash-dfir` (where Vol runs), not `powershell-win`.
 
+### 10.3 Picker render strategy — dropdown vs cards (auto-detect)
+
+The plugin picker renders one of two ways per stage, chosen automatically by `renderPickerHTML`:
+
+| Render | When | Why |
+|---|---|---|
+| **`<select>` dropdown** | All keys ≤ 40 chars AND no key contains `"`, `<`, `>`, or `` ` `` | Compact, familiar UX. Right for short tool/plugin names like `windows.info`, `windows.pslist`, `fls`, `EvtxECmd`. Takes ~40px of vertical space when collapsed. |
+| **Click-cards** | Any key > 40 chars OR any key contains a special char | Native `<select>` clips long options at the OS-native dropdown width and ignores option-level CSS. Cards always show the full key text on the page. Right for tshark display filters with quoted args, long Plaso filter expressions, or any key with `"`/`<`/`>` that would break the `<option value="..."` HTML attribute. |
+
+**Per-stage override.** Set `pickerStyle` on a STAGES entry to force one path regardless of key length:
+
+```js
+{
+  id: 3,
+  title: "Stage 3 — ...",
+  pickerStyle: "cards",      // or "dropdown" — overrides auto-detect for this stage
+  pluginGrades: { ... }
+}
+```
+
+Use the override only when auto-detect picks wrong for a pedagogical reason. Examples:
+- Force `"cards"` on a stage with all-short keys when you want extra visual prominence for the picker (rare).
+- Force `"dropdown"` on a stage with one long edge-case key if all the other keys are short and the dropdown still reads acceptably (rare).
+
+Both render paths use the same `pickPlugin(idxOrKey)` handler — the JS dispatches by index either way, so quoted keys are safe even in the dropdown form. The HTML-escaped display text in both paths prevents `<option value>` attribute injection.
+
+**For author reference — current lab key lengths:**
+- BlackWindow: max key length ≈ 25 chars (all stages render as dropdown automatically).
+- SzechuanSauce: Stage 1 ≈ 30 chars (dropdown), Stages 2–7 = 56–168 chars (cards). Mixed-mode by design — auto-detect handles each stage independently.
+
 ---
 
 ## 11. Man-page mandate
@@ -668,6 +698,7 @@ These are deliberate design choices made and re-made through the BlackWindow reb
 | Fabricate artefacts the source doesn't contain | Forensic accuracy is non-negotiable. Don't invent attacker narratives the artefact can't support. |
 | Hardcode Volatility / Vol-specific strings in a non-Vol lab | The template's user-facing copy (picker prompt, Stage 1 hint, pro-mode tooltip, grep help) MUST interpolate from `TOOL_CONFIG` (see §10). The SzechuanSauce pcap rebuild surfaced five distinct Vol-leakage sites that bled into a tshark lab — every one of them is now config-driven. |
 | Ship `TA00??` or any other tactic-ID placeholder in `TACTICS_TEXT` | The TACTICS_TEXT reference is what the analyst sees when they type `tactics`. Placeholders signal "this is a draft". Every tactic ID must be real — including the v19 additions (TA0112 Defense Impairment). |
+| Manually set `pickerStyle: "cards"` on a stage with all short keys | Wastes vertical real estate (~250px vs ~40px for a dropdown). Rely on auto-detect (see §10.3) — it picks the right render based on max key length + special chars. Use `pickerStyle` only when auto-detect picks wrong for a pedagogical reason. |
 | Add LLM-graded hypothesis text input | Without an LLM the grading is theatre; with an LLM the lab loses offline-capable + zero-dependency status. The picker grades intentionality without LLM. |
 | Ship with localhost paths or PII | Pre-flight sweep is mandatory. Lab is publicly readable. |
 | Add a hard-mode that hides ATT&CK | Pro-mode toggle hides the picker (real opt-out). Hiding ATT&CK defeats the lab's pedagogy. |

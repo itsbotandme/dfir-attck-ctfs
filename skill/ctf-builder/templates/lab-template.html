@@ -369,6 +369,19 @@
     header h1 { display: none; }
   }
 
+  /* Picker — conditional rendering per SKILL.md §10.3:
+     short keys → <select> dropdown (compact), long / quoted keys → cards. */
+  .picker-select {
+    width: 100%; max-width: 100%;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+    padding: 8px 12px;
+    background: var(--code-bg); color: var(--text);
+    border: 1px solid var(--border); border-radius: 4px;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  .picker-select:focus { outline: none; border-color: var(--accent); }
+
   /* Picker click-cards — replaces the native <select> so long plugin
      keys (e.g. tshark display filters with quoted args) are fully
      visible on the page instead of clipped in an OS-native dropdown. */
@@ -1297,17 +1310,40 @@ function renderPickerHTML(s) {
                      : '✗ Off-base';
     return `<div class="picker-summary">🔍 Plugin picked: <code>${pick.plugin}</code><span class="ps-grade ${pick.grade}">${gradeLabel}</span></div>`;
   }
-  // Render the picker as full-width click-cards (NOT a <select>): the
-  // native OS dropdown clips long entries (e.g. tshark display filters
-  // with quoted args) and ignores option-level CSS. Cards always show
-  // the full key text and respond reliably to clicks regardless of
-  // special characters.
+  // Conditional picker rendering (see SKILL.md §10.3):
+  //   - Short keys (max ≤40 chars, no quotes / angle brackets / backticks) → <select> dropdown
+  //   - Long keys / special chars → click-cards (full text always visible)
+  //   - Author override per stage: s.pickerStyle = "cards" | "dropdown"
+  // Both rendering paths use the same pickPlugin(idxOrKey) handler.
   const keys = Object.keys(s.pluginGrades);
   const htmlEscape = str => str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  const opts = keys.map((p, i) => {
-    const isSel = pick && pick.plugin === p;
-    return `<button type="button" class="picker-option${isSel ? ' selected' : ''}" data-idx="${i}" onclick="pickPlugin(${i})">${htmlEscape(p)}</button>`;
-  }).join('');
+  const maxKeyLen = Math.max(...keys.map(k => k.length));
+  const hasUnsafeChar = keys.some(k => /["<>`]/.test(k));
+  const useCards = s.pickerStyle === "cards"
+                || (s.pickerStyle !== "dropdown" && (maxKeyLen > 40 || hasUnsafeChar));
+
+  let opts;
+  if (useCards) {
+    opts = `<div class="picker-options" role="radiogroup">${
+      keys.map((p, i) => {
+        const isSel = pick && pick.plugin === p;
+        return `<button type="button" class="picker-option${isSel ? ' selected' : ''}" data-idx="${i}" onclick="pickPlugin(${i})">${htmlEscape(p)}</button>`;
+      }).join('')
+    }</div>`;
+  } else {
+    // <select> dropdown — compact, familiar UX for short keys (e.g. Volatility
+    // plugin names). Dispatch by INDEX (value="${i}") so quoted keys are
+    // safe even if a stage later adds one — picker just escalates to cards.
+    const sopts = keys.map((p, i) => {
+      const sel = (pick && pick.plugin === p) ? ' selected' : '';
+      return `<option value="${i}"${sel}>${htmlEscape(p)}</option>`;
+    }).join('');
+    opts = `<select class="picker-select" onchange="pickPlugin(this.value)">
+      <option value="">— Select a ${TOOL_CONFIG.pluginNoun} —</option>
+      ${sopts}
+    </select>`;
+  }
+
   let feedbackHTML = '';
   if (pick) {
     const g = s.pluginGrades[pick.plugin];
@@ -1320,16 +1356,14 @@ function renderPickerHTML(s) {
     </div>`;
   }
   // Soft-gate nudge: if the analyst submitted without picking, show a
-  // one-line educational nudge above the dropdown until they pick.
+  // one-line educational nudge above the picker until they pick.
   const skippedNudge = (state.pickerSkipped[s.id] && !pick) ? `
-    <div class="picker-nudge">💡 Try picking a plugin first — the system grades your first-move thinking. You can still submit either way.</div>` : '';
+    <div class="picker-nudge">💡 Try picking a ${TOOL_CONFIG.pluginNoun} first — the system grades your first-move thinking. You can still submit either way.</div>` : '';
   return `<div class="plugin-picker">
-    <div class="pp-title">🔍 Pick your plugin</div>
+    <div class="pp-title">🔍 Pick your ${TOOL_CONFIG.pluginNoun}</div>
     <div class="pp-prompt">Before you run anything, commit to a first move. Which ${TOOL_CONFIG.name} ${TOOL_CONFIG.pluginNoun} would best answer this stage's question?</div>
     ${skippedNudge}
-    <div class="picker-options" role="radiogroup">
-      ${opts}
-    </div>
+    ${opts}
     ${feedbackHTML}
   </div>`;
 }
